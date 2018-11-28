@@ -55,10 +55,12 @@ void keyboard(unsigned char key, int x, int y) {
 
     case 'C':
         _actual_camera = _selected_object;
+        visual_mode = 1;
         break;
 
     case 'Q':
         _actual_camera = _selected_camera;
+        visual_mode = 0;
         break;
 
     case 'O':
@@ -345,5 +347,34 @@ void updateTransformObject(){
     
      _transform_object = (mode) ? _actual_camera : _selected_object;
     
+
+}
+
+void print_info(){
+	printf("############################Info#########################\n\n");
+	printf("-----------------------Transforamciones------------------\n");
+
+	printf("Modo de transformacion: ");
+	if (mode){
+		printf("Camara\n");
+	}
+	else{
+		printf("Objeto\n");
+	}
+
+	//transform_component * tc = get_component(obj, component_id)
+	//printMat(mat, col, row)
+	printf("Modo de visualizacion: ");
+
+	if (visual_mode){
+		printf("Objeto\n");
+	}
+	else{
+		printf("Camara\n");
+	}
+
+
+
+
 
 }

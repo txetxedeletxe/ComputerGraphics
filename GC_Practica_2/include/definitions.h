@@ -210,6 +210,7 @@ TRANSFORMATION_SCOPE scope;
 
 int mode;
 int projection_mode;
+int visual_mode;
 
 GLdouble _window_ratio;                     /*Control of window's proportions */
 GLdouble _ortho_x_min,_ortho_x_max;         /*Variables for the control of the orthographic projection*/
