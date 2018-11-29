@@ -118,15 +118,33 @@ void keyboard(unsigned char key, int x, int y) {
     char* fname = malloc(sizeof (char)*128); /* Note that scanf adds a null character at the end of the vector*/
     int read = 0;
     object *auxiliar_object = 0;
+    object *new_camera = 0;
     GLdouble wd,he,midx,midy;
 
 
 
     switch (key) {
 
+
     case 'H':
     case 'h':
     	print_info();
+    	break;
+
+    case 'N':
+    case 'n':
+    	new_camera = create_object();
+
+    	transform_component * trans = (transform_component * ) get_component(new_camera,COMPONENT_TRANSFORM);
+    	trans->undoStack->mat[12] = 0;
+    	trans->undoStack->mat[13] = 0;
+    	trans->undoStack->mat[14] = _ortho_x_max;
+
+    	new_camera->next = _first_camera;
+    	_first_camera = new_camera;
+    	_selected_camera = _first_camera;
+    	_actual_camera = _selected_camera;
+    	printf("New camera created! \n");
     	break;
 
     case 'P':
@@ -211,6 +229,7 @@ void keyboard(unsigned char key, int x, int y) {
         _selected_camera = _selected_camera->next;
         /*The selection is circular, thus if we move out of the list we go back to the first element*/
         if (_selected_camera == 0) _selected_camera = _first_camera;
+        _actual_camera = _selected_camera;
         updateTransformObject();
         
         break;
@@ -430,7 +449,6 @@ void updateTransformObject(){
     
      _transform_object = (mode) ? _actual_camera : _selected_object;
     
-
 }
 
 

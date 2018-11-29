@@ -22,4 +22,4 @@ $(ODIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -c -o $@ $^ $(CFLAGS)
 
 clean:
-	rm main obj/* 
+	rm obj/* main
