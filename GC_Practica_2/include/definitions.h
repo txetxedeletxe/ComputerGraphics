@@ -231,8 +231,6 @@ object * _transform_object;
 
 
 
-
-
 /*Exported functions to manipulate datastructs*/
 
 transform_component* create_transform();

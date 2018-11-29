@@ -1,6 +1,7 @@
 #include "definitions.h"
 #include "load_obj.h"
 #include "transform.h"
+#include "utilities.h"
 #include <GL/glut.h>
 #include <stdio.h>
 
@@ -29,6 +30,83 @@ void print_help(){
     printf("\n\n");
 }
 
+void print_info(){
+	printf("\n############################Info#########################\n\n");
+	printf("-----------------------Transforamciones------------------\n");
+
+	printf("Modo de transformacion: ");
+	if (mode){
+		printf("Camara\n");
+	}
+	else{
+		printf("Objeto\n");
+	}
+
+	printf("Matriz de transformacion:\n");
+	transform_component * tc = (transform_component *) get_component(_transform_object, COMPONENT_TRANSFORM);
+	printMat(tc->undoStack->mat,4,4);
+
+
+	printf("Modo de transformacion: ");
+
+	switch (transformation){
+
+	case KG_TRANSFORMATIONS_TRANSLATE:
+		printf("Translate");
+		break;
+
+	case KG_TRANSFORMATIONS_ROTATE:
+		printf("Rotate");
+		break;
+
+	case KG_TRANSFORMATIONS_SCALE:
+		printf("Scale");
+		break;
+
+	case KG_TRANSFORMATIONS_REFLECT:
+		printf("Reflect");
+		break;
+
+	case KG_TRANSFORMATIONS_SHEAR:
+		printf("Shear");
+		break;
+	}
+
+	printf("\n");
+
+	printf("Tipo de transformacion: ");
+
+	if (scope){
+		printf("Global\n");
+	}else{
+		printf("Local\n");
+	}
+
+	printf("---------------------------Camara-----------------------\n");
+	printf("Modo de visualizacion:\n");
+
+	if (visual_mode){
+		printf("Objeto\n");
+	}
+	else{
+		printf("Camara\n");
+	}
+
+	printf("Matriz de transformacion de la camara:\n");
+	tc = (transform_component *) get_component(_actual_camera, COMPONENT_TRANSFORM);
+	printMat(tc->undoStack->mat,4,4);
+
+	printf("Modo de proyeccion: ");
+
+	if (projection_mode){
+		printf("Ortho\n");
+	}
+	else{
+		printf("Perspective\n");
+	}
+
+}
+
 /**
  * @brief Callback function to control the basic keys
  * @param key Key that has been pressed
@@ -45,6 +123,11 @@ void keyboard(unsigned char key, int x, int y) {
 
 
     switch (key) {
+
+    case 'H':
+    case 'h':
+    	print_info();
+    	break;
 
     case 'P':
     case 'p':
@@ -350,31 +433,4 @@ void updateTransformObject(){
 
 }
 
-void print_info(){
-	printf("############################Info#########################\n\n");
-	printf("-----------------------Transforamciones------------------\n");
 
-	printf("Modo de transformacion: ");
-	if (mode){
-		printf("Camara\n");
-	}
-	else{
-		printf("Objeto\n");
-	}
-
-	//transform_component * tc = get_component(obj, component_id)
-	//printMat(mat, col, row)
-	printf("Modo de visualizacion: ");
-
-	if (visual_mode){
-		printf("Objeto\n");
-	}
-	else{
-		printf("Camara\n");
-	}
-
-
-
-
-
-}

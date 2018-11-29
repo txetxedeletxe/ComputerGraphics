@@ -117,7 +117,6 @@ void transform(AXIS direction){
 
 	free(matrix);
 
-	printMat(matrix2,4,4);
 
 
 }
