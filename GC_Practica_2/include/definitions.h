@@ -74,16 +74,23 @@
 #define KG_ZOOM_IN -1
 #define KG_ZOOM_OUT 1
 
+/**BITMASK VALIUES**/
 /* Codes for transformation operations */
-#define KG_TRANSFORMATIONS_TRANSLATE 0
-#define KG_TRANSFORMATIONS_ROTATE 1
-#define KG_TRANSFORMATIONS_SCALE 2
-#define KG_TRANSFORMATIONS_REFLECT 3
-#define KG_TRANSFORMATIONS_SHEAR 4
-
+#define KG_TRANSFORMATIONS_TRANSLATE 1
+#define KG_TRANSFORMATIONS_ROTATE 2
+#define KG_TRANSFORMATIONS_SCALE 4
+#define KG_TRANSFORMATIONS_REFLECT 8
+#define KG_TRANSFORMATIONS_SHEAR 16
+#define KG_TRANSFORMATIONS 31
 /* Scope of the transformation */
-#define KG_SCOPE_GLOBAL 1
-#define KG_SCOPE_LOCAL 0
+#define KG_SCOPE_GLOBAL 32
+/*Camera projection mode*/
+#define KG_PROJECT_ORTHO 64
+/*Camera type*/
+#define KG_CAMERA_OBJECT 128
+/*Transform type*/
+#define KG_TRANSFORM_CAMERA 256
+
 
 /* Step units for transformations */
 #define KG_ROTATE_STEP 0.05235987755 // pi/60 radians, 3 degrees
@@ -198,19 +205,13 @@ typedef struct object object;
 
 //Aliases para flags
 typedef int AXIS;
-typedef int TRANSFORMATION_MODE;
-typedef int TRANSFORMATION_SCOPE;
 typedef int ZOOM_DIRECTION;
 
 
 /** GLOBAL VARIABLES **/
 
-TRANSFORMATION_MODE transformation;
-TRANSFORMATION_SCOPE scope;
 
-int mode;
-int projection_mode;
-int visual_mode;
+unsigned int stateField;
 
 GLdouble _window_ratio;                     /*Control of window's proportions */
 GLdouble _ortho_x_min,_ortho_x_max;         /*Variables for the control of the orthographic projection*/
@@ -238,5 +239,12 @@ object* create_object();
 component* create_component(int id, void * comp);
 void add_component(object * obj , component * comp);
 void* get_component(object * obj , int component_id);
+
+int checkState(unsigned int mask);
+void changeState(unsigned int mask, int value);
+int getState(unsigned int mask);
+void flipState(unsigned int mask);
+
+void updateTransformObject();
 #endif // DEFINITIONS_H
 

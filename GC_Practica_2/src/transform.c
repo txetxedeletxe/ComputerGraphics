@@ -1,13 +1,8 @@
 #include "transform.h"
 #include "utilities.h"
-#include "definitions.h"
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
-
-extern GLdouble _ortho_x_min,_ortho_x_max;
-extern GLdouble _ortho_y_min,_ortho_y_max;
-extern GLdouble _ortho_z_min,_ortho_z_max;
 
 
 
@@ -65,7 +60,7 @@ void transform(AXIS direction){
     int sense = 0;
 
 	/* SELECTS TRANSFORMATION */
-	switch(transformation){
+	switch(getState(KG_TRANSFORMATIONS)){
 
 		case KG_TRANSFORMATIONS_TRANSLATE:
 			translate(direction,matrix);
@@ -106,7 +101,7 @@ void transform(AXIS direction){
 	
 
 	/* left or right multiplication depending on the scope */
-	if (scope){
+	if (checkState(KG_SCOPE_GLOBAL)){
 		MatMul(matrix,tc->undoStack->mat,matrix2);
 	}
 	else{
@@ -314,7 +309,7 @@ void uniformScale(int direction){
 	transform_component * tc = (transform_component *)get_component(_transform_object,COMPONENT_TRANSFORM);
 
 	/* left or right multiplication depending on the scope */
-	if (scope){
+	if (checkState(KG_SCOPE_GLOBAL)){
 		MatMul(matrix,tc->undoStack->mat,matrix2);
 	}
 	else{

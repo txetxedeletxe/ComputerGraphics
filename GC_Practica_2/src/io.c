@@ -35,7 +35,7 @@ void print_info(){
 	printf("-----------------------Transforamciones------------------\n");
 
 	printf("Modo de transformacion: ");
-	if (mode){
+	if (checkState(KG_TRANSFORM_CAMERA)){
 		printf("Camara\n");
 	}
 	else{
@@ -47,9 +47,9 @@ void print_info(){
 	printMat(tc->undoStack->mat,4,4);
 
 
-	printf("Modo de transformacion: ");
+	printf("Tipo de transformacion: ");
 
-	switch (transformation){
+	switch (getState(KG_TRANSFORMATIONS)){
 
 	case KG_TRANSFORMATIONS_TRANSLATE:
 		printf("Translate");
@@ -74,9 +74,9 @@ void print_info(){
 
 	printf("\n");
 
-	printf("Tipo de transformacion: ");
+	printf("Alcance de transformacion: ");
 
-	if (scope){
+	if (checkState(KG_SCOPE_GLOBAL)){
 		printf("Global\n");
 	}else{
 		printf("Local\n");
@@ -85,7 +85,7 @@ void print_info(){
 	printf("---------------------------Camara-----------------------\n");
 	printf("Modo de visualizacion:\n");
 
-	if (visual_mode){
+	if (checkState(KG_CAMERA_OBJECT)){
 		printf("Objeto\n");
 	}
 	else{
@@ -98,7 +98,7 @@ void print_info(){
 
 	printf("Modo de proyeccion: ");
 
-	if (projection_mode){
+	if (checkState(KG_PROJECT_ORTHO)){
 		printf("Ortho\n");
 	}
 	else{
@@ -149,31 +149,31 @@ void keyboard(unsigned char key, int x, int y) {
 
     case 'P':
     case 'p':
-        if (mode)
-            projection_mode = 1 - projection_mode;
+        if (checkState(KG_TRANSFORM_CAMERA))
+             flipState(KG_PROJECT_ORTHO);
         break;
 
 
     case 'C':
         _actual_camera = _selected_object;
-        visual_mode = 1;
+        changeState(KG_CAMERA_OBJECT,1);
         break;
 
     case 'Q':
         _actual_camera = _selected_camera;
-        visual_mode = 0;
+        changeState(KG_CAMERA_OBJECT,0);
         break;
 
     case 'O':
     case 'o':
-        mode = 0;
+    	changeState(KG_TRANSFORM_CAMERA,0);
         updateTransformObject();
         
         break;
 
     case 'K':
     case 'k':
-        mode = 1;
+    	changeState(KG_TRANSFORM_CAMERA,1);
         updateTransformObject();
         
         break;
@@ -312,43 +312,48 @@ void keyboard(unsigned char key, int x, int y) {
     /* Activate TRANSLATION */
     case 'm':
     case 'M':
-        transformation = KG_TRANSFORMATIONS_TRANSLATE;
+    	changeState(KG_TRANSFORMATIONS,0);
+    	changeState(KG_TRANSFORMATIONS_TRANSLATE,1);
         break;
 
     /* Activate ROTATION */
     case 'b':
     case 'B':
-        transformation = KG_TRANSFORMATIONS_ROTATE;
+    	changeState(KG_TRANSFORMATIONS,0);
+    	changeState(KG_TRANSFORMATIONS_ROTATE,1);
         break;
 
     /* Activate SCALING */
     case 't':
     case 'T':
-        transformation = KG_TRANSFORMATIONS_SCALE;
+    	changeState(KG_TRANSFORMATIONS,0);
+    	changeState(KG_TRANSFORMATIONS_SCALE,1);
         break;
 
     /* Activate REFLEXION */
     case 'r':
     case 'R':
-        transformation = KG_TRANSFORMATIONS_REFLECT;
+    	changeState(KG_TRANSFORMATIONS,0);
+    	changeState(KG_TRANSFORMATIONS_REFLECT,1);
         break;
 
     /* Activate SHEAR MAPPING */
     case 's':
     case 'S':
-        transformation = KG_TRANSFORMATIONS_SHEAR;
+    	changeState(KG_TRANSFORMATIONS,0);
+    	changeState(KG_TRANSFORMATIONS_SHEAR,1);
         break;
 
     /* Change scope to GLOBAL */
     case 'g':
     case 'G':
-        scope = KG_SCOPE_GLOBAL;
+        changeState(KG_SCOPE_GLOBAL,1);
         break;
 
     /* Change scope to LOCAL */
     case 'l':
     case 'L':
-        scope = KG_SCOPE_LOCAL;
+    	changeState(KG_SCOPE_GLOBAL,0);
         break;
 
     /* Alternatives version for control keys */
@@ -445,10 +450,5 @@ void specialKeyboard(int key, int x, int y) {
 
 }
 
-void updateTransformObject(){
-    
-     _transform_object = (mode) ? _actual_camera : _selected_object;
-    
-}
 
 

@@ -4,15 +4,7 @@
 #include <GL/glu.h>
 #include "camera.h"
 #include "utilities.h"
-/** EXTERNAL VARIABLES **/
 
-extern GLdouble _window_ratio;
-extern GLdouble _ortho_x_min,_ortho_x_max;
-extern GLdouble _ortho_y_min,_ortho_y_max;
-extern GLdouble _ortho_z_min,_ortho_z_max;
-
-extern object *_first_object;
-extern object *_selected_object;
 
 /**
  * @brief Function to draw the axes
@@ -68,7 +60,7 @@ void display(void) {
     glLoadIdentity();
 
     /*When the window is wider than our original projection plane we extend the plane in the X axis*/
-    if (projection_mode){
+    if (checkState(KG_PROJECT_ORTHO)){
         if ((_ortho_x_max - _ortho_x_min) / (_ortho_y_max - _ortho_y_min) < _window_ratio) {
             /* New width */
             GLdouble wd = (_ortho_y_max - _ortho_y_min) * _window_ratio;

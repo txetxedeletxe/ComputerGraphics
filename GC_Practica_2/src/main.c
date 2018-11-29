@@ -5,6 +5,8 @@
 #include "display.h"
 #include "io.h"
 #include "definitions.h"
+#include "load_obj.h"
+
 
 
 /** GENERAL INITIALIZATION **/
@@ -36,18 +38,49 @@ void initialization (){
     object * cam = create_object();
     transform_component * trans = (transform_component * ) get_component(cam,COMPONENT_TRANSFORM);
 
-    trans->undoStack->mat[12] = 0;
-    trans->undoStack->mat[13] = 0;
-    trans->undoStack->mat[14] = _ortho_x_max;
+    trans->undoStack->mat[14] = 10;
 
-    cam->next = 0;
+    cam->next = _first_camera;
     _first_camera = cam;
     _selected_camera = cam;
     _actual_camera = cam;
 
 
-    mode = 0;
-    projection_mode = 0;
+    changeState(KG_TRANSFORM_CAMERA,0);
+    changeState(KG_PROJECT_ORTHO,0);
+    changeState(KG_TRANSFORMATIONS,0);
+    changeState(KG_TRANSFORMATIONS_TRANSLATE,1);
+
+    char def_load[] = "resources/abioia.obj";
+
+    object * obj1 = create_object();
+    object * obj2 = create_object();
+
+    object3d * mesh = (object3d*) malloc(sizeof(object3d));
+
+    read_wavefront(def_load,mesh);
+
+    component * c1 = create_component(COMPONENT_MESH,mesh);
+    component * c2 = create_component(COMPONENT_MESH,mesh);
+
+    add_component(obj1,c1);
+    add_component(obj2,c2);
+
+    obj1->next = _first_object;
+    _first_object = obj1;
+
+    obj2->next = _first_object;
+    _first_object = obj2;
+
+    _selected_object = _first_object;
+
+    updateTransformObject();
+
+    transform_component * tc  = get_component(obj1,COMPONENT_TRANSFORM);
+    tc->undoStack->mat[12] = 2;
+
+    tc = get_component(obj2,COMPONENT_TRANSFORM);
+    tc->undoStack->mat[12] = -2;
 }
 
 

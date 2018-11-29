@@ -65,5 +65,33 @@ object* create_object(){
 	return obj;
 }
 
+int checkState(unsigned int mask){
 
+	return (stateField & mask) == mask;
+}
+
+int getState(unsigned int mask){
+	return stateField & mask;
+}
+
+void changeState(unsigned int mask, int value){
+
+	if (value == 0){
+		stateField = stateField & (!mask);
+	}
+	else{
+		stateField = stateField | mask;
+	}
+}
+
+void flipState(unsigned int mask){
+
+	stateField = stateField ^ mask;
+}
+
+void updateTransformObject(){
+
+     _transform_object = (checkState(KG_TRANSFORM_CAMERA)) ? _actual_camera : _selected_object;
+
+}
 
