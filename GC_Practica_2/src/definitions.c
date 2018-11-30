@@ -77,7 +77,7 @@ int getState(unsigned int mask){
 void changeState(unsigned int mask, int value){
 
 	if (value == 0){
-		stateField = stateField & (!mask);
+		stateField = stateField & (~mask);
 	}
 	else{
 		stateField = stateField | mask;

@@ -32,6 +32,7 @@ void print_help(){
 
 void print_info(){
 	printf("\n############################Info#########################\n\n");
+
 	printf("-----------------------Transforamciones------------------\n");
 
 	printf("Modo de transformacion: ");
@@ -104,6 +105,7 @@ void print_info(){
 	else{
 		printf("Perspective\n");
 	}
+	printf("State value: %d\n",stateField);
 
 }
 

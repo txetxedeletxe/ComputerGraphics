@@ -245,6 +245,14 @@ void changeState(unsigned int mask, int value);
 int getState(unsigned int mask);
 void flipState(unsigned int mask);
 
+void addCamera(object * cam);
+void add3dObject(object * obj);
+
+void nextCamera();
+void nextObject();
+
+void deleteCamera();
+void deleteCamera();
 void updateTransformObject();
 #endif // DEFINITIONS_H
 
