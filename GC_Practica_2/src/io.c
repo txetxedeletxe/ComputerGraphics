@@ -2,6 +2,7 @@
 #include "load_obj.h"
 #include "transform.h"
 #include "utilities.h"
+#include "camera.h"
 #include <GL/glut.h>
 #include <stdio.h>
 
@@ -226,6 +227,8 @@ void keyboard(unsigned char key, int x, int y) {
 
     /* Change selected object */
     case 9: /* <TAB> */
+    	if (_selected_object == 0)
+    	    		break;
         _selected_object = _selected_object->next;
         /*The selection is circular, thus if we move out of the list we go back to the first element*/
         if (_selected_object == 0) _selected_object = _first_object;
@@ -245,6 +248,8 @@ void keyboard(unsigned char key, int x, int y) {
 
     /* Delete an object */
     case 127: /* <SUPR> */
+    	if (_selected_object == 0)
+    		break;
         /*Erasing an object depends on whether it is the first one or not*/
         if (_selected_object == _first_object)
         {
@@ -358,6 +363,11 @@ void keyboard(unsigned char key, int x, int y) {
     case 'G':
         changeState(KG_SCOPE_GLOBAL,1);
         _analyze_object = _selected_object;
+
+        transform_component *tc = get_component(_actual_camera, COMPONENT_TRANSFORM);
+        transform_component *tc2 = get_component(_analyze_object, COMPONENT_TRANSFORM);
+        if (checkState(KG_TRANSFORM_CAMERA))
+        	toAnalyzeMode(tc->undoStack->mat, tc2->undoStack->mat);
         break;
 
     /* Change scope to LOCAL */

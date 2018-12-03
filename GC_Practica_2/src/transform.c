@@ -72,10 +72,13 @@ void transform(AXIS direction){
 
     				case KG_TRANSFORMATIONS_TRANSLATE:
 
+
     					if (direction*direction == KG_Z_AXIS_POSITIVE*KG_Z_AXIS_POSITIVE){
-							translate(direction,matrix);
+							translate(-direction,matrix);
 							MatMul(tc->undoStack->mat,matrix,matrix2);
-							updateObjectMatrix(matrix2);
+							toAnalyzeMode(matrix2, tc2->undoStack->mat);
+	    					updateObjectMatrix(matrix2);
+
     					}
     					break;
 
@@ -89,8 +92,11 @@ void transform(AXIS direction){
     						sense = -1;
     						direction = -direction;
     					}
+
     					//invertir ejes X e Y
     					direction = (direction != 3) ? 3 - direction : 3;
+    					if (direction*direction == KG_X_AXIS_POSITIVE*KG_X_AXIS_POSITIVE)
+    					    						direction = -direction;
     					rotate(sense*direction,matrix);
     					tc->undoStack->mat[12] -= tc2->undoStack->mat[12];
     					tc->undoStack->mat[13] -= tc2->undoStack->mat[13];
@@ -120,6 +126,10 @@ void transform(AXIS direction){
 		switch(getState(KG_TRANSFORMATIONS)){
 
 			case KG_TRANSFORMATIONS_TRANSLATE:
+
+				if (checkState(KG_TRANSFORM_CAMERA) && direction*direction == KG_Z_AXIS_POSITIVE*KG_Z_AXIS_POSITIVE)
+					direction = -direction;
+
 				translate(direction,matrix);
 				break;
 
@@ -132,10 +142,17 @@ void transform(AXIS direction){
 					sense = -1;
 					direction = -direction;
 				}
+
 				//invertir ejes X e Y
 				direction = (direction != 3) ? 3 - direction : 3;
+
+				if (checkState(KG_TRANSFORM_CAMERA) && direction*direction == KG_Y_AXIS_POSITIVE*KG_Y_AXIS_POSITIVE)
+					direction = -direction;
+
 				rotate(sense*direction,matrix);
 				break;
+
+
 
 			case KG_TRANSFORMATIONS_SCALE:
 				scale(direction,matrix);

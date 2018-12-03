@@ -53,7 +53,7 @@ void display(void) {
     object *aux_obj = _first_object;
 
     /* Clear the screen */
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     /* Define the projection */
     glMatrixMode(GL_PROJECTION);
@@ -110,6 +110,7 @@ void display(void) {
         glLoadMatrixf(camera_mat);
         glMultMatrixf(transform->undoStack->mat);
         for (f = 0; f < mesh->num_faces; f++) {
+
             glBegin(GL_POLYGON);
             for (v = 0; v < mesh->face_table[f].num_vertices; v++) {
                 v_index = mesh->face_table[f].vertex_table[v];

@@ -33,8 +33,10 @@ void initialization (){
     glClearColor(KG_COL_BACK_R, KG_COL_BACK_G, KG_COL_BACK_B, KG_COL_BACK_A);
 
     /*Definition of the method to draw the objects*/
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
     object * cam = create_object();
     transform_component * trans = (transform_component * ) get_component(cam,COMPONENT_TRANSFORM);
 
