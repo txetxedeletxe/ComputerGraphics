@@ -93,6 +93,12 @@ void print_info(){
 		printf("Camara\n");
 	}
 
+    if(checkState(KG_SCOPE_GLOBAL)){
+        printf("Modo análisis\n");
+    }else{
+        printf("Modo vuelo\n");
+    }
+
 	printf("Matriz de transformacion de la camara:\n");
 	tc = (transform_component *) get_component(_actual_camera, COMPONENT_TRANSFORM);
 	printMat(tc->undoStack->mat,4,4);
@@ -132,6 +138,7 @@ void keyboard(unsigned char key, int x, int y) {
     case 'h':
     	print_info();
     	break;
+
 
     case 'N':
     case 'n':

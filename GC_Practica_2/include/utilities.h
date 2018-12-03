@@ -1,6 +1,8 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include "definitions.h"
+#include "math.h"
 
 /**
  * @brief Converts a given matrix intro the identity matrix of its size.
@@ -27,3 +29,7 @@ GLfloat dotProduct(GLfloat* v1, GLfloat* v2, int dimension  );
 void printVector(GLfloat* vec, int size);
 
 void printMat(GLfloat* mat, int col, int row);
+
+void unitaryVector(vector3* v);
+
+void normalOfPlane(vector3* normal, vector3* v1, vector3* v2);

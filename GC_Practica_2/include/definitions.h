@@ -98,7 +98,9 @@
 #define KG_TRANSLATE_STEP 0.3f
 #define KG_SHEAR_STEP 0.05f
 
-
+/*Camara mode*/
+#define FLIGHT 0
+#define ANALYZE 1
 
 /*Component Ids*/
 
@@ -180,7 +182,6 @@ struct transform_component{
     
 };
 
-typedef struct camara_component camara_component;
 
 struct component{
 
@@ -211,7 +212,10 @@ typedef int ZOOM_DIRECTION;
 /** GLOBAL VARIABLES **/
 
 
+
 unsigned int stateField;
+
+
 
 GLdouble _window_ratio;                     /*Control of window's proportions */
 GLdouble _ortho_x_min,_ortho_x_max;         /*Variables for the control of the orthographic projection*/

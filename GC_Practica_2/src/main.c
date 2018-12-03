@@ -81,6 +81,8 @@ void initialization (){
 
     tc = get_component(obj2,COMPONENT_TRANSFORM);
     tc->undoStack->mat[12] = -2;
+
+
 }
 
 
