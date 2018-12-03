@@ -234,6 +234,9 @@ object * _actual_camera;
 
 object * _transform_object;
 
+object * _analyze_object;
+
+vector3 origin;
 
 
 /*Exported functions to manipulate datastructs*/

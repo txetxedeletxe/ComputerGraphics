@@ -41,7 +41,7 @@ void toAnalyzeMode(GLfloat *camara, GLfloat *objeto){
 	unitaryVector(&direction);
 	unitaryVector(&vup);
 	normalOfPlane(&newX, &direction, &vup);
-	normalOfPlane(&vup, &direction, &newX);
+	normalOfPlane(&vup, &newX , &direction);
 
 	camara[0] = newX.x;
 	camara[1] = newX.y;

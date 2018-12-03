@@ -71,9 +71,11 @@ void unitaryVector(vector3* v){
 
 void normalOfPlane(vector3* normal, vector3* v1, vector3* v2){
 
+
 	normal->x = (v1->y * v2->z) - (v1->z * v2->y);
 	normal->y = (v1->z * v2->x) - (v1->x * v2->z);
 	normal->z = (v1->x * v2->y) - (v1->y * v2->x);
+
 	unitaryVector(normal);
 }
 
@@ -91,3 +93,4 @@ void printMat(GLfloat* mat, int col, int row){
 	}
 	printf("\n");
 }
+

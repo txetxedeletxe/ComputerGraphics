@@ -357,12 +357,14 @@ void keyboard(unsigned char key, int x, int y) {
     case 'g':
     case 'G':
         changeState(KG_SCOPE_GLOBAL,1);
+        _analyze_object = _selected_object;
         break;
 
     /* Change scope to LOCAL */
     case 'l':
     case 'L':
     	changeState(KG_SCOPE_GLOBAL,0);
+
         break;
 
     /* Alternatives version for control keys */

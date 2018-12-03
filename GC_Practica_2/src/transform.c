@@ -1,5 +1,6 @@
 #include "transform.h"
 #include "utilities.h"
+#include "camera.h"
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
@@ -54,64 +55,115 @@ void transform(AXIS direction){
     if (!_transform_object)
     	return;
 
+	transform_component * tc = (transform_component *)get_component(_transform_object,COMPONENT_TRANSFORM);
+
 	GLfloat* matrix = (GLfloat*) malloc(sizeof(GLfloat)*16);
 	GLfloat* matrix2 = (GLfloat*) malloc(sizeof(GLfloat)*16);
 
-    int sense = 0;
+	int sense = 0;
 
-	/* SELECTS TRANSFORMATION */
-	switch(getState(KG_TRANSFORMATIONS)){
+	if (checkState(KG_SCOPE_GLOBAL | KG_TRANSFORM_CAMERA)){
 
-		case KG_TRANSFORMATIONS_TRANSLATE:
-			translate(direction,matrix);
-			break;
+		transform_component * tc2 = (transform_component *)get_component(_analyze_object,COMPONENT_TRANSFORM);
 
-		case KG_TRANSFORMATIONS_ROTATE:           
-            
-            if (direction > 0){
-                sense = 1;            
-            }
-            else{
-                sense = -1;
-                direction = -direction;
-            }
-            //invertir ejes X e Y
-            direction = (direction != 3) ? 3 - direction : 3;
-			rotate(sense*direction,matrix);
-			break;
 
-		case KG_TRANSFORMATIONS_SCALE:
-			scale(direction,matrix);
-			break;
 
-        case KG_TRANSFORMATIONS_REFLECT:
-			reflect(direction,matrix);
-			break;
+    	switch(getState(KG_TRANSFORMATIONS)){
 
-        case KG_TRANSFORMATIONS_SHEAR:
-			shear(direction,matrix);
-			break;
+    				case KG_TRANSFORMATIONS_TRANSLATE:
 
-	}
+    					if (direction*direction == KG_Z_AXIS_POSITIVE*KG_Z_AXIS_POSITIVE){
+							translate(direction,matrix);
+							MatMul(tc->undoStack->mat,matrix,matrix2);
+							updateObjectMatrix(matrix2);
+    					}
+    					break;
 
-	transform_component * tc = (transform_component *)get_component(_transform_object,COMPONENT_TRANSFORM);
+    				case KG_TRANSFORMATIONS_ROTATE:
 
+
+    					if (direction > 0){
+    						sense = 1;
+    					}
+    					else{
+    						sense = -1;
+    						direction = -direction;
+    					}
+    					//invertir ejes X e Y
+    					direction = (direction != 3) ? 3 - direction : 3;
+    					rotate(sense*direction,matrix);
+    					tc->undoStack->mat[12] -= tc2->undoStack->mat[12];
+    					tc->undoStack->mat[13] -= tc2->undoStack->mat[13];
+    					tc->undoStack->mat[14] -= tc2->undoStack->mat[14];
+    					MatMul(matrix,tc->undoStack->mat,matrix2);
+    					tc->undoStack->mat[12] += tc2->undoStack->mat[12];
+    					tc->undoStack->mat[13] += tc2->undoStack->mat[13];
+    					tc->undoStack->mat[14] += tc2->undoStack->mat[14];
+    					matrix2[12] += tc2->undoStack->mat[12];
+    					matrix2[13] += tc2->undoStack->mat[13];
+    					matrix2[14] += tc2->undoStack->mat[14];
+
+    					toAnalyzeMode(matrix2, tc2->undoStack->mat);
+    					updateObjectMatrix(matrix2);
+    					break;
+
+
+
+    			}
+
+    }
+    else{
+
+
+
+		/* SELECTS TRANSFORMATION */
+		switch(getState(KG_TRANSFORMATIONS)){
+
+			case KG_TRANSFORMATIONS_TRANSLATE:
+				translate(direction,matrix);
+				break;
+
+			case KG_TRANSFORMATIONS_ROTATE:
+
+				if (direction > 0){
+					sense = 1;
+				}
+				else{
+					sense = -1;
+					direction = -direction;
+				}
+				//invertir ejes X e Y
+				direction = (direction != 3) ? 3 - direction : 3;
+				rotate(sense*direction,matrix);
+				break;
+
+			case KG_TRANSFORMATIONS_SCALE:
+				scale(direction,matrix);
+				break;
+
+			case KG_TRANSFORMATIONS_REFLECT:
+				reflect(direction,matrix);
+				break;
+
+			case KG_TRANSFORMATIONS_SHEAR:
+				shear(direction,matrix);
+				break;
+
+		}
 	
 		
+		/* left or right multiplication depending on the scope */
+		if (checkState(KG_SCOPE_GLOBAL)){
+			MatMul(matrix,tc->undoStack->mat,matrix2);
+		}
+		else{
+			MatMul(tc->undoStack->mat,matrix,matrix2);
+		}
+
+		updateObjectMatrix(matrix2); //update the undo/redo stack
 	
-
-	/* left or right multiplication depending on the scope */
-	if (checkState(KG_SCOPE_GLOBAL)){
-		MatMul(matrix,tc->undoStack->mat,matrix2);
-	}
-	else{
-		MatMul(tc->undoStack->mat,matrix,matrix2);
-	}
-
-	updateObjectMatrix(matrix2); //update the undo/redo stack
-
-	free(matrix);
-
+		free(matrix);
+    }
 
 
 }
