@@ -48,6 +48,8 @@ void initialization (){
 
     mode = 0;
     projection_mode = 0;
+
+    camara_mode = 0; //Modo vuelo.
 }
 
 

@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "utilities.h"
+#include "definitions.h"
+#include "math.h"
 
 void matIden(GLfloat* mat){
 
@@ -57,6 +59,25 @@ void printVector(GLfloat* vec, int size){
 	printf("\n");
 
 }
+
+
+void unitaryVector(vector3* v){
+
+	GLfloat modulo = sqrt(( pow(v->x,2.0) + pow((v->y), 2.0) + pow((v->z),2.0)));
+	v->x = v->x / modulo;
+	v->y = v->y / modulo;
+	v->z = v->z / modulo;
+}
+
+void normalOfPlane(vector3* normal, vector3* v1, vector3* v2){
+
+	normal->x = (v1->y * v2->z) - (v1->z * v2->y);
+	normal->y = (v1->z * v2->x) - (v1->x * v2->z);
+	normal->z = (v1->x * v2->y) - (v1->y * v2->x);
+	unitaryVector(normal);
+}
+
+
 void printMat(GLfloat* mat, int col, int row){
 
 	int j = 0;
