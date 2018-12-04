@@ -124,5 +124,5 @@ void display(void) {
         aux_obj = aux_obj->next;
     }
     /*Do the actual drawing*/
-    glFlush();
+    gl_swap_buffers();
 }

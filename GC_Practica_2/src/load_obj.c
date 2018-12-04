@@ -136,6 +136,7 @@ printf("1 pasada: num vert = %d (%d), num faces = %d(%d) \n",num_vertices,count_
                     face_table[j].vertex_table[i] = values[i] - 1;
 //printf(" %d ",values[i] - 1);
                     vertex_table[face_table[j].vertex_table[i]].num_faces++;
+
                     }
 //printf("\n");
                 j++;
@@ -186,8 +187,11 @@ printf("2 pasada\n");
             object_ptr->max.z = object_ptr->vertex_table[i].coord.z;
 
     }
-
     
+    normalOfObject(object_ptr);
+
     return (0);
 }
+
+
 
