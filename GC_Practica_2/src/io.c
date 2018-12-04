@@ -154,6 +154,8 @@ void keyboard(unsigned char key, int x, int y) {
     	_first_camera = new_camera;
     	_selected_camera = _first_camera;
     	_actual_camera = _selected_camera;
+    	if (checkState(KG_TRANSFORM_CAMERA))
+    		_transform_object = _actual_camera;
     	printf("New camera created! \n");
     	break;
 
@@ -225,10 +227,12 @@ void keyboard(unsigned char key, int x, int y) {
         updateTransformObject();
         break;
 
+
+
     /* Change selected object */
     case 9: /* <TAB> */
     	if (_selected_object == 0)
-    	    		break;
+    	    break;
         _selected_object = _selected_object->next;
         /*The selection is circular, thus if we move out of the list we go back to the first element*/
         if (_selected_object == 0) _selected_object = _first_object;
@@ -248,7 +252,7 @@ void keyboard(unsigned char key, int x, int y) {
 
     /* Delete an object */
     case 127: /* <SUPR> */
-    	if (_selected_object == 0)
+    	if (_selected_object == 0 || ((getState(KG_CAMERA_OBJECT) && _selected_object == _actual_camera)))
     		break;
         /*Erasing an object depends on whether it is the first one or not*/
         if (_selected_object == _first_object)
@@ -361,6 +365,10 @@ void keyboard(unsigned char key, int x, int y) {
     /* Change scope to GLOBAL */
     case 'g':
     case 'G':
+    	if (_first_object == 0)
+    		break;
+    	if ((getState(KG_CAMERA_OBJECT)) && (_selected_object == _actual_camera))
+    		break;
         changeState(KG_SCOPE_GLOBAL,1);
         _analyze_object = _selected_object;
 

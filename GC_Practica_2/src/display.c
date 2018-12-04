@@ -3,8 +3,8 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "camera.h"
+#include <stdio.h>
 #include "utilities.h"
-
 
 /**
  * @brief Function to draw the axes
@@ -82,7 +82,7 @@ void display(void) {
         glFrustum(_frust_x_min,_frust_x_max,_frust_y_min,_frust_y_max,_frust_z_min,_frust_z_max);
     }
 
-    
+
 
     /* Now we start drawing the object */
     glMatrixMode(GL_MODELVIEW);
