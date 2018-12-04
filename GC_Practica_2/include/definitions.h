@@ -140,6 +140,7 @@ typedef struct {
 typedef struct {
     point3 coord;                       /* coordinates,x, y, z */
     GLint num_faces;                    /* number of faces that share this vertex */
+    vector3 normal;						/* normal of the vector */
 } vertex;
 
 /****************************
@@ -148,8 +149,9 @@ typedef struct {
  * polygons                 *
  ****************************/
 typedef struct {
-    GLint num_vertices;                 /* number of vertices in the face */
-    GLint *vertex_table;                /* table with the index of each vertex */
+    GLint num_vertices;                /* number of vertices in the face */
+    GLint *vertex_table;			   /* table with the index of each vertex */
+    vector3 normal;                    /*Normal of each polygon*/
 } face;
 
 
@@ -171,7 +173,6 @@ struct object3d{
     face *face_table;                   /* table of faces */
     point3 min;                         /* coordinates' lower bounds */
     point3 max;                         /* coordinates' bigger bounds */
-    
     
 };
 
