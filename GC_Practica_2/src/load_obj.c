@@ -188,7 +188,7 @@ printf("2 pasada\n");
 
     }
     
-    normalOfObject(object_ptr);
+    normalOfObject(object_ptr); //Calculates the normal of each vertex and face of the loaded object.
 
     return (0);
 }
