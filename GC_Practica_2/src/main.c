@@ -48,6 +48,8 @@ void initialization (){
     _selected_camera = cam;
     _actual_camera = cam;
 
+    _first_light[0] = create_light(0, 100.0, 1, 1, 1); //SUN
+
 
     changeState(KG_TRANSFORM_CAMERA,0);
     changeState(KG_PROJECT_ORTHO,0);
@@ -101,6 +103,15 @@ int main(int argc, char** argv) {
     glutInitWindowSize(KG_WINDOW_WIDTH, KG_WINDOW_HEIGHT);
     glutInitWindowPosition(KG_WINDOW_X, KG_WINDOW_Y);
     glutCreateWindow(KG_WINDOW_TITLE);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glEnable(GL_DEPTH_TEST); // Z-buffer
+
+    if (checkState(KG_LIGHTING_MODE)){
+    	glShadowModel(GL_SMOOTH); //Normal de cada vértice
+    } else {
+    	glShadowModel(GL_FLAT); //Normal de cada poligono
+    }
 
     /* set the callback functions */
     glutDisplayFunc(display);

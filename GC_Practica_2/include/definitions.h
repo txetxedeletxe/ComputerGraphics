@@ -90,6 +90,8 @@
 #define KG_CAMERA_OBJECT 128
 /*Transform type*/
 #define KG_TRANSFORM_CAMERA 256
+/*Lighting type (bit 0 -> flat, bit 1 -> smooth)*/
+#define KG_LIGHTING_MODE 512
 
 
 /* Step units for transformations */
@@ -102,10 +104,16 @@
 #define FLIGHT 0
 #define ANALYZE 1
 
+/*Lighting type*/
+#define DIRECTIONAL 0
+#define PUNCTUAL 1
+#define FOCUS 2
+
 /*Component Ids*/
 
 #define COMPONENT_TRANSFORM 1
 #define COMPONENT_MESH 2
+#define COMPONENT_LIGHT 3
 
 /** STRUCTURES **/
 
@@ -183,6 +191,15 @@ struct transform_component{
     
 };
 
+typedef struct lighting_component{
+
+	GLfloat intensity;
+	int light_type;
+	color3 color;
+
+} lighting_component;
+
+
 
 struct component{
 
@@ -230,6 +247,8 @@ object * _first_object;                /*List of objects*/
 object * _selected_object;
 object * _first_camera;             /*Object currently selected*/
 object * _selected_camera;
+object _first_light[8];
+object * _selected_light;
 
 object * _actual_camera;
 
@@ -247,6 +266,8 @@ object* create_object();
 component* create_component(int id, void * comp);
 void add_component(object * obj , component * comp);
 void* get_component(object * obj , int component_id);
+
+lighting_component* create_light(int type, GLfloat intensity, GLdouble red, GLdouble green, GLdouble blue);
 
 int checkState(unsigned int mask);
 void changeState(unsigned int mask, int value);
