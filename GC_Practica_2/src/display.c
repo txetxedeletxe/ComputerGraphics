@@ -53,7 +53,18 @@ void display(void) {
     object *aux_obj = _first_object;
 
     /* Clear the screen */
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    //matriz de proyeccion. DONE
+
+    //matriz de cambio de sistema de referencia en MODELVIEW. DONE
+
+    //establecer parámetros de las fuentes de iluminación (posiciones, direcciones, intensidades...)
+
+    //dibujar objetos
+    	//para cada objeto hay que establecer su material
+    	//para cada poligono o vertice (smooth o flat) hay que establecer el vector normal
+    	//para cada poligono dibujar sus poligonos con sus vertices
 
     /* Define the projection */
     glMatrixMode(GL_PROJECTION);
@@ -124,5 +135,6 @@ void display(void) {
         aux_obj = aux_obj->next;
     }
     /*Do the actual drawing*/
-    gl_swap_buffers();
+
+    glutSwapBuffers();
 }

@@ -469,6 +469,10 @@ void specialKeyboard(int key, int x, int y) {
             transform(KG_Z_AXIS_NEGATIVE);
             break;
 
+        case GLUT_KEY_F12:
+        	flipState(KG_LIGHTING_MODE);
+        	break;
+
         default:
             /*In the default case we just print the code of the key. This is usefull to define new cases*/
             printf("%d %c\n", key, key);

@@ -42,6 +42,19 @@ transform_component* create_transform(){
 
 }
 
+lighting_component* create_light(int type, GLfloat intensity, GLdouble red, GLdouble green, GLdouble blue){
+	lighting_component *lc = (lighting_component*) malloc(sizeof(lighting_component));
+
+	lc->light_type = type;
+	lc->intensity = intensity;
+	lc->color.r = red;
+	lc->color.g = green;
+	lc->color.b = blue;
+
+	return lc;
+
+}
+
 component* create_component(int id, void * comp){
 
 	component* compo = (component*) malloc(sizeof(component));
@@ -52,6 +65,8 @@ component* create_component(int id, void * comp){
 	return compo;
 
 }
+
+
 
 object* create_object(){
 	object* obj = (object*) malloc(sizeof(object));
