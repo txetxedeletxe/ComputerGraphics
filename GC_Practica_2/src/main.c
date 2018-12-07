@@ -48,7 +48,12 @@ void initialization (){
     _selected_camera = cam;
     _actual_camera = cam;
 
-    _first_light[0] = create_light(0, 100.0, 1, 1, 1); //SUN
+    lighting_component * lc = create_light(0, 100.0, 1, 1, 1); //SUN
+    component * c = create_component(COMPONENT_LIGHT,lc);
+    object * obj = create_object();
+    add_component(obj,c);
+
+    _lights[0] = obj;
 
 
     changeState(KG_TRANSFORM_CAMERA,0);
@@ -108,9 +113,9 @@ int main(int argc, char** argv) {
     glEnable(GL_DEPTH_TEST); // Z-buffer
 
     if (checkState(KG_LIGHTING_MODE)){
-    	glShadowModel(GL_SMOOTH); //Normal de cada vértice
+    	glShadeModel(GL_SMOOTH); //Normal de cada vértice
     } else {
-    	glShadowModel(GL_FLAT); //Normal de cada poligono
+    	glShadeModel(GL_FLAT); //Normal de cada poligono
     }
 
     /* set the callback functions */

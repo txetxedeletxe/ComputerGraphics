@@ -247,7 +247,7 @@ object * _first_object;                /*List of objects*/
 object * _selected_object;
 object * _first_camera;             /*Object currently selected*/
 object * _selected_camera;
-object _first_light[8];
+object * _lights[8];
 object * _selected_light;
 
 object * _actual_camera;
