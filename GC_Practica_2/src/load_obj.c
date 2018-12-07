@@ -3,6 +3,7 @@
 #include <string.h>
 #include <malloc.h>
 #include "transform.h"
+#include "utilities.h"
 #define MAXLINE 200
 
 /*
