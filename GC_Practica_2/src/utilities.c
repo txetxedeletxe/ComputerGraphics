@@ -61,7 +61,7 @@ void printVector(GLfloat* vec, int size){
 }
 
 
-void unitaryVector(vector3* v){
+void unitaryVector(MKZ_vector3* v){
 
 	GLfloat modulo = sqrt(( pow(v->x,2.0) + pow((v->y), 2.0) + pow((v->z),2.0)));
 	v->x = v->x / modulo;
@@ -69,7 +69,7 @@ void unitaryVector(vector3* v){
 	v->z = v->z / modulo;
 }
 
-void normalOfPlane(vector3* normal, vector3* v1, vector3* v2){
+void normalOfPlane(MKZ_vector3* normal, MKZ_vector3* v1, MKZ_vector3* v2){
 
 
 	normal->x = (v1->y * v2->z) - (v1->z * v2->y);

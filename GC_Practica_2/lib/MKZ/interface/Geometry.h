@@ -1,33 +1,46 @@
 typedef struct {
     float x, y, z;
-} vector3;
+} MKZ_vector3;
 
-typedef vector3 point3;
+typedef MKZ_vector3 MKZ_point3;
 
 typedef struct {
     float r, g, b;
-} color3;
+} MKZ_color3;
 
 typedef struct {
-    point3 coord;                       /* coordinates,x, y, z */
-    int num_faces;                    /* number of faces that share this vertex */
-} vertex;
+    MKZ_point3 coord;                       /* coordinates,x, y, z */
+    int num_faces;                    /* number of faces that share this MKZ_vertex */
+} MKZ_vertex;
 
 typedef struct {
-    int num_vertices;                 /* number of vertices in the face */
-    int *vertex_table;                /* table with the index of each vertex */
-} face;
+    int num_vertices;                 /* number of vertices in the MKZ_face */
+    int *vertex_table;                /* table with the index of each MKZ_vertex */
+} MKZ_face;
 
 typedef struct {
 
 	int num_vertices;                 /* number of vertices in the object*/
-	vertex *vertex_table;               /* table of vertices */
+	MKZ_vertex *vertex_table;               /* table of vertices */
 	int num_faces;                    /* number of faces in the object */
-	face *face_table;                   /* table of faces */
-	point3 min;                         /* coordinates' lower bounds */
-	point3 max;
-}mesh;
+	MKZ_face *face_table;                   /* table of faces */
+	MKZ_point3 min;                         /* coordinates' lower bounds */
+	MKZ_point3 max;
+
+}MKZ_mesh;
 
 typedef struct{
 
-}material;
+	float ** r;
+	float ** g;
+	float ** b;
+
+}MKZ_RGBmap;
+
+typedef struct{
+
+	MKZ_RGBmap * ambientMap;
+	MKZ_RGBmap * difuseMap;
+	MKZ_RGBmap * specularMap;
+
+}MKZ_material;

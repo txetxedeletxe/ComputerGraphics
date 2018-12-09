@@ -1,26 +1,36 @@
 #include "Geometry.h"
 
-struct empty_object{
+typedef struct{
 
 	float* transform;
-	int visible;
+	int active;
+	int id;
 
-};
-
-typedef struct empty_object empty_object;
-
+}MKZ_object;
 
 typedef struct {
 
-	mesh * mesh;
-	material * material;
-	empty_object obj;
+	MKZ_mesh * mesh;
+	MKZ_material * material;
+	MKZ_object obj;
 
-}meshed_object;
+
+}MKZ_meshedObject;
 
 typedef struct {
 
 	int light_type;
-	empty_object obj;
 
-}light_object;
+	float intensity;
+	MKZ_color3 color;
+
+	MKZ_object obj;
+
+
+}MKZ_lightObject;
+
+typedef struct{
+
+	float* transform;
+
+}MKZ_camera;

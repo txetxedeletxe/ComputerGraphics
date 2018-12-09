@@ -1,13 +1,11 @@
 #include <stdio.h>
 #include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
 #include "display.h"
 #include "io.h"
 #include "definitions.h"
 #include "load_obj.h"
-
-
+#include "MKZEngine.h"
+#include "WindowManager.h"
 
 /** GENERAL INITIALIZATION **/
 void initialization (){
@@ -94,23 +92,16 @@ int main(int argc, char** argv) {
     /*First of all, print the help information*/
     print_help();
 
-    /* glut initializations */
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_RGB);
-    glutInitWindowSize(KG_WINDOW_WIDTH, KG_WINDOW_HEIGHT);
-    glutInitWindowPosition(KG_WINDOW_X, KG_WINDOW_Y);
-    glutCreateWindow(KG_WINDOW_TITLE);
+    MKZinit();
+    WMsetWindowTitle(KG_WINDOW_TITLE);
+    MKZcreateWindow(KG_WINDOW_WIDTH,KG_WINDOW_HEIGHT);
 
-    /* set the callback functions */
-    glutDisplayFunc(display);
-    glutReshapeFunc(reshape);
-    glutKeyboardFunc(keyboard);
-    glutSpecialFunc(specialKeyboard); // function and direction keys control
-
+    //MKZsetCallback();
     /* this initialization has to be AFTER the creation of the window */
     initialization();
 
+
     /* start the main loop */
-    glutMainLoop();
+    MKZenterMainLoop();
     return 0;
 }

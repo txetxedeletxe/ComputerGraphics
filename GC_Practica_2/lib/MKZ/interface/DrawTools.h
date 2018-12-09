@@ -8,7 +8,7 @@ void DTinit();
 void DTsetProjectionMode(int p_mode);
 void DTsetDrawVolume(double left, double right, double bottom, double top, double near, double far);
 void DTsetCamera(float * camMat);
-void DTsetBackgroundColor(color3 * bg);
+void DTsetBackgroundColor(MKZ_color3 * bg);
 void DTstartDrawing();
 void DTclearScreen();
 void DTdrawObject(meshed_object * mo);

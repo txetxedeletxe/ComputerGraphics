@@ -26,17 +26,17 @@ void toAnalyzeMode(GLfloat *camara, GLfloat *objeto){
 	GLfloat direct_y = objeto[13] - camara[13];
 	GLfloat direct_z = objeto[14] - camara[14];
 
-	vector3 direction;
+	MKZ_vector3 direction;
 	direction.x = direct_x;
 	direction.y = direct_y;
 	direction.z = direct_z;
 
-	vector3 vup;
+	MKZ_vector3 vup;
 	vup.x = camara[4];
 	vup.y = camara[5];
 	vup.z = camara[6];
 
-	vector3 newX;
+	MKZ_vector3 newX;
 
 	unitaryVector(&direction);
 	unitaryVector(&vup);

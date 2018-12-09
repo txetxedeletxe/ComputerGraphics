@@ -10,8 +10,16 @@ void MKZinit(){
 
 }
 
-void MKZcreateWindow(int width, int height){
-	WMsetWindowSize(width, height);
+void MKZsetWindowSize(int width, int height){
+	WMsetWindowSize(width,height);
+}
+
+void MKZsetWindowTitle(char * title){
+	WMsetWindowTitle(title);
+}
+
+void MKZcreateWindow(){
+
 	WMcreateWindow();
 	WMsetDisplayFunction(Ddraw);
 }

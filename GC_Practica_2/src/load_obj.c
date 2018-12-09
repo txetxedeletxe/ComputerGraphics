@@ -39,8 +39,8 @@ static int sreadint2(char * lerroa, int * zenbakiak) {
  */
 int read_wavefront(char * file_name, object3d * object_ptr) {
     
-    vertex *vertex_table;
-    face *face_table;
+    MKZ_vertex *vertex_table;
+    MKZ_face *face_table;
     int num_vertices = -1, num_faces = -1, count_vertices = 0, count_faces = 0;
     FILE *obj_file;
     char line[MAXLINE], line_1[MAXLINE], aux[45];
@@ -102,8 +102,8 @@ printf("1 pasada: num vert = %d (%d), num faces = %d(%d) \n",num_vertices,count_
     num_vertices = count_vertices;
     num_faces = count_faces;
 
-    vertex_table = (vertex *) malloc(num_vertices * sizeof (vertex));
-    face_table = (face *) malloc(num_faces * sizeof (face));
+    vertex_table = (MKZ_vertex *) malloc(num_vertices * sizeof (MKZ_vertex));
+    face_table = (MKZ_face *) malloc(num_faces * sizeof (MKZ_face));
 
     obj_file = fopen(file_name, "r");
     k = 0;

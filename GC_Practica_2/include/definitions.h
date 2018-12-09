@@ -115,7 +115,7 @@
  ****************************/
 typedef struct {
     GLdouble x, y, z;
-} point3;
+} MKZ_point3;
 
 /*****************************
  * Structure to store the    *
@@ -123,7 +123,7 @@ typedef struct {
  *****************************/
 typedef struct {
     GLdouble x, y, z;
-} vector3;
+} MKZ_vector3;
 
 /****************************
  * Structure to store the   *
@@ -131,16 +131,16 @@ typedef struct {
  ****************************/
 typedef struct {
     GLfloat r, g, b;
-} color3;
+} MKZ_color3;
 
 /****************************
  * Structure to store       *
  * objects' vertices         *
  ****************************/
 typedef struct {
-    point3 coord;                       /* coordinates,x, y, z */
+    MKZ_point3 coord;                       /* coordinates,x, y, z */
     GLint num_faces;                    /* number of faces that share this vertex */
-} vertex;
+} MKZ_vertex;
 
 /****************************
  * Structure to store       *
@@ -150,7 +150,7 @@ typedef struct {
 typedef struct {
     GLint num_vertices;                 /* number of vertices in the face */
     GLint *vertex_table;                /* table with the index of each vertex */
-} face;
+} MKZ_face;
 
 
 struct matStack{
@@ -166,11 +166,11 @@ struct matStack{
  ****************************/
 struct object3d{
     GLint num_vertices;                 /* number of vertices in the object*/
-    vertex *vertex_table;               /* table of vertices */
+    MKZ_vertex *vertex_table;               /* table of vertices */
     GLint num_faces;                    /* number of faces in the object */
-    face *face_table;                   /* table of faces */
-    point3 min;                         /* coordinates' lower bounds */
-    point3 max;                         /* coordinates' bigger bounds */
+    MKZ_face *face_table;                   /* table of faces */
+    MKZ_point3 min;                         /* coordinates' lower bounds */
+    MKZ_point3 max;                         /* coordinates' bigger bounds */
     
     
 };
@@ -236,7 +236,7 @@ object * _transform_object;
 
 object * _analyze_object;
 
-vector3 origin;
+MKZ_vector3 origin;
 
 
 /*Exported functions to manipulate datastructs*/

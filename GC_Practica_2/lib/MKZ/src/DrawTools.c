@@ -59,7 +59,7 @@ void DTsetCamera(float * camMat){
 	TRtoCameraMatrix(camMat,baseChange_mat);
 }
 
-void DTsetBackgroundColor(color3 * bg){
+void DTsetBackgroundColor(MKZ_color3 * bg){
 
 	glClearColor(bg->r, bg->g, bg->b, 1);
 }
@@ -96,7 +96,7 @@ void DTdrawObject(meshed_object * mo){
 	glMultMatrixf(mo->obj.transform);
 
 
-	mesh * mesh = mo->mesh;
+	MKZ_mesh * mesh = mo->mesh;
 	int f;
 	int v;
 	int v_index;
