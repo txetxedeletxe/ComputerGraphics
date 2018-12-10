@@ -18,6 +18,15 @@ typedef struct {
     int *vertex_table;                /* table with the index of each MKZ_vertex */
 } MKZ_face;
 
+
+typedef struct{
+
+	MKZ_point3 p0;
+	MKZ_point3 p1;
+
+}MKZ_line;
+
+
 typedef struct {
 
 	int num_vertices;                 /* number of vertices in the object*/

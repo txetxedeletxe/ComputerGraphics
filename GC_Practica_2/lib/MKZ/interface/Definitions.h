@@ -10,8 +10,10 @@ typedef struct{
 
 typedef struct {
 
+
 	MKZ_mesh * mesh;
 	MKZ_material * material;
+
 	MKZ_object obj;
 
 
@@ -31,6 +33,6 @@ typedef struct {
 
 typedef struct{
 
-	float* transform;
+	float*  transform;
 
 }MKZ_camera;
