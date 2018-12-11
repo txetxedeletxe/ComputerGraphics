@@ -1,4 +1,5 @@
 #include "MKZ_Objects.h"
+#include "MKZ_Definitions.h"
 
 /**				FUNCTIONS 				**/
 /* INITIALIZATION */
@@ -28,8 +29,16 @@ void MKZ_SCENE_restore_camera();
 void MKZ_SCENE_set_bg_color(MKZ_color3 * c3);
 void MKZ_SCENE_set_projectionMode(int PROJECTION_MODE);
 void MKZ_SCENE_set_poligonMode(int PoligonMode);
-void MKZ_SCENE_set_drawMask(unsigned int mask);
 
+MKZ_color3 * MKZ_SCENE_get_bg_color();
+int MKZ_SCENE_get_projectionMode();
+int MKZ_SCENE_get_poligonMode();
+
+void MKZ_SCENE_restore_bg_color();
+
+/** DRAW CONTROL**/
+void MKZ_DRAW_enable_drawMask(unsigned int d_mask);
+void MKZ_DRAW_disable_drawMask(unsigned int d_mask);
 /** TOOLS **/
 
 /** Transforms **/

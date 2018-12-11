@@ -1,8 +1,8 @@
-struct linkedList{
+typedef struct MKZ_linkedList MKZ_linkedList;
+struct MKZ_linkedList{
 	void * content;
-	int id;
-	struct linkedList * ll;
+	MKZ_linkedList * ll;
 };
 
-typedef struct linkedList linkedList;
-linkedList * DScreateLinkedList(void* element,int id);
+
+MKZ_linkedList * MKZ_DATASTRUCT_create_linkedList();

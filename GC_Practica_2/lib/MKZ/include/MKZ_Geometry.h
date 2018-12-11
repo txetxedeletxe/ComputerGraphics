@@ -55,22 +55,22 @@ typedef struct{
 }MKZ_material;
 
 /** Geometry **/
-MKZ_point3 * MKZ_create_point3();
-MKZ_vector3 * MKZ_create_point3();
-MKZ_face * MKZ_create_face(int vertex_count);
-MKZ_line * MKZ_create_line();
+MKZ_point3 * MKZ_GEOMETRY_create_point3();
+MKZ_vector3 * MKZ_GEOMETRY_create_vector3();
+MKZ_face * MKZ_GEOMETRY_create_face(int vertex_count);
+MKZ_line * MKZ_GEOMETRY_create_line();
+MKZ_color3 * MKZ_GEOMETRY_create_color3();
 
+void MKZ_GEOMETRY_face_add_vertex(MKZ_face * face, int p);
 
-void MKZ_face_add_vertex(MKZ_face * face, int p);
-
-void MKZ_free_point3(MKZ_point3 * p3);
-void MKZ_free_vector3(MKZ_vector3 * v3);
-void MKZ_free_face(MKZ_face * face);
-void MKZ_free_line(MKZ_line * line);
-
+void MKZ_GEOMETRY_free_point3(MKZ_point3 * p3);
+void MKZ_GEOMETRY_free_vector3(MKZ_vector3 * v3);
+void MKZ_GEOMETRY_free_face(MKZ_face * face);
+void MKZ_GEOMETRY_free_line(MKZ_line * line);
+void MKZ_GEOMETRY_free_color3(MKZ_color3 * col);
 
 
 /** MESH **/
-MKZ_mesh * MKZ_create_mesh(MKZ_point3 * vertices, MKZ_face * faces);
-MKZ_mesh * MKZ_load_mesh(char * filename);
-void MKZ_free_mesh(MKZ_mesh * mesh);
+MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces);
+MKZ_mesh * MKZ_GEOMETRY_load_mesh(char * filename);
+void MKZ_GEOMETRY_free_mesh(MKZ_mesh * mesh);

@@ -1,6 +1,6 @@
-#include <Arithmetic.h>
-#include "DrawTools.h"
-#include "Transform.h"
+#include "MKZ_Arithmetic.h"
+#include "MKZ_Transform.h"
+#include "MKZ_Definitions.h"
 
 #include <GL/gl.h>
 
@@ -15,13 +15,13 @@ double c_bottom, c_top;
 double c_near, c_far;
 
 
-void DTinit(){
+void MKZ_DRAW_init(){
 
 
-	baseChange_mat = UTcreateVector(16);
-	UTmatIden(baseChange_mat,4);
+	baseChange_mat = MKZ_ARITHMETIC_create_matrix();
+	MKZ_ARITHMETIC_identityMatrix(baseChange_mat);
 
-	projection_mode = DT_PROJECTIONMODE_PARALLEL;
+	projection_mode = MKZ_DRAW_PROJECTIONMODE_PARALLEL;
 
 	c_left 		= -1;
 	c_right 	= 1;
@@ -38,13 +38,20 @@ void DTinit(){
 
 }
 
-void DTsetProjectionMode(int p_mode){
+void MKZ_DRAW_set_projectionMode(int p_mode){
 
 	projection_mode = p_mode;
 
 }
 
-void DTsetDrawVolume(double left, double right, double bottom, double top, double near, double far){
+void MKZ_DRAW_set_poligonMode(int p_mode){
+
+	glPolygonMode(GL_FRONT_AND_BACK , p_mode);
+
+}
+
+
+void MKZ_DRAW_set_renderVolume(double left, double right, double bottom, double top, double near, double far){
 
 	c_left 		=  left;
 	c_right 	=  right;
@@ -55,23 +62,23 @@ void DTsetDrawVolume(double left, double right, double bottom, double top, doubl
 
 }
 
-void DTsetCamera(float * camMat){
-	TRtoCameraMatrix(camMat,baseChange_mat);
+void MKZ_DRAW_set_cameraMat(float * camMat){
+	MKZ_TRANSFORM_to_cameraMatrix(camMat,baseChange_mat);
 }
 
-void DTsetBackgroundColor(MKZ_color3 * bg){
+void MKZ_DRAW_set_background_color(MKZ_color3 * bg){
 
 	glClearColor(bg->r, bg->g, bg->b, 1);
 }
 
 
-void DTstartDrawing(){
+void MKZ_DRAW_start(){
 
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	if (projection_mode == DT_PROJECTIONMODE_PARALLEL){
+	if (projection_mode == MKZ_DRAW_PROJECTIONMODE_PARALLEL){
 		glOrtho(c_left,c_right,c_bottom,c_top,c_near,c_far);
 	}
 	else
@@ -85,12 +92,12 @@ void DTstartDrawing(){
 
 }
 
-void DTclearScreen(){
+void MKZ_DRAW_clear(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 }
 
-void DTdrawObject(meshed_object * mo){
+void MKZ_DRAW_object(MKZ_meshedObject * mo){
 
 	glLoadMatrixf(baseChange_mat);
 	glMultMatrixf(mo->obj.transform);
@@ -115,6 +122,13 @@ void DTdrawObject(meshed_object * mo){
 	}
 }
 
-void DTendDrawing(){
+void MKZ_DRAW_enable_drawMask(unsigned int d_mask){
+	glEnable(d_mask);
+}
+void MKZ_DRAW_disable_drawMask(unsigned int d_mask){
+	glDisable(d_mask);
+}
+
+void MKZ_DRAW_end(){
 	glFlush();
 }

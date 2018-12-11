@@ -1,11 +1,8 @@
-#include <Arithmetic.h>
-#include "Datastruct.h"
+#include "MKZ_Datastruct.h"
 #include <stdlib.h>
 
-linkedList * DScreateLinkedList(void* element,int id){
+MKZ_linkedList * MKZ_DATASTRUCT_create_linkedList(){
 
-	linkedList * ll = (linkedList*) malloc(sizeof(linkedList));
-	ll->content = element;
-	ll->id = id;
+	MKZ_linkedList * ll = (MKZ_linkedList*) malloc(sizeof(MKZ_linkedList));
 	return ll;
 }
