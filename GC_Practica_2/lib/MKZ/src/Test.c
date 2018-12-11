@@ -1,5 +1,5 @@
-#include "MKZEngine.h"
 #include <stdlib.h>
+#include "../interface/MKZ.h"
 
 int main(int argc, char **argv) {
 

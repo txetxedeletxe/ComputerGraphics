@@ -38,7 +38,7 @@ void specialFunction(int key, int x, int y){
 
 
 /** Exported part **/
-void WMinit(){
+void MKZ_WM_init(){
 
 	int a = 0;
 	glutInit(&a,0);
@@ -46,36 +46,36 @@ void WMinit(){
 
 	callBack = nothing;
 
-	//glutKeyboardFunc(keyboardFunction);
-	//glutSpecialFunc(specialFunction);
+	glutKeyboardFunc(keyboardFunction);
+	glutSpecialFunc(specialFunction);
 
 }
 
-void WMsetDisplayFunction(void (* display )( void )){
+void MKZ_WM_set_display_function(void (* display )( void )){
 	glutDisplayFunc(display);
 }
 
-void WMsetCallbackFunction(void (*cback)(int event,void * state)){
-
+void KMZ_WM_set_callBack_function(void (*cback)(int event,void * state)){
 	callBack = cback;
-
 }
 
-void WMsetWindowSize(int width, int height){
+void MKZ_WM_set_window_size(int width, int height){
 	 glutInitWindowSize(width, height);
 }
-void WMsetWindowTitle(char* title){
+
+void MKZ_WM_set_window_title(char* title){
 	windowTitle = title;
 }
-void WMcreateWindow(){
+
+void MKZ_WM_create_window(){
 	glutCreateWindow(windowTitle);
 }
 
-void WMenterMainLoop(){
+void MKZ_WM_enter_mainLoop(){
 	glutMainLoop();
 }
 
-void WMredisplay(){
+void MKZ_WM_draw(){
 	glutPostRedisplay();
 }
 

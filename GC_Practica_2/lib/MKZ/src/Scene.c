@@ -1,23 +1,54 @@
-#include "Draw.h"
-#include "Utilities.h"
-#include "Datastruct.h"
+#include "MKZ_Arithmetic.h"
+#include "MKZ_Datastruct.h"
+#include "MKZ_Objects.h"
+#include "MKZ_Draw.h"
 
 /** Internal state **/
 /** camera **/
-float * camera_mat;
+MKZ_camera * camera;
 
 /** object **/
-int objNextId;
 linkedList * objectList;
 
 /** lights **/
-int lightNextId;
 linkedList * lightList;
 
-void DsetCameraTransform(float * camMat){
-	UTvectorCP(camMat,camera_mat,16);
-	DTsetCamera(camera_mat);
+/** Exported **/
+/* Init */
+void MKZ_SCENE_init(){
+
+
+		objectList = 0;
+		lightList = 0;
+
+		camera = MKZ_create_camera();
 }
+
+/** Callback **/
+void SCENE_draw();
+
+/* camera */
+void SCENE_set_camera(MKZ_camera * cam);
+MKZ_camera * SCENE_get_camera();
+void SCENE_reset_camera();
+
+/* Objects */
+void SCENE_add_mesh(MKZ_meshedObject * mo);
+MKZ_meshedObject * SCENE_get_mesh(int id);
+void SCENE_remove_mesh(int id);
+
+/* Light */
+void SCENE_add_light(MKZ_lightObject * lo);
+MKZ_lightObject * SCENE_get_light(int id);
+void SCENE_remove_light(int id);
+
+/* MISC */
+void SCENE_set_bg_color(MKZ_color3 * c3);
+void SCENE_set_projectionMode(int projection_mode);
+void SCENE_set_poligonMode(int poligon_mode);
+void SCENE_set_drawMask(unsigned int mask);
+
+
 
 float * DgetCameraTransform(){
 	return camera_mat;
@@ -27,15 +58,7 @@ float * DgetCameraTransform(){
 /** Exposed functions **/
 void Dinit(){
 
-	objNextId = 0;
-	objectList = 0;
-	lightList = 0;
-	lightNextId = 0;
 
-	camera_mat = UTcreateVector(16);
-	UTmatIden(camera_mat,4);
-	DTinit();
-	DTsetCamera(camera_mat);
 }
 
 /** callback **/

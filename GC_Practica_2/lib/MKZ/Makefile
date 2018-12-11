@@ -3,7 +3,7 @@ LIBC = ar rcs
 
 LIB = -lGL -lGLU -lglut -lm
 
-INCLUDEDIR=interface
+INCLUDEDIR=include
 
 _OBJ=MKZEngine.o WindowManager.o Draw.o DrawTools.o Utilities.o Datastruct.o Transform.o
 OBJDIR=obj

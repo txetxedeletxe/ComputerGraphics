@@ -1,4 +1,4 @@
-#include "Definitions.h"
+#include "MKZ_Geometry.h"
 
 
 #define DT_PROJECTIONMODE_PARALLEL 0
@@ -11,6 +11,6 @@ void DTsetCamera(float * camMat);
 void DTsetBackgroundColor(MKZ_color3 * bg);
 void DTstartDrawing();
 void DTclearScreen();
-void DTdrawObject(meshed_object * mo);
+void DTdrawObject(MKZ_mesh * mo);
 void DTendDrawing();
 
