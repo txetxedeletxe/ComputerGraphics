@@ -123,10 +123,12 @@ void display(void) {
         for (f = 0; f < mesh->num_faces; f++) {
 
             glBegin(GL_POLYGON);
-            if(!checkState(KG_LIGHTING_MODE)) glNormal3fv(mesh->face_table[f].normal.x, mesh->face_table[f].normal.y, mesh->face_table[f].normal.z);
+            if(!checkState(KG_LIGHTING_MODE))
+            	glNormal3f(mesh->face_table[f].normal.x, mesh->face_table[f].normal.y, mesh->face_table[f].normal.z);
             for (v = 0; v < mesh->face_table[f].num_vertices; v++) {
                 v_index = mesh->face_table[f].vertex_table[v];
-                if (checkState(KG_LIGHTING_MODE)) glNormal3fv(mesh->vertex_table[mesh->face_table[f].vertex_table[v]].normal.x, mesh->vertex_table[mesh->face_table[f].vertex_table[v]].normal.y, mesh->vertex_table[mesh->face_table[f].vertex_table[v]].normal.z);
+                if (checkState(KG_LIGHTING_MODE))
+                	glNormal3f(mesh->vertex_table[mesh->face_table[f].vertex_table[v]].normal.x, mesh->vertex_table[mesh->face_table[f].vertex_table[v]].normal.y, mesh->vertex_table[mesh->face_table[f].vertex_table[v]].normal.z);
                 glVertex3d(mesh->vertex_table[v_index].coord.x,
                         mesh->vertex_table[v_index].coord.y,
                         mesh->vertex_table[v_index].coord.z);

@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include "transform.h"
 #include "utilities.h"
+#include "definitions.h"
 #define MAXLINE 200
 
 /*

@@ -72,15 +72,15 @@ void initialization (){
     GLfloat lightpos[4] = {tcl->undoStack->mat[12], tcl->undoStack->mat[13], tcl->undoStack->mat[14], 0}; //sun in direction (0, 1, 0, 0). The last cero means that is directional.
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
     /*The sun suffers no attenuation min(1, 1/(a_0+a_1*d+a_2*d^2)) a_i being the coefficient and d the distance from the light to each vertex/polygon of the object*/
-    glLightfv(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1);
-    glLightfv(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0);
-    glLightfv(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, (lc->color.r,lc->color.g,lc->color.b,1));
+    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1);
+    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0);
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0);
+    glLightf(GL_LIGHT0, GL_AMBIENT, 0.5);
 
     GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat mat_shininess[] = { 50.0 };
-    glMaterialfv(GL_FRONT, GL_AMBIENT, (0.3,0.3,0.3,1.0));
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, (0.6,0.6,0.6,1.0));
+    glMaterialf(GL_FRONT, GL_AMBIENT, 0.3);
+    glMaterialf(GL_FRONT, GL_DIFFUSE, 0.6);
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 

@@ -283,5 +283,7 @@ void nextObject();
 void deleteCamera();
 void deleteCamera();
 void updateTransformObject();
+
+void normalOfObject(object3d * o);
 #endif // DEFINITIONS_H
 
