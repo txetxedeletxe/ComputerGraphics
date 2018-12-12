@@ -109,38 +109,6 @@ void updateTransformObject(){
      _transform_object = (checkState(KG_TRANSFORM_CAMERA)) ? _actual_camera : _selected_object;
 
 }
-
-void normalOfObject(object3d o){
-
-	//First the normal of each polygon is calculated
-	int i;
-	int j;
-	point3 first;
-	point3 second;
-	point3 third;
-	vector3 one;
-	vector3 two;
-	for (i = 0; i<o.num_faces; i++){
-
-		first = o.vertex_table[o.face_table[i].vertex_table[0]].coord;
-		second = o.vertex_table[o.face_table[i].vertex_table[1]].coord;
-		third = o.vertex_table[o.face_table[i].vertex_table[2]].coord;
-		vectorFromPoints(&first, &second, &one);
-		vectorFromPoints(&first, &third, &two);
-		normalOfPlane(&o.face_table[i].normal, &one, &two);
-
-		for(j=0; j<o.face_table[i].num_vertices; j++){
-			addVectors(&o.vertex_table[o.face_table[i].vertex_table[j]].normal, &o.face_table[i].normal);
-		}
-	}
-
-	for (i=0; i<o.num_vertices; i++){
-		unitaryVector(&o.vertex_table[i].normal);
-	}
-
-
-}
-
 void addVectors(vector3 *v1, vector3 *v2){
 	v1->x += v2->x;
 	v1->y += v2->y;
@@ -153,6 +121,39 @@ void vectorFromPoints(point3 *p1, point3 *p2, vector3 *v){
 	v->y = p1->y - p2->y;
 	v->z = p1->z - p2->z;
 }
+
+void normalOfObject(object3d*  o){
+
+	//First the normal of each polygon is calculated
+	int i;
+	int j;
+	point3 first;
+	point3 second;
+	point3 third;
+	vector3 one;
+	vector3 two;
+	for (i = 0; i<o->num_faces; i++){
+
+		first = o->vertex_table[o->face_table[i].vertex_table[0]].coord;
+		second = o->vertex_table[o->face_table[i].vertex_table[1]].coord;
+		third = o->vertex_table[o->face_table[i].vertex_table[2]].coord;
+		vectorFromPoints(&first, &second, &one);
+		vectorFromPoints(&first, &third, &two);
+		normalOfPlane(&o->face_table[i].normal, &one, &two);
+
+		for(j=0; j<o->face_table[i].num_vertices; j++){
+			addVectors(&o->vertex_table[o->face_table[i].vertex_table[j]].normal, &o->face_table[i].normal);
+		}
+	}
+
+	for (i=0; i<o->num_vertices; i++){
+		unitaryVector(&o->vertex_table[i].normal);
+	}
+
+
+}
+
+
 
 
 
