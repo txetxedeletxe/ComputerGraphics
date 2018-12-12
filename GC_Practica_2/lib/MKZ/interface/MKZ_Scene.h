@@ -2,12 +2,8 @@
 #define __MKZ_SCENE_IMPORTED__
 
 #include "MKZ_Objects.h"
-/** Init **/
-void MKZ_SCENE_init();
-
-/** Callback **/
-void MKZ_SCENE_draw();
-
+#include "MKZ_Draw.h"
+/** SCENE **/
 void MKZ_SCENE_add_mesh(MKZ_meshedObject * mo);
 void MKZ_SCENE_add_light(MKZ_lightObject * lo);
 void MKZ_SCENE_set_camera(MKZ_camera * ca);

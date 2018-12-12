@@ -2,8 +2,8 @@
 #define __MKZ_TRANSFORM_IMPORTED__
 
 #include "MKZ_Geometry.h"
+#include "MKZ_Arithmetic.h"
 
-void MKZ_TRANSFORM_to_cameraMatrix(float* transform_mat , float* camera_mat);
 
 /** Transforms **/
 /* global transform */
@@ -32,5 +32,6 @@ void MKZ_TRANSFORM_scaleX_local(float * tramat, float scalar);
 void MKZ_TRANSFORM_scaleY_local(float * tramat, float scalar);
 void MKZ_TRANSFORM_scaleZ_local(float * tramat, float scalar);
 void MKZ_TRANSFORM_scaleUniform_local(float * tramat, float scalar);
+
 
 #endif

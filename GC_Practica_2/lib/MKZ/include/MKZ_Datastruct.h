@@ -1,3 +1,6 @@
+#ifndef __MKZ_DATASTRUCT_IMPORTED__
+#define __MKZ_DATASTRUCT_IMPORTED__
+
 typedef struct MKZ_linkedList MKZ_linkedList;
 struct MKZ_linkedList{
 	void * content;
@@ -6,3 +9,5 @@ struct MKZ_linkedList{
 
 
 MKZ_linkedList * MKZ_DATASTRUCT_create_linkedList();
+
+#endif

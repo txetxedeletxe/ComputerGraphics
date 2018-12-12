@@ -1,3 +1,6 @@
+#ifndef __MKZ_OBJECTS_IMPORTED__
+#define __MKZ_OBJECTS_IMPORTED__
+
 #include "MKZ_Geometry.h"
 
 typedef struct{
@@ -46,3 +49,4 @@ void MKZ_free_meshedObject(MKZ_meshedObject * mo);
 void MKZ_free_lightObject(MKZ_lightObject * lo);
 void MKZ_free_camera(MKZ_camera * ca);
 
+#endif
