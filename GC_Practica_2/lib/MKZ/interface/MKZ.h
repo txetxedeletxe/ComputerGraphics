@@ -39,48 +39,50 @@ void MKZ_SCENE_restore_bg_color();
 /** DRAW CONTROL**/
 void MKZ_DRAW_enable_drawMask(unsigned int d_mask);
 void MKZ_DRAW_disable_drawMask(unsigned int d_mask);
+
 /** TOOLS **/
 
 /** Transforms **/
-/* matrices */
-float * MKZ_matrix_identity();
-float * MKZ_matrix_null();
-float * MKZ_matrix_translate(MKZ_vector3 * v3);
-float * MKZ_matrix_rotate(MKZ_line * axis, float rads);
-float * MKZ_matrix_rotateX( float rads);
-float * MKZ_matrix_rotateY( float rads);
-float * MKZ_matrix_rotateZ( float rads);
-float * MKZ_matrix_scale(MKZ_vector3 * along, float scalar);
-float * MKZ_matrix_scaleX(float scalar);
-float * MKZ_matrix_scaleY(float scalar);
-float * MKZ_matrix_scaleZ(float scalar);
-float * MKZ_matrix_scaleUniform(float scalar);
+/* global transform */
+void MKZ_TRANSFORM_matrix_global(float * modMat, float * transformMat);
+void MKZ_TRANSFORM_translate_global(float * tramat, MKZ_vector3 * v3);
+void MKZ_TRANSFORM_rotate_global(float * tramat, MKZ_line * axis,  float rads);
+void MKZ_TRANSFORM_rotateX_global(float * tramat, float rads);
+void MKZ_TRANSFORM_rotateY_global(float * tramat, float rads);
+void MKZ_TRANSFORM_rotateZ_global(float * tramat, float rads);
+void MKZ_TRANSFORM_scale_global(float * tramat, MKZ_vector3 * along, float scalar);
+void MKZ_TRANSFORM_scaleX_global(float * tramat, float scalar);
+void MKZ_TRANSFORM_scaleY_global(float * tramat, float scalar);
+void MKZ_TRANSFORM_scaleZ_global(float * tramat, float scalar);
+void MKZ_TRANSFORM_scaleUniform_global(float * tramat, float scalar);
+void MKZ_TRANSFORM_set_position_global(float * modMat, MKZ_point3 * position);
 
 /* local transform */
-void MKZ_transform_matrix_global(float * modMat, float * transformMat);
-void MKZ_transform_translate_global(float * tramat, MKZ_vector3 * v3);
-void MKZ_transform_rotate_global(float * tramat, MKZ_line * axis,  float rads);
-void MKZ_transform_rotateX_global(float * tramat, float rads);
-void MKZ_transform_rotateY_global(float * tramat, float rads);
-void MKZ_transform_rotateZ_global(float * tramat, float rads);
-void MKZ_transform_scale_global(float * tramat, MKZ_vector3 * along, float scalar);
-void MKZ_transform_scaleX_global(float * tramat, float scalar);
-void MKZ_transform_scaleY_global(float * tramat, float scalar);
-void MKZ_transform_scaleZ_global(float * tramat, float scalar);
-void MKZ_transform_scaleUniform_global(float * tramat, float scalar);
-
-/* global transform */
-void MKZ_transform_matrix_local(float * modMat, float * transformMat);
-void MKZ_transform_translate_local(float * tramat, MKZ_vector3 * v3);
-void MKZ_transform_rotate_local(float * tramat, MKZ_line * axis, float rads);
-void MKZ_transform_rotateX_local(float * tramat, float rads);
-void MKZ_transform_rotateY_local(float * tramat, float rads);
-void MKZ_transform_rotateZ_local(float * tramat, float rads);
-void MKZ_transform_scale_local(float * tramat, MKZ_vector3 * along, float scalar);
-void MKZ_transform_scaleX_local(float * tramat, float scalar);
-void MKZ_transform_scaleY_local(float * tramat, float scalar);
-void MKZ_transform_scaleZ_local(float * tramat, float scalar);
-void MKZ_transform_scaleUniform_local(float * tramat, float scalar);
+void MKZ_TRANSFORM_matrix_local(float * modMat, float * transformMat);
+void MKZ_TRANSFORM_translate_local(float * tramat, MKZ_vector3 * v3);
+void MKZ_TRANSFORM_rotate_local(float * tramat, MKZ_line * axis, float rads);
+void MKZ_TRANSFORM_rotateX_local(float * tramat, float rads);
+void MKZ_TRANSFORM_rotateY_local(float * tramat, float rads);
+void MKZ_TRANSFORM_rotateZ_local(float * tramat, float rads);
+void MKZ_TRANSFORM_scale_local(float * tramat, MKZ_vector3 * along, float scalar);
+void MKZ_TRANSFORM_scaleX_local(float * tramat, float scalar);
+void MKZ_TRANSFORM_scaleY_local(float * tramat, float scalar);
+void MKZ_TRANSFORM_scaleZ_local(float * tramat, float scalar);
+void MKZ_TRANSFORM_scaleUniform_local(float * tramat, float scalar);
 
 /** Arithmetic **/
-float * MKZ_matrix_multiply(float * mat_left, float * mat_right);
+float * MKZ_ARITHMETIC_create_matrix();
+void MKZ_ARITHMETIC_matMul(float * mat1,float * mat2,float * mat3);
+/* matrices */
+void MKZ_ARITHMETIC_matrix_identity(float* mat);
+void MKZ_ARITHMETIC_matrix_nul(float* mat);
+void MKZ_ARITHMETIC_matrix_translate(MKZ_vector3 * v3,float* mat);
+void MKZ_ARITHMETIC_matrix_rotate(MKZ_line * axis, float rads,float* mat);
+void MKZ_ARITHMETIC_matrix_rotateX(float rads,float* mat);
+void MKZ_ARITHMETIC_matrix_rotateY(float rads,float* mat);
+void MKZ_ARITHMETIC_matrix_rotateZ(float rads,float* mat);
+void MKZ_ARITHMETIC_matrix_scale(MKZ_vector3 * along, float scalar,float* mat);
+void MKZ_ARITHMETIC_matrix_scaleX(float scalar,float* mat);
+void MKZ_ARITHMETIC_matrix_scaleY(float scalar,float* mat);
+void MKZ_ARITHMETIC_matrix_scaleZ(float scalar,float* mat);
+void MKZ_ARITHMETIC_matrix_scaleUniform(float scalar,float* mat);

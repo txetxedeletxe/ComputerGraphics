@@ -10,10 +10,10 @@ MKZ_camera * default_camera;
 MKZ_camera * camera;
 
 /** object **/
-linkedList * objectList;
+MKZ_linkedList * objectList;
 
 /** lights **/
-linkedList * lightList;
+MKZ_linkedList * lightList;
 
 
 /** Draw Parameters **/
@@ -49,7 +49,7 @@ void MKZ_SCENE_draw(){
 		DTstartDrawing();
 		DTclearScreen();
 
-		linkedList * aux = objectList;
+		MKZ_linkedList * aux = objectList;
 
 		while (aux != 0){
 			DTdrawObject((MKZ_meshedObject *)aux->content);
@@ -61,7 +61,8 @@ void MKZ_SCENE_draw(){
 
 void MKZ_SCENE_add_mesh(MKZ_meshedObject * mo){
 
-		linkedList * ll = DScreateLinkedList(mo);
+		MKZ_linkedList * ll = DScreateLinkedList(mo);
+		ll->content = mo;
 		ll->ll  = objectList;
 		objectList = ll;
 
@@ -69,7 +70,8 @@ void MKZ_SCENE_add_mesh(MKZ_meshedObject * mo){
 }
 void MKZ_SCENE_add_light(MKZ_lightObject * lo){
 
-		linkedList * ll = DScreateLinkedList(lo);
+		MKZ_linkedList * ll = DScreateLinkedList(lo);
+		ll->content = lo;
 		ll->ll  = lightList;
 		lightList = ll;
 
@@ -80,32 +82,37 @@ void MKZ_SCENE_set_camera(MKZ_camera * ca){
 }
 
 MKZ_meshedObject *  MKZ_SCENE_get_mesh(int id){
-	linkedList * aux = objectList;
 
+	MKZ_linkedList * aux = objectList;
+
+	MKZ_meshedObject * mo;
+	while (aux != 0){
+
+		mo = (MKZ_meshedObject * )aux->content;
+		if (mo->obj.id == id){
+			return mo;
+		}
+		aux = aux->ll;
+	}
+
+	return 0;
+}
+
+MKZ_lightObject * MKZ_SCENE_get_light(int id){
+
+	MKZ_linkedList * aux = lightList;
+
+	MKZ_lightObject * lo;
 		while (aux != 0){
 
-			if (aux->id == id){
-				return (MKZ_meshedObject*) aux->content;
+			lo = (MKZ_lightObject * )aux->content;
+			if (lo->obj.id == id){
+				return lo;
 			}
 			aux = aux->ll;
 		}
 
 		return 0;
-}
-
-MKZ_lightObject * MKZ_SCENE_get_light(int id){
-
-	linkedList * aux = lightList;
-
-			while (aux != 0){
-
-				if (aux->id == id){
-					return (MKZ_lightObject *) aux->content;
-				}
-				aux = aux->ll;
-			}
-
-			return 0;
 
 }
 
@@ -115,56 +122,64 @@ MKZ_camera * MKZ_SCENE_get_camera(){
 
 void MKZ_SCENE_remove_mesh(int id){
 
-	linkedList * aux = objectList;
+	MKZ_linkedList * aux = objectList;
 
-		if (aux == 0)
-			return;
 
-		if (aux->id == id){
-			objectList = aux->ll;
-			return;
-		}
+	if (aux == 0)
+		return;
 
-		linkedList * aux2 = aux;
-		aux = aux->ll;
+	MKZ_meshedObject * mo = (MKZ_meshedObject *)aux->content;
 
-		while (aux != 0){
+	if (mo->obj.id == id){
+		objectList = aux->ll;
+		free(aux);
+		return;
+	}
 
-				if (aux->id == id){
-					aux2->ll = aux->ll;
-					return;
-				}
-				aux2 = aux;
-				aux = aux->ll;
+	MKZ_linkedList * aux2 = aux;
+	aux = aux->ll;
+
+	while (aux != 0){
+			mo = (MKZ_meshedObject *)aux->content;
+			if (mo->obj.id == id){
+				aux2->ll = aux->ll;
+				free(aux);
+				return;
 			}
+			aux2 = aux;
+			aux = aux->ll;
+		}
 
 }
 
 void MKZ_SCENE_remove_light(int id){
 
-	linkedList * aux = lightList;
+	MKZ_linkedList * aux = lightList;
 
-			if (aux == 0)
-				return;
+	if (aux == 0)
+		return;
 
+	MKZ_lightObject * lo = (MKZ_lightObject *)aux->content;
 
-			if (aux->id == id){
-				objectList = aux->ll;
-				return;
-			}
+	if (lo->obj.id == id){
+		objectList = aux->ll;
+		free(aux);
+		return;
+	}
 
-			linkedList * aux2 = aux;
-			aux = aux->ll;
+	MKZ_linkedList * aux2 = aux;
+	aux = aux->ll;
 
-			while (aux != 0){
-
-					if (aux->id == id){
-						aux2->ll = aux->ll;
-						return;
-					}
-					aux2 = aux;
-					aux = aux->ll;
-				}
+	while (aux != 0){
+		lo = (MKZ_lightObject *)aux->content;
+		if (lo->obj.id == id){
+			aux2->ll = aux->ll;
+			free(aux);
+			return;
+		}
+		aux2 = aux;
+		aux = aux->ll;
+	}
 
 }
 
