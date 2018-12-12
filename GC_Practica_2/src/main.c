@@ -36,6 +36,8 @@ void initialization (){
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_CULL_FACE);
     glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0); //SUN
+    //glEnable(GL_LIGHT1);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     object * cam = create_object();
@@ -49,11 +51,60 @@ void initialization (){
     _actual_camera = cam;
 
     lighting_component * lc = create_light(0, 100.0, 1, 1, 1); //SUN
+    lc->color.r=0.5;
+    lc->color.g=0.5;
+    lc->color.b=0.5;
     component * c = create_component(COMPONENT_LIGHT,lc);
-    object * obj = create_object();
-    add_component(obj,c);
+    object * objLight = create_object();
+    add_component(objLight,c);
 
-    _lights[0] = obj;
+    _lights[0] = objLight;
+    transform_component* tcl= (transform_component * ) get_component(objLight,COMPONENT_TRANSFORM);
+    tcl->undoStack->mat[12]=0;
+    tcl->undoStack->mat[13]=1;
+    tcl->undoStack->mat[14]=0;
+
+    lc->color.r=0.5;
+    lc->color.g=0.5;
+    lc->color.b=0.5;
+
+
+    GLfloat lightpos[4] = {tcl->undoStack->mat[12], tcl->undoStack->mat[13], tcl->undoStack->mat[14], 0}; //sun in direction (0, 1, 0, 0). The last cero means that is directional.
+    glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+    /*The sun suffers no attenuation min(1, 1/(a_0+a_1*d+a_2*d^2)) a_i being the coefficient and d the distance from the light to each vertex/polygon of the object*/
+    glLightfv(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1);
+    glLightfv(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0);
+    glLightfv(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, (lc->color.r,lc->color.g,lc->color.b,1));
+
+    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat mat_shininess[] = { 50.0 };
+    glMaterialfv(GL_FRONT, GL_AMBIENT, (0.3,0.3,0.3,1.0));
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, (0.6,0.6,0.6,1.0));
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+
+
+    GLfloat light1_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
+    GLfloat light1_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light1_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light1_position[] = { -2.0, 2.0, 1.0, 1.0 };
+    GLfloat spot_direction[] = { -1.0, -1.0, 0.0 };
+
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light1_ambient);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
+    glLightfv(GL_LIGHT1, GL_POSITION, light1_position);
+    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.5);
+    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.5);
+    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.2);
+
+    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0);
+    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spot_direction);
+    glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 2.0);
+
+    glEnable(GL_LIGHT1);
+
 
 
     changeState(KG_TRANSFORM_CAMERA,0);
