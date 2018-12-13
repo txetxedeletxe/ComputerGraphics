@@ -190,6 +190,14 @@ printf("2 pasada\n");
 
     }
     
+    for (i=0; i<object_ptr->num_vertices; i++){
+
+    	object_ptr->vertex_table[i].normal.x = 0;
+    	object_ptr->vertex_table[i].normal.y = 0;
+    	object_ptr->vertex_table[i].normal.z = 0;
+
+    }
+
     normalOfObject(object_ptr); //Calculates the normal of each vertex and face of the loaded object.
 
     return (0);

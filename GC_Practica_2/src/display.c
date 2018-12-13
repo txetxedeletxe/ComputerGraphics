@@ -55,6 +55,12 @@ void display(void) {
     /* Clear the screen */
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+    if (checkState(KG_LIGHTING_MODE)){
+        glShadeModel(GL_SMOOTH); //Normal de cada vértice
+    } else {
+        glShadeModel(GL_FLAT); //Normal de cada poligono
+    }
+
     //matriz de proyeccion. DONE
 
     //matriz de cambio de sistema de referencia en MODELVIEW. DONE
