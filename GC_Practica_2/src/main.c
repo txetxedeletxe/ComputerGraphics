@@ -64,9 +64,9 @@ void initialization (){
     tcl->undoStack->mat[13]=1;
     tcl->undoStack->mat[14]=0;
 
-    lc->color.r=0.5;
-    lc->color.g=0.5;
-    lc->color.b=0.5;
+    lc->color.r=1;
+    lc->color.g=1;
+    lc->color.b=1;
 
 
     GLfloat lightpos[4] = {tcl->undoStack->mat[12], tcl->undoStack->mat[13], tcl->undoStack->mat[14], 0}; //sun in direction (0, 1, 0, 0). The last cero means that is directional.
@@ -77,33 +77,33 @@ void initialization (){
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0);
     glLightf(GL_LIGHT0, GL_AMBIENT, 0.5);
 
+    GLfloat mat_ambient[] = {0.2,0.2, 0.2, 1.0};
+    GLfloat mat_difuse[] = { 1.0,0,0, 1.0 };
     GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat mat_shininess[] = { 50.0 };
-    glMaterialf(GL_FRONT, GL_AMBIENT, 0.3);
-    glMaterialf(GL_FRONT, GL_DIFFUSE, 0.6);
+    GLfloat mat_shininess[] = { 100.0 };
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_difuse);
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
 
-    GLfloat light1_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
+    GLfloat light1_ambient[] = { 100.0, 100.0, 100.0, 1.0 };
     GLfloat light1_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light1_specular[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light1_position[] = { -2.0, 2.0, 1.0, 1.0 };
-    GLfloat spot_direction[] = { -1.0, -1.0, 0.0 };
+    GLfloat spot_direction[] = { 1.0, -1.0, 0.0 };
 
     glLightfv(GL_LIGHT1, GL_AMBIENT, light1_ambient);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
     glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
     glLightfv(GL_LIGHT1, GL_POSITION, light1_position);
     glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.5);
-    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.5);
-    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.2);
+    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 1);
+    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0);
 
-    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0);
+    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 90.0);
     glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spot_direction);
     glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 2.0);
-
-    glEnable(GL_LIGHT1);
 
 
 
@@ -163,11 +163,7 @@ int main(int argc, char** argv) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_DEPTH_TEST); // Z-buffer
 
-    if (checkState(KG_LIGHTING_MODE)){
-    	glShadeModel(GL_SMOOTH); //Normal de cada vértice
-    } else {
-    	glShadeModel(GL_FLAT); //Normal de cada poligono
-    }
+
 
     /* set the callback functions */
     glutDisplayFunc(display);
