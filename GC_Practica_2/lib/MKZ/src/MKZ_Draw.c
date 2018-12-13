@@ -1,6 +1,6 @@
 #include "MKZ_Arithmetic.h"
 #include "MKZ_Transform.h"
-#include "MKZ_Definitions.h"
+#include "MKZ_Draw.h"
 
 #include <GL/gl.h>
 

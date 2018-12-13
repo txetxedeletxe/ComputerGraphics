@@ -8,29 +8,7 @@
 /*
  * Auxiliar function to process each line of the file
  */
-static int sreadint(char * lerroa, int * zenbakiak) {
-    char *s = lerroa;
-    int i, zbk, kont = 0;
 
-    while (sscanf(s, " %d%n", &zbk, &i) > 0) {
-        s += i;
-        zenbakiak[kont++] = zbk;
-    }
-    return (kont);
-}
-
-static int sreadint2(char * lerroa, int * zenbakiak) {
-    char *s = lerroa;
-    int i, zbk, kont = 0;
-
-    while (sscanf(s, " %d%n", &zbk, &i) > 0) {
-        s += i;
-	while ((*s != ' ')&&(*s !='\0')) s++;  // jump vector normal information
-        zenbakiak[kont++] = zbk;
-    }
-//printf("%d numbers in the line\n",kont);
-    return (kont);
-}
 /**
  * @brief Function to read wavefront files (*.obj)
  * @param file_name Path of the file to be read

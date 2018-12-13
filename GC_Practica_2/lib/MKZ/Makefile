@@ -5,7 +5,7 @@ LIB = -lGL -lGLU -lglut -lm
 
 INCLUDEDIR=include
 
-_OBJ=MKZEngine.o WindowManager.o Draw.o DrawTools.o Utilities.o Datastruct.o Transform.o
+_OBJ=MKZ_Arithmetic.o MKZ_Datastruct.o MKZ_Draw.o MKZ_Geometry.o MKZ.o MKZ_Scene.o MKZ_Test.o MKZ_Transform.o MKZ_WindowManager.o
 OBJDIR=obj
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
@@ -13,9 +13,9 @@ SRCDIR=src
 
 FLAGS=-I$(INCLUDEDIR)
 
-all: libMKZengine.a
+all: libMKZ.a
 
-libMKZengine.a: $(OBJ)
+libMKZ.a: $(OBJ)
 	$(LIBC) ../$@ $^
 	
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
@@ -23,4 +23,4 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 clean:
 	rm obj/*
-	rm ../libMKZengine.a
+	rm ../libMKZ.a

@@ -1,8 +1,7 @@
 #ifndef __MKZ_DRAW_IMPORTED__
 #define __MKZ_DRAW_IMPORTED__
 
-#include "MKZ_Geometry.h"
-
+#include "MKZ_Objects.h"
 
 #define MKZ_DRAW_PROJECTIONMODE_PARALLEL 0
 #define MKZ_DRAW_PROJECTIONMODE_PERSPECTIVE 1
@@ -15,7 +14,7 @@ void MKZ_DRAW_set_cameraMat(float * camMat);
 void MKZ_DRAW_set_background_color(MKZ_color3 * bg);
 void MKZ_DRAW_start();
 void MKZ_DRAW_clear();
-void MKZ_DRAW_object(MKZ_mesh * mo);
+void MKZ_DRAW_object(MKZ_meshedObject * mo);
 void MKZ_DRAW_enable_drawMask(unsigned int d_mask);
 void MKZ_DRAW_disable_drawMask(unsigned int d_mask);
 void MKZ_DRAW_end();

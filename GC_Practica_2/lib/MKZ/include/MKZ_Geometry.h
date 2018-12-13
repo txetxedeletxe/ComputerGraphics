@@ -74,7 +74,7 @@ void MKZ_GEOMETRY_free_color3(MKZ_color3 * col);
 
 
 /** MESH **/
-MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces);
+MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces , int vertex_count , int face_count);
 MKZ_mesh * MKZ_GEOMETRY_load_mesh(char * filename);
 void MKZ_GEOMETRY_free_mesh(MKZ_mesh * mesh);
 
