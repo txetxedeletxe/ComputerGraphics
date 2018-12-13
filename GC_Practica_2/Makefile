@@ -1,8 +1,9 @@
 CC = gcc
 
-LIB = -lGL -lGLU -lglut -lm -lMKZengine
+ST_LIB = -lGL -lGLU -lglut -lm
+LIB = -lMKZ
 
-LLIB = libMKZengine.a
+LLIB = libMKZ.a
 LLIBDIR = lib
 
 ODIR = obj
@@ -10,16 +11,16 @@ SRCDIR = src
 HEADDIR = include
 
 
-CFLAGS = -I$(HEADDIR) -Llib
+CFLAGS = -I$(HEADDIR) $(ST_LIB) -Llib $(LIB)
 
-_OBJ = display.o io.o load_obj.o main.o transform.o definitions.o utilities.o camera.o
+_OBJ = main.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 all: main
 
 main: $(LLIBDIR)/$(LLIB) $(OBJ)
-	$(CC) -o $@ $(OBJ) $(CFLAGS) $(LIB)
+	$(CC) -o $@ $(OBJ) $(CFLAGS) 
 
 $(LLIBDIR)/$(LLIB):
 	make -C lib/MKZ
@@ -28,6 +29,7 @@ $(ODIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -c -o $@ $^ $(CFLAGS)
 
 clean:
+	make -C lib/MKZ clean
 	rm obj/* 
 	rm main
-	make -C lib/MKZ clean
+	

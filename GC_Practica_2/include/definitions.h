@@ -2,7 +2,6 @@
 #define DEFINITIONS_H
 
 #include <GL/gl.h>
-
 /** DEFINITIONS **/
 
 #define KG_WINDOW_TITLE                     "Práctica GPO"
@@ -109,49 +108,6 @@
 
 /** STRUCTURES **/
 
-/****************************
- * Structure to store the   *
- * coordinates of 3D points *
- ****************************/
-typedef struct {
-    GLdouble x, y, z;
-} MKZ_point3;
-
-/*****************************
- * Structure to store the    *
- * coordinates of 3D vectors *
- *****************************/
-typedef struct {
-    GLdouble x, y, z;
-} MKZ_vector3;
-
-/****************************
- * Structure to store the   *
- * colors in RGB mode       *
- ****************************/
-typedef struct {
-    GLfloat r, g, b;
-} MKZ_color3;
-
-/****************************
- * Structure to store       *
- * objects' vertices         *
- ****************************/
-typedef struct {
-    MKZ_point3 coord;                       /* coordinates,x, y, z */
-    GLint num_faces;                    /* number of faces that share this vertex */
-} MKZ_vertex;
-
-/****************************
- * Structure to store       *
- * objects' faces or        *
- * polygons                 *
- ****************************/
-typedef struct {
-    GLint num_vertices;                 /* number of vertices in the face */
-    GLint *vertex_table;                /* table with the index of each vertex */
-} MKZ_face;
-
 
 struct matStack{
 
@@ -164,16 +120,6 @@ struct matStack{
  * Structure to store a     *
  * pile of 3D objects       *
  ****************************/
-struct object3d{
-    GLint num_vertices;                 /* number of vertices in the object*/
-    MKZ_vertex *vertex_table;               /* table of vertices */
-    GLint num_faces;                    /* number of faces in the object */
-    MKZ_face *face_table;                   /* table of faces */
-    MKZ_point3 min;                         /* coordinates' lower bounds */
-    MKZ_point3 max;                         /* coordinates' bigger bounds */
-    
-    
-};
 
 struct transform_component{
 
@@ -199,7 +145,6 @@ struct object{
 
 
 
-typedef struct object3d object3d;
 typedef struct transform_component transform_component;
 typedef struct component component;
 typedef struct object object;
@@ -236,7 +181,6 @@ object * _transform_object;
 
 object * _analyze_object;
 
-MKZ_vector3 origin;
 
 
 /*Exported functions to manipulate datastructs*/

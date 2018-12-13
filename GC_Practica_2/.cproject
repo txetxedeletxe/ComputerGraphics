@@ -29,7 +29,7 @@
             			
             <storageModule moduleId="cdtBuildSystem" version="4.0.0">
                 				
-                <configuration buildProperties="" id="cdt.managedbuild.toolchain.gnu.base.1926976910" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+                <configuration buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.base.1926976910" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
                     					
                     <folderInfo id="cdt.managedbuild.toolchain.gnu.base.1926976910.1750415000" name="/" resourcePath="">
                         						
@@ -37,7 +37,7 @@
                             							
                             <targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.GNU_ELF" id="cdt.managedbuild.target.gnu.platform.base.1402379500" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
                             							
-                            <builder id="cdt.managedbuild.target.gnu.builder.base.447078987" managedBuildOn="false" name="Gnu Make Builder.Default" superClass="cdt.managedbuild.target.gnu.builder.base"/>
+                            <builder id="cdt.managedbuild.target.gnu.builder.base.447078987" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
                             							
                             <tool id="cdt.managedbuild.tool.gnu.archiver.base.1578589984" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
                             							

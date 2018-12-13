@@ -3,6 +3,31 @@
 #include <stdio.h>
 #define MAXLINE 200
 
+static int sreadint(char * lerroa, int * zenbakiak) {
+    char *s = lerroa;
+    int i, zbk, kont = 0;
+
+    while (sscanf(s, " %d%n", &zbk, &i) > 0) {
+        s += i;
+        zenbakiak[kont++] = zbk;
+    }
+    return (kont);
+}
+
+static int sreadint2(char * lerroa, int * zenbakiak) {
+    char *s = lerroa;
+    int i, zbk, kont = 0;
+
+    while (sscanf(s, " %d%n", &zbk, &i) > 0) {
+        s += i;
+	while ((*s != ' ')&&(*s !='\0')) s++;  // jump vector normal information
+        zenbakiak[kont++] = zbk;
+    }
+//printf("%d numbers in the line\n",kont);
+    return (kont);
+}
+
+
 void MKZ_IO_read_objFile(char * file_name, MKZ_point3 * vertex_table, MKZ_face * face_table , int * vertex_count , int * face_count){
 
 

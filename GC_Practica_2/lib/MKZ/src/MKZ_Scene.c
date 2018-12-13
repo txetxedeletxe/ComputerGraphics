@@ -29,7 +29,7 @@ void MKZ_SCENE_init(){
 
 		objectList = 0;
 		lightList = 0;
-		default_bg_color = MKZ_create_color3();
+		default_bg_color = MKZ_GEOMETRY_create_color3();
 		bg_color = default_bg_color;
 		default_camera = MKZ_create_camera();
 		camera = MKZ_create_camera();
@@ -42,26 +42,26 @@ void MKZ_SCENE_init(){
 
 void MKZ_SCENE_draw(){
 
-		DTsetProjectionMode(projection_mode);
-		DTsetBackgroundColor(bg_color);
-		DTsetCamera(camera->transform);
+		MKZ_DRAW_set_projectionMode(projection_mode);
+		MKZ_DRAW_set_background_color(bg_color);
+		MKZ_DRAW_set_cameraMat(camera->transform);
 
-		DTstartDrawing();
-		DTclearScreen();
+		MKZ_DRAW_start();
+		MKZ_DRAW_clear();
 
 		MKZ_linkedList * aux = objectList;
 
 		while (aux != 0){
-			DTdrawObject((MKZ_meshedObject *)aux->content);
+			MKZ_DRAW_object((MKZ_meshedObject *)aux->content);
 			aux = aux->ll;
 		}
 
-		DTendDrawing();
+		MKZ_DRAW_end();
 }
 
 void MKZ_SCENE_add_mesh(MKZ_meshedObject * mo){
 
-		MKZ_linkedList * ll = DScreateLinkedList(mo);
+		MKZ_linkedList * ll = MKZ_DATASTRUCT_create_linkedList();
 		ll->content = mo;
 		ll->ll  = objectList;
 		objectList = ll;
@@ -70,7 +70,7 @@ void MKZ_SCENE_add_mesh(MKZ_meshedObject * mo){
 }
 void MKZ_SCENE_add_light(MKZ_lightObject * lo){
 
-		MKZ_linkedList * ll = DScreateLinkedList(lo);
+		MKZ_linkedList * ll = MKZ_DATASTRUCT_create_linkedList();
 		ll->content = lo;
 		ll->ll  = lightList;
 		lightList = ll;

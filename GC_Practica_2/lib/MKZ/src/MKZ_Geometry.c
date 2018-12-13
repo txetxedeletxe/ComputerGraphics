@@ -1,6 +1,7 @@
 #include "MKZ_Geometry.h"
 #include "MKZ_io.h"
 
+#include <stdlib.h>
 MKZ_point3 * MKZ_GEOMETRY_create_point3(){
 	return (MKZ_point3*) malloc(sizeof(MKZ_point3));
 }
@@ -128,29 +129,6 @@ MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces , in
 
 }
 
-static int sreadint(char * lerroa, int * zenbakiak) {
-    char *s = lerroa;
-    int i, zbk, kont = 0;
-
-    while (sscanf(s, " %d%n", &zbk, &i) > 0) {
-        s += i;
-        zenbakiak[kont++] = zbk;
-    }
-    return (kont);
-}
-
-static int sreadint2(char * lerroa, int * zenbakiak) {
-    char *s = lerroa;
-    int i, zbk, kont = 0;
-
-    while (sscanf(s, " %d%n", &zbk, &i) > 0) {
-        s += i;
-	while ((*s != ' ')&&(*s !='\0')) s++;  // jump vector normal information
-        zenbakiak[kont++] = zbk;
-    }
-//printf("%d numbers in the line\n",kont);
-    return (kont);
-}
 
 MKZ_mesh * MKZ_GEOMETRY_load_mesh(char * file_name){
 
@@ -172,7 +150,7 @@ void MKZ_GEOMETRY_free_mesh(MKZ_mesh * mesh){
 
 	int i;
 	for (i = 0 ; i < mesh->num_faces ; i++){
-		MKZ_GEOMETRY_free_face(mesh->face_table[i]);
+		MKZ_GEOMETRY_free_face(&mesh->face_table[i]);
 	}
 
 	free(mesh);
