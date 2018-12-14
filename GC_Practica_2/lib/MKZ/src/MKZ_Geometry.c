@@ -1,6 +1,5 @@
+#include <MKZ_Io.h>
 #include "MKZ_Geometry.h"
-#include "MKZ_io.h"
-
 #include <stdlib.h>
 MKZ_point3 * MKZ_GEOMETRY_create_point3(){
 	return (MKZ_point3*) malloc(sizeof(MKZ_point3));

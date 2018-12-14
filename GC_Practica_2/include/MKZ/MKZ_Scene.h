@@ -1,8 +1,8 @@
 #ifndef __MKZ_SCENE_IMPORTED__
 #define __MKZ_SCENE_IMPORTED__
 
-#include "MKZ_Draw.h"
 #include "MKZ_Objects.h"
+#include "MKZ_Draw.h"
 /** SCENE **/
 void MKZ_SCENE_add_mesh(MKZ_meshedObject * mo);
 void MKZ_SCENE_add_light(MKZ_lightObject * lo);

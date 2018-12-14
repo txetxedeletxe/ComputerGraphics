@@ -31,8 +31,8 @@ void MKZ_SCENE_init(){
 		lightList = 0;
 		default_bg_color = MKZ_GEOMETRY_create_color3();
 		bg_color = default_bg_color;
-		default_camera = MKZ_create_camera();
-		camera = MKZ_create_camera();
+		default_camera = MKZ_OBJECT_create_camera();
+		camera = MKZ_OBJECT_create_camera();
 
 		MKZ_DRAW_init();
 		MKZ_DRAW_set_background_color(bg_color);
@@ -44,7 +44,7 @@ void MKZ_SCENE_draw(){
 
 		MKZ_DRAW_set_projectionMode(projection_mode);
 		MKZ_DRAW_set_background_color(bg_color);
-		MKZ_DRAW_set_cameraMat(camera->transform);
+		MKZ_DRAW_set_cameraMat(camera->obj->transform);
 
 		MKZ_DRAW_start();
 		MKZ_DRAW_clear();

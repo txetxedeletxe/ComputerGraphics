@@ -1,18 +1,11 @@
 #include "MKZ_Geometry.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+
 #define MAXLINE 200
 
-static int sreadint(char * lerroa, int * zenbakiak) {
-    char *s = lerroa;
-    int i, zbk, kont = 0;
 
-    while (sscanf(s, " %d%n", &zbk, &i) > 0) {
-        s += i;
-        zenbakiak[kont++] = zbk;
-    }
-    return (kont);
-}
 
 static int sreadint2(char * lerroa, int * zenbakiak) {
     char *s = lerroa;
@@ -45,7 +38,8 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 * vertex_table, MKZ_face *
 		 * of them and in the second read the actual information is read and
 		 * loaded. Finally, the object structure is created
 		 */
-		if ((obj_file = fopen(file_name, "r")) == NULL) return (0);
+		if ((obj_file = fopen(file_name, "r")) == NULL)
+			return;
 		while (fscanf(obj_file, "\n%[^\n]", line) > 0) {
 			i = 0;
 			while (line[i] == ' ') i++;
@@ -82,11 +76,11 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 * vertex_table, MKZ_face *
 		}
 		if (num_vertices == 0 || count_vertices == 0) {
 			//printf("No vertex found: (%s)\n", file_name);
-			return (0);
+			return;
 		}
 		if (num_faces == 0 || count_faces == 0) {
 			//printf("No faces found: (%s)\n", file_name);
-			return (0);
+			return;
 		}
 
 		num_vertices = count_vertices;
@@ -105,7 +99,7 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 * vertex_table, MKZ_face *
 				case 'v':
 				if (line[1] == ' ')  // vn not interested
 			{
-					sscanf(line + 2, "%lf%lf%lf", &(vertex_table[k].x),
+					sscanf(line + 2, "%f%f%f", &(vertex_table[k].x),
 							&(vertex_table[k].y), &(vertex_table[k].z));
 					k++;
 			}
@@ -118,7 +112,7 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 * vertex_table, MKZ_face *
 						line_1[i - 2] = line[i];
 			line_1[i-2] = '\0';
 					int face_num_vertices = sreadint2(line_1, values);
-					face_table[j] = MKZ_GEOMETRY_create_face(face_num_vertices);
+					face_table[j] = *(MKZ_GEOMETRY_create_face(face_num_vertices));
 
 	//printf("f %d vertices\n",face_table[j].num_vertices);
 					for (i = 0; i < face_table[j].num_vertices; i++) {

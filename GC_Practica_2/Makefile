@@ -11,7 +11,7 @@ SRCDIR = src
 HEADDIR = include
 
 
-CFLAGS = -I$(HEADDIR) $(ST_LIB) -Llib $(LIB)
+CFLAGS = -I$(HEADDIR) -Llib $(LIB) $(ST_LIB) 
 
 _OBJ = main.o
 
