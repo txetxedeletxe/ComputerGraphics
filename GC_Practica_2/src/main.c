@@ -50,36 +50,50 @@ void initialization (){
     _selected_camera = cam;
     _actual_camera = cam;
 
-    lighting_component * lc = create_light(0, 100.0, 1, 1, 1); //SUN
-    lc->color.r=0.5;
-    lc->color.g=0.5;
-    lc->color.b=0.5;
+    lighting_component * lc = create_light(0, 3, 100.0, 50.0, 1, 1, 1, 100.0); //SUN (directional light)
     component * c = create_component(COMPONENT_LIGHT,lc);
     object * objLight = create_object();
     add_component(objLight,c);
 
     _lights[0] = objLight;
     transform_component* tcl= (transform_component * ) get_component(objLight,COMPONENT_TRANSFORM);
-    tcl->undoStack->mat[12]=0;
+    //X vector of the sun
+    tcl->undoStack->mat[0]=1;
+    tcl->undoStack->mat[1]=0;
+    tcl->undoStack->mat[2]=0;
+    //Y vector of the sun
+    tcl->undoStack->mat[4]=0;
+    tcl->undoStack->mat[5]=0;
+    tcl->undoStack->mat[6]=-1;
+    //Z vector of the sun
+    tcl->undoStack->mat[8]=0;
+    tcl->undoStack->mat[9]=1;
+    tcl->undoStack->mat[10]=0;
+    //Direction of the sun
+    tcl->undoStack->mat[12]=0.5;
     tcl->undoStack->mat[13]=1;
-    tcl->undoStack->mat[14]=0;
-
-    lc->color.r=1;
-    lc->color.g=1;
-    lc->color.b=1;
+    tcl->undoStack->mat[14]=0.5;
 
 
+    GLfloat mat_ambient[] = {lc->color.r*lc->intensity[0],lc->color.g*lc->intensity[0], lc->color.b*lc->intensity[0], 1.0};
+    GLfloat mat_difuse[] = { lc->color.r*lc->intensity[1], lc->color.g*lc->intensity[1], lc->color.b*lc->intensity[1], 1.0 };
+    GLfloat mat_specular[] = { lc->color.r*lc->intensity[2], lc->color.g*lc->intensity[2], lc->color.b*lc->intensity[2], 1.0 };
     GLfloat lightpos[4] = {tcl->undoStack->mat[12], tcl->undoStack->mat[13], tcl->undoStack->mat[14], 0}; //sun in direction (0, 1, 0, 0). The last cero means that is directional.
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
     /*The sun suffers no attenuation min(1, 1/(a_0+a_1*d+a_2*d^2)) a_i being the coefficient and d the distance from the light to each vertex/polygon of the object*/
     glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1);
     glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0);
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0);
-    glLightf(GL_LIGHT0, GL_AMBIENT, 0.5);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, mat_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, mat_difuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, mat_specular);
+    glLightf(GL_LIGHT0, GL_SHININESS, lc->shininess);
 
-    GLfloat mat_ambient[] = {0.2,0.2, 0.2, 1.0};
-    GLfloat mat_difuse[] = { 1.0,0,0, 1.0 };
-    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+
+
+    //GLfloat mat_ambient[] = {lc->color.r*lc->intensity[0],lc->color.g*lc->intensity[0], lc->color.b*lc->intensity[0], 1.0};
+    //GLfloat mat_difuse[] = { lc->color.r*lc->intensity[1], lc->color.g*lc->intensity[1], lc->color.b*lc->intensity[1], 1.0 };
+    //GLfloat mat_specular[] = { lc->color.r*lc->intensity[2], lc->color.g*lc->intensity[2], lc->color.b*lc->intensity[2], 1.0 };
     GLfloat mat_shininess[] = { 100.0 };
     glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_difuse);
@@ -111,6 +125,7 @@ void initialization (){
     changeState(KG_PROJECT_ORTHO,0);
     changeState(KG_TRANSFORMATIONS,0);
     changeState(KG_TRANSFORMATIONS_TRANSLATE,1);
+    changeState(KG_LIGHTING_ACTIVE, 1);
 
     char def_load[] = "resources/abioia.obj";
 
