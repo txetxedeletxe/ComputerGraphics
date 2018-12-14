@@ -92,6 +92,8 @@
 #define KG_TRANSFORM_CAMERA 256
 /*Lighting type (bit 0 -> flat, bit 1 -> smooth)*/
 #define KG_LIGHTING_MODE 512
+/*States whether the lighting is active or not*/
+#define KG_LIGHTING_ACTIVE 1024
 
 
 /* Step units for transformations */
@@ -193,9 +195,11 @@ struct transform_component{
 
 typedef struct lighting_component{
 
-	GLfloat intensity;
+	GLfloat intensity[3]; //Ambiental, diffuse and specular intensity
 	int light_type;
 	color3 color;
+	GLfloat shininess;
+
 
 } lighting_component;
 
@@ -267,7 +271,7 @@ component* create_component(int id, void * comp);
 void add_component(object * obj , component * comp);
 void* get_component(object * obj , int component_id);
 
-lighting_component* create_light(int type, GLfloat intensity, GLdouble red, GLdouble green, GLdouble blue);
+lighting_component* create_light(int type, GLfloat intensityA, GLfloat intensityD, GLfloat intensityS, GLdouble red, GLdouble green, GLdouble blue, GLfloat shiny);
 
 int checkState(unsigned int mask);
 void changeState(unsigned int mask, int value);

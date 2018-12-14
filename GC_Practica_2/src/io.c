@@ -461,8 +461,17 @@ void specialKeyboard(int key, int x, int y) {
             transform(KG_Z_AXIS_NEGATIVE);
             break;
 
+        case GLUT_KEY_F9:
+        	if(checkState(KG_LIGHTING_ACTIVE)){
+        		glDisable(GL_LIGHTING);
+        	} else{
+        		glEnable(GL_LIGHTING);
+        	}
+        	flipState(KG_LIGHTING_ACTIVE);
+        	break;
+
         case GLUT_KEY_F12:
-        	flipState(KG_LIGHTING_MODE);
+        	if (checkState(KG_LIGHTING_ACTIVE))	flipState(KG_LIGHTING_MODE);
         	break;
 
         default:
