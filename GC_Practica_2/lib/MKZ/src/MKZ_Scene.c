@@ -3,6 +3,7 @@
 #include "MKZ_Draw.h"
 
 #include <stdlib.h>
+#include <unistd.h>
 
 /** Internal state **/
 /** camera **/
@@ -42,12 +43,14 @@ void MKZ_SCENE_init(){
 
 void MKZ_SCENE_draw(){
 
-		MKZ_DRAW_set_projectionMode(projection_mode);
 		MKZ_DRAW_set_background_color(bg_color);
-		MKZ_DRAW_set_cameraMat(camera->obj->transform);
+		MKZ_DRAW_set_projectionMode(projection_mode);
+		MKZ_DRAW_set_cameraMat(camera->obj.transform);
 
-		MKZ_DRAW_start();
+
 		MKZ_DRAW_clear();
+		MKZ_DRAW_start();
+
 
 		MKZ_linkedList * aux = objectList;
 
@@ -55,6 +58,7 @@ void MKZ_SCENE_draw(){
 			MKZ_DRAW_object((MKZ_meshedObject *)aux->content);
 			aux = aux->ll;
 		}
+
 
 		MKZ_DRAW_end();
 }
@@ -68,6 +72,7 @@ void MKZ_SCENE_add_mesh(MKZ_meshedObject * mo){
 
 
 }
+
 void MKZ_SCENE_add_light(MKZ_lightObject * lo){
 
 		MKZ_linkedList * ll = MKZ_DATASTRUCT_create_linkedList();

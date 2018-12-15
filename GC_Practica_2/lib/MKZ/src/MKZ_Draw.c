@@ -3,6 +3,7 @@
 #include "MKZ_Draw.h"
 
 #include <GL/gl.h>
+#include <unistd.h>
 
 /** Internal state **/
 /** camera **/
@@ -103,14 +104,16 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 	glMultMatrixf(mo->obj.transform);
 
 
+
 	MKZ_mesh * mesh = mo->mesh;
 	int f;
 	int v;
 	int v_index;
 
 	for (f = 0; f < mesh->num_faces; f++) {
-
+		write(0, "8", 1);
 		glBegin(GL_POLYGON);
+
 		for (v = 0; v < mesh->face_table[f].num_vertices; v++) {
 			v_index = mesh->face_table[f].vertex_table[v];
 			glVertex3d(mesh->vertex_table[v_index].coord.x,

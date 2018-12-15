@@ -64,6 +64,8 @@ MKZ_face * MKZ_GEOMETRY_create_face(int vertex_count);
 MKZ_line * MKZ_GEOMETRY_create_line();
 MKZ_color3 * MKZ_GEOMETRY_create_color3();
 
+void MKZ_GEOMETRY_reset_to_origin(MKZ_point3 * p3);
+void MKZ_GEOMETRY_reset_to_black(MKZ_color3 * c3);
 void MKZ_GEOMETRY_face_add_vertex(MKZ_face * face, int p);
 
 void MKZ_GEOMETRY_free_point3(MKZ_point3 * p3);
@@ -73,8 +75,10 @@ void MKZ_GEOMETRY_free_line(MKZ_line * line);
 void MKZ_GEOMETRY_free_color3(MKZ_color3 * col);
 
 
+
+
 /** MESH **/
-MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces);
+MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces , int vertex_count , int face_count);
 MKZ_mesh * MKZ_GEOMETRY_load_mesh(char * filename);
 void MKZ_GEOMETRY_free_mesh(MKZ_mesh * mesh);
 

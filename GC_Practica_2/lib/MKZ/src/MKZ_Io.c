@@ -21,7 +21,8 @@ static int sreadint2(char * lerroa, int * zenbakiak) {
 }
 
 
-void MKZ_IO_read_objFile(char * file_name, MKZ_point3 * vertex_table, MKZ_face * face_table , int * vertex_count , int * face_count){
+void MKZ_IO_read_objFile(char * file_name, MKZ_point3 ** vertex_table, MKZ_face ** face_table , int * vertex_count , int * face_count){
+
 
 
 		int num_vertices = -1, num_faces = -1, count_vertices = 0, count_faces = 0;
@@ -86,9 +87,11 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 * vertex_table, MKZ_face *
 		num_vertices = count_vertices;
 		num_faces = count_faces;
 
-		vertex_table = (MKZ_point3 *) malloc(num_vertices * sizeof (MKZ_point3));
-		face_table = (MKZ_face *) malloc(num_faces * sizeof (MKZ_face));
+		*(vertex_table) = (MKZ_point3 *) malloc(num_vertices * sizeof (MKZ_point3));
+		*(face_table) = (MKZ_face *) malloc(num_faces * sizeof (MKZ_face));
 
+		MKZ_point3 * vt = *(vertex_table);
+		MKZ_face * ft = *(face_table);
 		obj_file = fopen(file_name, "r");
 		k = 0;
 		j = 0;
@@ -99,8 +102,8 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 * vertex_table, MKZ_face *
 				case 'v':
 				if (line[1] == ' ')  // vn not interested
 			{
-					sscanf(line + 2, "%f%f%f", &(vertex_table[k].x),
-							&(vertex_table[k].y), &(vertex_table[k].z));
+					sscanf(line + 2, "%f%f%f", &(vt[k].x),
+							&(vt[k].y), &(vt[k].z));
 					k++;
 			}
 				   break;
@@ -112,11 +115,11 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 * vertex_table, MKZ_face *
 						line_1[i - 2] = line[i];
 			line_1[i-2] = '\0';
 					int face_num_vertices = sreadint2(line_1, values);
-					face_table[j] = *(MKZ_GEOMETRY_create_face(face_num_vertices));
+					ft[j] = *(MKZ_GEOMETRY_create_face(face_num_vertices));
 
 	//printf("f %d vertices\n",face_table[j].num_vertices);
-					for (i = 0; i < face_table[j].num_vertices; i++) {
-						MKZ_GEOMETRY_face_add_vertex(face_table,  values[i] - 1);
+					for (i = 0; i < ft[j].num_vertices; i++) {
+						MKZ_GEOMETRY_face_add_vertex(ft,  values[i] - 1);
 	//printf(" %d ",values[i] - 1);
 
 						}
@@ -128,7 +131,7 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 * vertex_table, MKZ_face *
 		}
 
 		fclose(obj_file);
-
+		;
 		*(vertex_count) = count_vertices;
 		*(face_count) = count_faces;
 

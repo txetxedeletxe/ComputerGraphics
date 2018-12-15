@@ -36,7 +36,7 @@ typedef struct {
 
 typedef struct{
 
-	MKZ_object *  obj;
+	MKZ_object obj;
 
 }MKZ_camera;
 

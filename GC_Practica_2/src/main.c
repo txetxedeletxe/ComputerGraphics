@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "definitions.h"
 #include "MKZ/MKZ.h"
-
+#include <unistd.h>
 
 /** GENERAL INITIALIZATION **/
 void initialization (){
@@ -31,8 +31,16 @@ void initialization (){
 	c3->b = KG_COL_BACK_B;
 
 	MKZ_SCENE_set_bg_color(c3);
+	//MKZ_WM_draw();
 
+	MKZ_meshedObject * mo = MKZ_OBJECT_create_meshedObject();
+	write(0, "1", 1);
+	MKZ_mesh * mesh = MKZ_GEOMETRY_load_mesh("resources/abioia.obj");
+	mo->mesh = mesh;
 
+	write(0, "2", 1);
+	MKZ_SCENE_add_mesh(mo);
+	write(0, "3", 1);
 //    object * cam = create_object();
 //    transform_component * trans = (transform_component * ) get_component(cam,COMPONENT_TRANSFORM);
 //
@@ -83,10 +91,13 @@ int main(int argc, char** argv) {
     MKZ_WM_set_window_size(KG_WINDOW_WIDTH, KG_WINDOW_WIDTH);
     MKZ_WM_set_window_title("MKZ window");
     MKZ_create_window();
+
+    initialization();
+
     MKZ_WM_enter_mainLoop();
     //MKZsetCallback();
     /* this initialization has to be AFTER the creation of the window */
-    initialization();
+
 
 
     /* start the main loop */

@@ -1,12 +1,32 @@
 #include <MKZ_Io.h>
 #include "MKZ_Geometry.h"
 #include <stdlib.h>
+
+void MKZ_GEOMETRY_reset_to_origin(MKZ_point3 * p3){
+
+	p3->x = 0;
+	p3->y = 0;
+	p3->z = 0;
+
+}
+
+void MKZ_GEOMETRY_reset_to_black(MKZ_color3 * c3){
+
+	c3->r = 0;
+	c3->g = 0;
+	c3->b = 0;
+
+}
+
+
 MKZ_point3 * MKZ_GEOMETRY_create_point3(){
-	return (MKZ_point3*) malloc(sizeof(MKZ_point3));
+	MKZ_point3 * p3  = (MKZ_point3*) malloc(sizeof(MKZ_point3));
+	MKZ_GEOMETRY_reset_to_origin(p3);
+	return p3;
 }
 
 MKZ_vector3 * MKZ_GEOMETRY_create_vector3(){
-	return (MKZ_vector3*) malloc(sizeof(MKZ_vector3));
+	return MKZ_GEOMETRY_create_point3();
 }
 
 MKZ_face * MKZ_GEOMETRY_create_face(int vertex_count){
@@ -24,10 +44,15 @@ MKZ_face * MKZ_GEOMETRY_create_face(int vertex_count){
 
 MKZ_line * MKZ_GEOMETRY_create_line(){
 
-	return (MKZ_line*) malloc(sizeof(MKZ_line));
+	MKZ_line * l = (MKZ_line*) malloc(sizeof(MKZ_line));
+	MKZ_GEOMETRY_reset_to_origin(&l->p0);
+	MKZ_GEOMETRY_reset_to_origin(&l->p1);
+	return l;
 }
 MKZ_color3 * MKZ_GEOMETRY_create_color3(){
-	return (MKZ_color3*) malloc(sizeof(MKZ_color3));
+	MKZ_color3 * c3 = (MKZ_color3*) malloc(sizeof(MKZ_color3));
+	MKZ_GEOMETRY_reset_to_black(c3);
+	return c3;
 }
 
 void MKZ_GEOMETRY_face_add_vertex(MKZ_face * face, int p){
@@ -83,14 +108,16 @@ MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces , in
 	for (i = 0; i < face_count; i++){
 
 				int j;
+				mesh->face_table[i].vertex_table = (int*) malloc(sizeof(int) * faces[i].num_vertices);
+
 				for (j = 0 ; j < faces[i].num_vertices ; j++){
 					int vertex = faces[i].vertex_table[j];
 
 					mesh->vertex_table[vertex].num_faces += 1;
-
+					MKZ_GEOMETRY_face_add_vertex(&mesh->face_table[i], vertex);
 				}
 
-		        mesh->face_table[i] = faces[i];
+
 
 	}
 
@@ -137,10 +164,13 @@ MKZ_mesh * MKZ_GEOMETRY_load_mesh(char * file_name){
 	MKZ_point3 * p3;
 	MKZ_face * fc;
 
-	MKZ_IO_read_objFile(file_name, p3, fc, &vertex_count, &face_count);
-	return MKZ_GEOMETRY_create_mesh(p3, fc, vertex_count, face_count);
+	MKZ_IO_read_objFile(file_name, &p3, &fc, &vertex_count, &face_count);
+	MKZ_mesh * mesh = MKZ_GEOMETRY_create_mesh(p3, fc, vertex_count, face_count);
 
+	MKZ_GEOMETRY_free_point3(p3);
+	MKZ_GEOMETRY_free_face(fc);
 
+	return mesh;
 }
 
 void MKZ_GEOMETRY_free_mesh(MKZ_mesh * mesh){

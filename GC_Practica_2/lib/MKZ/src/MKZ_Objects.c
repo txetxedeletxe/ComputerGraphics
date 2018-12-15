@@ -24,6 +24,8 @@ MKZ_meshedObject * MKZ_OBJECT_create_meshedObject(){
 
 	MKZ_meshedObject * mmo = (MKZ_meshedObject *) malloc(sizeof(MKZ_meshedObject));
 	MKZ_OBJECT_init_object(&mmo->obj);
+	mmo->material = 0;
+	mmo->mesh = 0;
 	return mmo;
 
 }
@@ -32,6 +34,11 @@ MKZ_lightObject * MKZ_OBJECT_create_lightObject(){
 
 	MKZ_lightObject * mlo = (MKZ_lightObject *) malloc(sizeof(MKZ_lightObject));
 	MKZ_OBJECT_init_object(&mlo->obj);
+	mlo->color.r = 1;
+	mlo->color.g = 1;
+	mlo->color.b = 1;
+	mlo->intensity = 1;
+	mlo->light_type = 0;
 	return mlo;
 }
 
