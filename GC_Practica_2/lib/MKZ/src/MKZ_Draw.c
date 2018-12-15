@@ -4,6 +4,8 @@
 
 #include <GL/gl.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdio.h>
 
 /** Internal state **/
 /** camera **/
@@ -110,8 +112,9 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 	int v;
 	int v_index;
 
+	char c[128];
+
 	for (f = 0; f < mesh->num_faces; f++) {
-		write(0, "8", 1);
 		glBegin(GL_POLYGON);
 
 		for (v = 0; v < mesh->face_table[f].num_vertices; v++) {
@@ -121,6 +124,7 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 					mesh->vertex_table[v_index].coord.z);
 
 		}
+
 		glEnd();
 	}
 }

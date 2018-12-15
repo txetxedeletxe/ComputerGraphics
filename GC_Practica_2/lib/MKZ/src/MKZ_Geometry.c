@@ -95,26 +95,26 @@ MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces , in
 	mesh->num_vertices = vertex_count;
 
 	mesh->face_table = (MKZ_face *) malloc(sizeof(MKZ_face)*face_count);
-	mesh->vertex_table = (MKZ_vertex *) malloc(sizeof(MKZ_vertex)*face_count);
+	mesh->vertex_table = (MKZ_vertex *) malloc(sizeof(MKZ_vertex)*vertex_count);
 
 	int i;
 	for (i = 0; i < vertex_count; i++){
 	        mesh->vertex_table[i].num_faces = 0;
-	        mesh->vertex_table[i].coord.x= vertices->x;
-	        mesh->vertex_table[i].coord.y= vertices->y;
-	        mesh->vertex_table[i].coord.z= vertices->z;
+	        mesh->vertex_table[i].coord.x= vertices[i].x;
+	        mesh->vertex_table[i].coord.y= vertices[i].y;
+	        mesh->vertex_table[i].coord.z= vertices[i].z;
 	}
 
 	for (i = 0; i < face_count; i++){
 
 				int j;
-				mesh->face_table[i].vertex_table = (int*) malloc(sizeof(int) * faces[i].num_vertices);
+				mesh->face_table[i].vertex_table = faces[i].vertex_table;
+				mesh->face_table[i].num_vertices = faces[i].num_vertices;
 
 				for (j = 0 ; j < faces[i].num_vertices ; j++){
 					int vertex = faces[i].vertex_table[j];
 
 					mesh->vertex_table[vertex].num_faces += 1;
-					MKZ_GEOMETRY_face_add_vertex(&mesh->face_table[i], vertex);
 				}
 
 
@@ -150,6 +150,35 @@ MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces , in
 
 	}
 
+	/*
+	fprintf(stdout, "n_vertex: %d\n",mesh->num_vertices);
+
+	for (i = 0 ; i < mesh->num_vertices ; i++){
+		fprintf(stdout, "vertex: %d\n",i);
+		fprintf(stdout, "face count:%d\n",mesh->vertex_table[i].num_faces);
+		fprintf(stdout, "x:%lf\n",mesh->vertex_table[i].coord.x);
+		fprintf(stdout, "y:%lf\n",mesh->vertex_table[i].coord.y);
+		fprintf(stdout, "z:%lf\n",mesh->vertex_table[i].coord.z);
+	}
+
+
+	fprintf(stdout, "n_faces: %d\n",mesh->num_faces);
+	/*
+	for (i = 0 ; i < mesh->num_faces ; i++){
+		fprintf(stdout, "face: %d\n",i);
+		fprintf(stdout, "vertex count:%d\n",mesh->face_table[i].num_vertices);
+
+		int j = 0;
+
+		for (j = 0 ; j < mesh->face_table[i].num_vertices ; j++){
+			fprintf(stdout, "vertex:%d\n",j);
+			fprintf(stdout, "vertex_index:%d\n",mesh->face_table[i].vertex_table[j]);
+		}
+
+
+	}
+	*/
+
 	return mesh;
 
 
@@ -164,11 +193,13 @@ MKZ_mesh * MKZ_GEOMETRY_load_mesh(char * file_name){
 	MKZ_point3 * p3;
 	MKZ_face * fc;
 
+
 	MKZ_IO_read_objFile(file_name, &p3, &fc, &vertex_count, &face_count);
+
 	MKZ_mesh * mesh = MKZ_GEOMETRY_create_mesh(p3, fc, vertex_count, face_count);
 
-	MKZ_GEOMETRY_free_point3(p3);
-	MKZ_GEOMETRY_free_face(fc);
+	free(p3);
+	free(fc);
 
 	return mesh;
 }
@@ -179,8 +210,9 @@ void MKZ_GEOMETRY_free_mesh(MKZ_mesh * mesh){
 
 	int i;
 	for (i = 0 ; i < mesh->num_faces ; i++){
-		MKZ_GEOMETRY_free_face(&mesh->face_table[i]);
+		free(mesh->face_table[i].vertex_table);
 	}
 
+	free(mesh->face_table);
 	free(mesh);
 }

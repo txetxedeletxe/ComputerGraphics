@@ -43,6 +43,7 @@ void MKZ_SCENE_init(){
 
 void MKZ_SCENE_draw(){
 
+
 		MKZ_DRAW_set_background_color(bg_color);
 		MKZ_DRAW_set_projectionMode(projection_mode);
 		MKZ_DRAW_set_cameraMat(camera->obj.transform);
@@ -54,10 +55,13 @@ void MKZ_SCENE_draw(){
 
 		MKZ_linkedList * aux = objectList;
 
+
 		while (aux != 0){
+
 			MKZ_DRAW_object((MKZ_meshedObject *)aux->content);
 			aux = aux->ll;
 		}
+
 
 
 		MKZ_DRAW_end();

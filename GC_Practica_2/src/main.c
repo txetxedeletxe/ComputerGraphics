@@ -34,13 +34,12 @@ void initialization (){
 	//MKZ_WM_draw();
 
 	MKZ_meshedObject * mo = MKZ_OBJECT_create_meshedObject();
-	write(0, "1", 1);
 	MKZ_mesh * mesh = MKZ_GEOMETRY_load_mesh("resources/abioia.obj");
 	mo->mesh = mesh;
 
-	write(0, "2", 1);
+
 	MKZ_SCENE_add_mesh(mo);
-	write(0, "3", 1);
+
 //    object * cam = create_object();
 //    transform_component * trans = (transform_component * ) get_component(cam,COMPONENT_TRANSFORM);
 //
