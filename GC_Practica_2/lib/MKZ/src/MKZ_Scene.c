@@ -34,18 +34,19 @@ void MKZ_SCENE_init(){
 		bg_color = default_bg_color;
 		default_camera = MKZ_OBJECT_create_camera();
 		camera = MKZ_OBJECT_create_camera();
+		projection_mode = MKZ_DRAW_PROJECTIONMODE_PARALLEL;
 
 		MKZ_DRAW_init();
-		MKZ_DRAW_set_background_color(bg_color);
-		MKZ_DRAW_set_projectionMode(projection_mode);
-		MKZ_DRAW_set_poligonMode(poligonMode);
+		//MKZ_DRAW_set_background_color(bg_color);
+		//MKZ_DRAW_set_projectionMode(projection_mode);
+		//MKZ_DRAW_set_poligonMode(poligonMode);
 }
 
 void MKZ_SCENE_draw(){
 
 
-		MKZ_DRAW_set_background_color(bg_color);
-		MKZ_DRAW_set_projectionMode(projection_mode);
+		//MKZ_DRAW_set_background_color(bg_color);
+		//MKZ_DRAW_set_projectionMode(projection_mode);
 		MKZ_DRAW_set_cameraMat(camera->obj.transform);
 
 

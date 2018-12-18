@@ -30,7 +30,7 @@ void initialization (){
 	c3->g = KG_COL_BACK_G;
 	c3->b = KG_COL_BACK_B;
 
-	MKZ_SCENE_set_bg_color(c3);
+	//MKZ_SCENE_set_bg_color(c3);
 	//MKZ_WM_draw();
 
 	MKZ_meshedObject * mo = MKZ_OBJECT_create_meshedObject();

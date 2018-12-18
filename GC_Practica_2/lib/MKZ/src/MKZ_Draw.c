@@ -34,10 +34,10 @@ void MKZ_DRAW_init(){
 	c_far 		= 1;
 
 	glClearColor(0, 0, 0, 1);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glEnable(GL_CULL_FACE);
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LESS);
 
 }
 
@@ -96,7 +96,7 @@ void MKZ_DRAW_start(){
 }
 
 void MKZ_DRAW_clear(){
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
 
 }
 
@@ -112,7 +112,6 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 	int v;
 	int v_index;
 
-	char c[128];
 
 	for (f = 0; f < mesh->num_faces; f++) {
 		glBegin(GL_POLYGON);

@@ -108,12 +108,12 @@ MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces , in
 	for (i = 0; i < face_count; i++){
 
 				int j;
-				mesh->face_table[i].vertex_table = faces[i].vertex_table;
+				//mesh->face_table[i].vertex_table = faces[i].vertex_table;
 				mesh->face_table[i].num_vertices = faces[i].num_vertices;
-
+				mesh->face_table[i].vertex_table = (int*) malloc(sizeof(int)*faces[i].num_vertices);
 				for (j = 0 ; j < faces[i].num_vertices ; j++){
 					int vertex = faces[i].vertex_table[j];
-
+					mesh->face_table[i].vertex_table[j] = faces[i].vertex_table[j];
 					mesh->vertex_table[vertex].num_faces += 1;
 				}
 
