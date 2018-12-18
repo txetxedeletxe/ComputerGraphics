@@ -16,13 +16,6 @@ MKZ_linkedList * objectList;
 /** lights **/
 MKZ_linkedList * lightList;
 
-
-/** Draw Parameters **/
-MKZ_color3 * default_bg_color;
-MKZ_color3 * bg_color;
-int projection_mode;
-int poligonMode;
-
 /** Exported **/
 /* Init */
 void MKZ_SCENE_init(){
@@ -30,16 +23,11 @@ void MKZ_SCENE_init(){
 
 		objectList = 0;
 		lightList = 0;
-		default_bg_color = MKZ_GEOMETRY_create_color3();
-		bg_color = default_bg_color;
 		default_camera = MKZ_OBJECT_create_camera();
-		camera = MKZ_OBJECT_create_camera();
-		projection_mode = MKZ_DRAW_PROJECTIONMODE_PARALLEL;
+		camera = default_camera;
 
 		MKZ_DRAW_init();
-		//MKZ_DRAW_set_background_color(bg_color);
-		//MKZ_DRAW_set_projectionMode(projection_mode);
-		//MKZ_DRAW_set_poligonMode(poligonMode);
+
 }
 
 void MKZ_SCENE_draw(){
@@ -198,45 +186,6 @@ void MKZ_SCENE_restore_camera(){
 	camera = default_camera;
 
 }
-
-
-void MKZ_SCENE_set_bg_color(MKZ_color3 * c3){
-
-	bg_color = c3;
-}
-
-void MKZ_SCENE_set_projectionMode(int PROJECTION_MODE){
-	projection_mode = PROJECTION_MODE;
-}
-
-void MKZ_SCENE_set_poligonMode(int poligon_mode){
-
-	poligonMode = poligon_mode;
-}
-
-
-
-
-MKZ_color3 * MKZ_SCENE_get_bg_color(){
-
-	return bg_color;
-}
-
-int MKZ_SCENE_get_projectionMode(){
-	return projection_mode;
-}
-
-int MKZ_SCENE_get_poligonMode(){
-
-	return poligonMode;
-}
-
-
-void MKZ_SCENE_restore_bg_color(){
-	bg_color = default_bg_color;
-}
-
-
 
 
 

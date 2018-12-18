@@ -20,15 +20,6 @@ void MKZ_SCENE_remove_mesh(int id);
 void MKZ_SCENE_remove_light(int id);
 void MKZ_SCENE_restore_camera();
 
-void MKZ_SCENE_set_bg_color(MKZ_color3 * c3);
-void MKZ_SCENE_set_projectionMode(int PROJECTION_MODE);
-void MKZ_SCENE_set_poligonMode(int PoligonMode);
-
-MKZ_color3 * MKZ_SCENE_get_bg_color();
-int MKZ_SCENE_get_projectionMode();
-int MKZ_SCENE_get_poligonMode();
-
-void MKZ_SCENE_restore_bg_color();
 
 
 #endif

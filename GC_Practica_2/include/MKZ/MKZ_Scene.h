@@ -16,9 +16,11 @@ void MKZ_SCENE_remove_mesh(int id);
 void MKZ_SCENE_remove_light(int id);
 void MKZ_SCENE_restore_camera();
 
+//Set default
 void MKZ_SCENE_set_bg_color(MKZ_color3 * c3);
 void MKZ_SCENE_set_projectionMode(int PROJECTION_MODE);
 void MKZ_SCENE_set_poligonMode(int PoligonMode);
+void MKZ_SCENE_set_camera_fov(double left, double right, double bottom, double top, double near, double far);
 
 MKZ_color3 * MKZ_SCENE_get_bg_color();
 int MKZ_SCENE_get_projectionMode();

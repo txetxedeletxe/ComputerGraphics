@@ -10,6 +10,5 @@
 /** DRAW CONTROL**/
 void MKZ_DRAW_enable_drawMask(unsigned int d_mask);
 void MKZ_DRAW_disable_drawMask(unsigned int d_mask);
-void MKZ_DRAW_set_renderVolume(double left, double right, double bottom, double top, double near, double far);
 
 #endif
