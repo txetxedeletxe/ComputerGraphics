@@ -3,6 +3,8 @@
 
 #include "MKZ_Geometry.h"
 
+
+
 typedef struct{
 
 	float* transform;
@@ -13,23 +15,22 @@ typedef struct{
 
 typedef struct {
 
+	MKZ_object obj;
 
 	MKZ_mesh * mesh;
 	MKZ_material * material;
-
-	MKZ_object obj;
 
 
 }MKZ_meshedObject;
 
 typedef struct {
 
+	MKZ_object obj;
+
 	int light_type;
 
 	float intensity;
 	MKZ_color3 color;
-
-	MKZ_object obj;
 
 
 }MKZ_lightObject;
@@ -42,7 +43,6 @@ typedef struct{
 
 	int projection_mode;
 	int polygon_mode;
-
 
 
 }MKZ_camera;

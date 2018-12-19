@@ -21,13 +21,17 @@ void event_callback(int event_id , void * event_info){
 		    	printf("%s", KG_MSSG_SELECT_FILE);
 		    	scanf("%s", fname);
 
-		    	MKZ_mesh * mesh = MKZ_GEOMETRY_load_mesh(fname);
+
 
 		    	if (mesh == 0){
 		    		printf("%s", KG_MSSG_INVALIDFILE);
 		    	}
 		    	else{
 		    		printf("%s", KG_MSSG_FILEREAD);
+		    		MKZ_meshedObject * mo = MKZ_OBJECT_create_meshedObject();
+		    		mo->mesh = mesh;
+
+
 		    	}
 		}
 
