@@ -1,5 +1,9 @@
+
+#include "MKZ_WindowManager.h"
+
 #include <GL/glut.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /** State variables **/
 void (*callBack)(int event,void * state);
@@ -10,30 +14,22 @@ void nothing(int event, void * state){}
 
 void keyboardFunction(unsigned char key, int x, int y){
 
-	struct {
-		unsigned char key;
-		int x;
-		int y;
-	}kb;
+	MKZ_kb_event * kb_event = (MKZ_kb_event *) malloc(sizeof(MKZ_kb_event));
 
-	kb.key = key;
-	kb.x = x;
-	kb.y = y;
-	callBack(0,&kb);
+	kb_event->key = key;
+	kb_event->x = x;
+	kb_event->y = y;
+	callBack(MKZ_CALLBACK_KEYBOARD,kb_event);
 }
 
 void specialFunction(int key, int x, int y){
 
-	struct {
-		int key;
-		int x;
-		int y;
-	}kb;
+	MKZ_kb_special_event * kb_event = (MKZ_kb_special_event *) malloc(sizeof(MKZ_kb_special_event));
 
-	kb.key = key;
-	kb.x = x;
-	kb.y = y;
-	callBack(1,&kb);
+	kb_event->key = key;
+	kb_event->x = x;
+	kb_event->y = y;
+	callBack(MKZ_CALLBACK_SPECIAL_KEYBOARD,kb_event);
 }
 
 

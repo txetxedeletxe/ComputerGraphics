@@ -19,5 +19,7 @@ void MKZ_ARITHMETIC_matrix_scaleX(float scalar,float* mat);
 void MKZ_ARITHMETIC_matrix_scaleY(float scalar,float* mat);
 void MKZ_ARITHMETIC_matrix_scaleZ(float scalar,float* mat);
 void MKZ_ARITHMETIC_matrix_scaleUniform(float scalar,float* mat);
+void MKZ_ARITHMETIC_print_matrix(float * mat);
+
 
 #endif

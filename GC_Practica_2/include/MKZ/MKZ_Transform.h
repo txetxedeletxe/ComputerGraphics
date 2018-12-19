@@ -19,6 +19,9 @@ void MKZ_TRANSFORM_scaleY_global(float * tramat, float scalar);
 void MKZ_TRANSFORM_scaleZ_global(float * tramat, float scalar);
 void MKZ_TRANSFORM_scaleUniform_global(float * tramat, float scalar);
 void MKZ_TRANSFORM_set_position_global(float * modMat, MKZ_point3 * position);
+void MKZ_TRANSFORM_set_absolute_scale(float* modMat, MKZ_vector3 * scaleVector);
+
+MKZ_vector3 * MKZ_TRANSFORM_get_absolute_scale(float* tramat);
 
 /* local transform */
 void MKZ_TRANSFORM_matrix_local(float * modMat, float * transformMat);

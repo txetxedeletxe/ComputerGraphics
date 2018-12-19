@@ -33,10 +33,10 @@ void MKZ_SCENE_init(){
 void MKZ_SCENE_draw(){
 
 
-		//MKZ_DRAW_set_background_color(bg_color);
-		//MKZ_DRAW_set_projectionMode(projection_mode);
+		MKZ_DRAW_set_background_color(&camera->skybox);
+		MKZ_DRAW_set_projectionMode(camera->projection_mode);
+		MKZ_DRAW_set_poligonMode(camera->polygon_mode);
 		MKZ_DRAW_set_cameraMat(camera->obj.transform);
-
 
 		MKZ_DRAW_clear();
 		MKZ_DRAW_start();

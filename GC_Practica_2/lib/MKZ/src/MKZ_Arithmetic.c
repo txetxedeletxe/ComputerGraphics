@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
 
 #include "MKZ_Geometry.h"
 
@@ -48,6 +49,14 @@ float MKZ_ARITHMETIC_dotProduct(float * v1, float * v2){
 	return psum;
 }
 
+float MKZ_ARITHMETIC_eulidean_norm_vector(MKZ_vector3 * v3){
+
+	return sqrt(v3->x*v3->x + v3->y*v3->y + v3->z*v3->z);
+}
+
+float MKZ_ARITHMETIC_eulidean_norm(float * v3){
+	return sqrt(v3[0]*v3[0] + v3[1]*v3[1] + v3[2]*v3[2]);
+}
 
 void MKZ_ARITHMETIC_copy_matrix(float * vin , float * vout){
 
@@ -201,3 +210,17 @@ void MKZ_ARITHMETIC_matrix_scaleUniform(float scalar,float* mat){
 	mat[5]*=scalar;
 	mat[10]*=scalar;
 }
+
+void MKZ_ARITHMETIC_print_matrix(float * mat){
+
+	int i,j;
+
+	for (i = 0  ; i < 4 ; i++){
+
+			printf("%f %f %f %f\n",mat[i],mat[i+4],mat[i+8],mat[i+12]);
+
+	}
+
+	printf("\n");
+}
+

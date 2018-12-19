@@ -194,9 +194,10 @@ MKZ_mesh * MKZ_GEOMETRY_load_mesh(char * file_name){
 	MKZ_face * fc;
 
 
-	MKZ_IO_read_objFile(file_name, &p3, &fc, &vertex_count, &face_count);
-
-	MKZ_mesh * mesh = MKZ_GEOMETRY_create_mesh(p3, fc, vertex_count, face_count);
+	int error = MKZ_IO_read_objFile(file_name, &p3, &fc, &vertex_count, &face_count);
+	MKZ_mesh * mesh = 0;
+	if (!error)
+		mesh = MKZ_GEOMETRY_create_mesh(p3, fc, vertex_count, face_count);
 
 	free(p3);
 	free(fc);

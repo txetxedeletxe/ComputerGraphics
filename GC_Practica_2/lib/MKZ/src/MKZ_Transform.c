@@ -1,5 +1,7 @@
 #include "MKZ_Arithmetic.h"
 
+#include <stdio.h>
+
 void MKZ_TRANSFORM_to_cameraMatrix(float* transform_mat , float* camera_mat){
 
 	MKZ_ARITHMETIC_identityMatrix(camera_mat);
@@ -121,6 +123,40 @@ void MKZ_TRANSFORM_set_position_global(float * modMat, MKZ_point3 * position){
 	modMat[12] = position->x;
 	modMat[12] = position->y;
 	modMat[12] = position->z;
+
+}
+
+
+void MKZ_TRANSFORM_set_absolute_scale(float* modMat, MKZ_vector3 * scaleVector){
+
+	float f = MKZ_ARITHMETIC_eulidean_norm(modMat);
+	float f2 = scaleVector->x/f;
+	modMat[0] *= f2;
+	modMat[1] *= f2;
+	modMat[2] *= f2;
+
+	f = MKZ_ARITHMETIC_eulidean_norm(modMat+4);
+	f2 = scaleVector->y/f;
+	modMat[4] *= f2;
+	modMat[5] *= f2;
+	modMat[6] *= f2;
+
+	f = MKZ_ARITHMETIC_eulidean_norm(modMat+8);
+	f2 = scaleVector->z/f;
+	modMat[8] *= f2;
+	modMat[9] *= f2;
+	modMat[10] *= f2;
+}
+
+MKZ_vector3 * MKZ_TRANSFORM_get_absolute_scale(float* tramat){
+
+	MKZ_vector3 * v3 = MKZ_GEOMETRY_create_vector3();
+
+	v3->x = MKZ_ARITHMETIC_eulidean_norm(tramat);
+	v3->y = MKZ_ARITHMETIC_eulidean_norm(tramat+4);
+	v3->z = MKZ_ARITHMETIC_eulidean_norm(tramat+8);
+
+	return v3;
 
 }
 

@@ -21,7 +21,7 @@ static int sreadint2(char * lerroa, int * zenbakiak) {
 }
 
 
-void MKZ_IO_read_objFile(char * file_name, MKZ_point3 ** vertex_table, MKZ_face ** face_table , int * vertex_count , int * face_count){
+int MKZ_IO_read_objFile(char * file_name, MKZ_point3 ** vertex_table, MKZ_face ** face_table , int * vertex_count , int * face_count){
 
 
 
@@ -40,7 +40,7 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 ** vertex_table, MKZ_face 
 		 * loaded. Finally, the object structure is created
 		 */
 		if ((obj_file = fopen(file_name, "r")) == NULL)
-			return;
+			return -1;
 		while (fscanf(obj_file, "\n%[^\n]", line) > 0) {
 			i = 0;
 			while (line[i] == ' ') i++;
@@ -73,15 +73,15 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 ** vertex_table, MKZ_face 
 	//printf("1 pasada: num vert = %d (%d), num faces = %d(%d) \n",num_vertices,count_vertices,num_faces,count_faces);
 		if ((num_vertices != -1 && num_vertices != count_vertices) || (num_faces != -1 && num_faces != count_faces)) {
 			//printf("WARNING: full file format: (%s)\n", file_name);
-			//return (2);
+			return -2;
 		}
 		if (num_vertices == 0 || count_vertices == 0) {
 			//printf("No vertex found: (%s)\n", file_name);
-			return;
+			return -3;
 		}
 		if (num_faces == 0 || count_faces == 0) {
 			//printf("No faces found: (%s)\n", file_name);
-			return;
+			return -4;
 		}
 
 		num_vertices = count_vertices;
@@ -135,6 +135,8 @@ void MKZ_IO_read_objFile(char * file_name, MKZ_point3 ** vertex_table, MKZ_face 
 
 		*(vertex_count) = num_vertices;
 		*(face_count) = num_faces;
+
+		return 0;
 
 
 }

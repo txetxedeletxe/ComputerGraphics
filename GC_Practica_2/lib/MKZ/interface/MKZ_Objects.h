@@ -38,6 +38,13 @@ typedef struct{
 
 	MKZ_object obj;
 
+	MKZ_color3 skybox;
+
+	int projection_mode;
+	int polygon_mode;
+
+
+
 }MKZ_camera;
 
 /** Objects **/

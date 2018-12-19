@@ -1,13 +1,8 @@
 #include "MKZ_Objects.h"
 #include "MKZ_Arithmetic.h"
-#include <stdlib.h>
+#include "MKZ_Definitions.h"
 
-/*
- * MKZ_Objects.c
- *
- *  Created on: Dec 14, 2018
- *      Author: 837459
- */
+#include <stdlib.h>
 
 int next_id = 0;
 
@@ -46,6 +41,9 @@ MKZ_camera * MKZ_OBJECT_create_camera(){
 
 	MKZ_camera * mc = (MKZ_camera *) malloc(sizeof(MKZ_camera));
 	MKZ_OBJECT_init_object(&mc->obj);
+	mc->projection_mode = MKZ_PROJECTIONMODE_PARALLEL;
+	mc->polygon_mode = MKZ_POLYGONMODE_FILLED;
+	MKZ_GEOMETRY_reset_to_black(&mc->skybox);
 	return mc;
 
 }

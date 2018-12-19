@@ -15,6 +15,9 @@ float * MKZ_ARITHMETIC_matMul(float * mat1,float * mat2,float * mat3);
 float MKZ_ARITHMETIC_dotProduct_vector(MKZ_vector3 * v1, MKZ_vector3 * v2);
 float MKZ_ARITHMETIC_dotProduct(float * v1, float * v2);
 
+float MKZ_ARITHMETIC_eulidean_norm_vector(MKZ_vector3 * v3);
+float MKZ_ARITHMETIC_eulidean_norm(float * v3);
+
 /** Transformation matrix **/
 void MKZ_ARITHMETIC_matrix_translate(MKZ_vector3 * v3,float* mat);
 void MKZ_ARITHMETIC_matrix_rotate(MKZ_line * axis, float rads,float* mat);
@@ -26,5 +29,7 @@ void MKZ_ARITHMETIC_matrix_scaleX(float scalar,float* mat);
 void MKZ_ARITHMETIC_matrix_scaleY(float scalar,float* mat);
 void MKZ_ARITHMETIC_matrix_scaleZ(float scalar,float* mat);
 void MKZ_ARITHMETIC_matrix_scaleUniform(float scalar,float* mat);
+void MKZ_ARITHMETIC_print_matrix(float * mat);
+
 
 #endif

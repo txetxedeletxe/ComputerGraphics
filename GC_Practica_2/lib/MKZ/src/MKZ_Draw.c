@@ -1,6 +1,7 @@
 #include "MKZ_Arithmetic.h"
 #include "MKZ_Transform.h"
 #include "MKZ_Draw.h"
+#include "MKZ_Definitions.h"
 
 #include <GL/gl.h>
 #include <unistd.h>
@@ -9,6 +10,7 @@
 
 /** Internal state **/
 /** camera **/
+float * identity_mat;
 float * baseChange_mat;
 
 int projection_mode;
@@ -21,10 +23,11 @@ double c_near, c_far;
 void MKZ_DRAW_init(){
 
 
-	baseChange_mat = MKZ_ARITHMETIC_create_matrix();
-	MKZ_ARITHMETIC_identityMatrix(baseChange_mat);
+	identity_mat = MKZ_ARITHMETIC_create_matrix();
+	MKZ_ARITHMETIC_identityMatrix(identity_mat);
+	baseChange_mat = identity_mat;
 
-	projection_mode = MKZ_DRAW_PROJECTIONMODE_PARALLEL;
+	projection_mode = MKZ_PROJECTIONMODE_PARALLEL;
 
 	c_left 		= -1;
 	c_right 	= 1;
@@ -34,9 +37,9 @@ void MKZ_DRAW_init(){
 	c_far 		= 1;
 
 	glClearColor(0, 0, 0, 1);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	//glEnable(GL_CULL_FACE);
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LESS);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 }
@@ -69,6 +72,10 @@ void MKZ_DRAW_set_cameraMat(float * camMat){
 	MKZ_TRANSFORM_to_cameraMatrix(camMat,baseChange_mat);
 }
 
+void MKZ_DRAW_reset_identity_camera(){
+	baseChange_mat = identity_mat;
+}
+
 void MKZ_DRAW_set_background_color(MKZ_color3 * bg){
 
 	glClearColor(bg->r, bg->g, bg->b, 1);
@@ -80,8 +87,9 @@ void MKZ_DRAW_start(){
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+	//fprintf(stdout,"P_mode : %d\n", projection_mode);
+	if (projection_mode == MKZ_PROJECTIONMODE_PARALLEL){
 
-	if (projection_mode == MKZ_DRAW_PROJECTIONMODE_PARALLEL){
 		glOrtho(c_left,c_right,c_bottom,c_top,c_near,c_far);
 	}
 	else

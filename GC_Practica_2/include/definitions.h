@@ -4,16 +4,12 @@
 #include <GL/gl.h>
 /** DEFINITIONS **/
 
-#define KG_WINDOW_TITLE                     "Práctica GPO"
+#define KG_WINDOW_TITLE                     "Practica GPO"
 #define KG_WINDOW_WIDTH                     600
 #define KG_WINDOW_HEIGHT                    400
-#define KG_WINDOW_X                         50
-#define KG_WINDOW_Y                         50
 
 #define KG_MSSG_SELECT_FILE                 "Idatz ezazu fitxategiaren path-a: "
-#define KG_MSSG_FILENOTFOUND                "Fitxategi hori ez da existitzen!!"
-#define KG_MSSG_INVALIDFILE                 "Arazoren bat egon da fitxategiarekin ..."
-#define KG_MSSG_EMPTYFILE                   "Fitxategia hutsik dago"
+#define KG_MSSG_INVALIDFILE                 "Could not read from file"
 #define KG_MSSG_FILEREAD                    "Fitxategiaren irakurketa buruta"
 
 #define KG_STEP_MOVE                        5.0f
@@ -26,14 +22,7 @@
 #define KG_ORTHO_Y_MIN_INIT                -5
 #define KG_ORTHO_Y_MAX_INIT                 5
 #define KG_ORTHO_Z_MIN_INIT                -100
-#define KG_ORTHO_Z_MAX_INIT                 10000
-
-#define KG_FRUS_X_MIN_INIT                -1
-#define KG_FRUS_X_MAX_INIT                 1
-#define KG_FRUS_Y_MIN_INIT                -1
-#define KG_FRUS_Y_MAX_INIT                 1
-#define KG_FRUS_Z_MIN_INIT                 1
-#define KG_FRUS_Z_MAX_INIT                 10000
+#define KG_ORTHO_Z_MAX_INIT                 100
 
 #define KG_COL_BACK_R                       0.30f
 #define KG_COL_BACK_G                       0.30f
@@ -48,20 +37,7 @@
 #define KG_COL_NONSELECTED_G                1.00f
 #define KG_COL_NONSELECTED_B                1.00f
 
-#define KG_COL_X_AXIS_R                     1.0f
-#define KG_COL_X_AXIS_G                     0.0f
-#define KG_COL_X_AXIS_B                     0.0f
-
-#define KG_COL_Y_AXIS_R                     0.0f
-#define KG_COL_Y_AXIS_G                     1.0f
-#define KG_COL_Y_AXIS_B                     0.0f
-
-#define KG_COL_Z_AXIS_R                     0.0f
-#define KG_COL_Z_AXIS_G                     0.0f
-#define KG_COL_Z_AXIS_B                     1.0f
-
 #define KG_MAX_DOUBLE                       10E25
-
 
 #define KG_X_AXIS_POSITIVE 1
 #define KG_X_AXIS_NEGATIVE -1
@@ -78,17 +54,13 @@
 #define KG_TRANSFORMATIONS_TRANSLATE 1
 #define KG_TRANSFORMATIONS_ROTATE 2
 #define KG_TRANSFORMATIONS_SCALE 4
-#define KG_TRANSFORMATIONS_REFLECT 8
-#define KG_TRANSFORMATIONS_SHEAR 16
-#define KG_TRANSFORMATIONS 31
+#define KG_TRANSFORMATIONS 7
 /* Scope of the transformation */
-#define KG_SCOPE_GLOBAL 32
-/*Camera projection mode*/
-#define KG_PROJECT_ORTHO 64
+#define KG_SCOPE_GLOBAL 8
 /*Camera type*/
-#define KG_CAMERA_OBJECT 128
+#define KG_CAMERA_OBJECT 16
 /*Transform type*/
-#define KG_TRANSFORM_CAMERA 256
+#define KG_TRANSFORM_CAMERA 32
 
 
 /* Step units for transformations */
@@ -101,109 +73,11 @@
 #define FLIGHT 0
 #define ANALYZE 1
 
-/*Component Ids*/
-
-#define COMPONENT_TRANSFORM 1
-#define COMPONENT_MESH 2
-
-/** STRUCTURES **/
-
-
-struct matStack{
-
-    GLfloat* mat;
-    struct matStack * next;
-
-};
-
-/****************************
- * Structure to store a     *
- * pile of 3D objects       *
- ****************************/
-
-struct transform_component{
-
-    struct matStack * undoStack;
-    struct matStack * redoStack;   
-    
-};
-
-
-struct component{
-
-    int component_id;
-    
-    struct component * next;
-    void * comp;
-};
-
-struct object{
-
-    struct component* f_component; 
-    struct object *next;
-};
-
-
-
-typedef struct transform_component transform_component;
-typedef struct component component;
-typedef struct object object;
 
 //Aliases para flags
 typedef int AXIS;
-typedef int ZOOM_DIRECTION;
-
-
-/** GLOBAL VARIABLES **/
 
 
 
-unsigned int stateField;
-
-
-
-GLdouble _window_ratio;                     /*Control of window's proportions */
-GLdouble _ortho_x_min,_ortho_x_max;         /*Variables for the control of the orthographic projection*/
-GLdouble _ortho_y_min ,_ortho_y_max;        /*Variables for the control of the orthographic projection*/
-GLdouble _ortho_z_min,_ortho_z_max;         /*Variables for the control of the orthographic projection*/
-GLdouble _frust_x_min,_frust_x_max;         /*Variables for the control of the orthographic projection*/
-GLdouble _frust_y_min ,_frust_y_max;        /*Variables for the control of the orthographic projection*/
-GLdouble _frust_z_min,_frust_z_max;         /*Variables for the control of the orthographic projection*/
-
-object * _first_object;                /*List of objects*/
-object * _selected_object;
-object * _first_camera;             /*Object currently selected*/
-object * _selected_camera;
-
-object * _actual_camera;
-
-object * _transform_object;
-
-object * _analyze_object;
-
-
-
-/*Exported functions to manipulate datastructs*/
-
-transform_component* create_transform();
-object* create_object();
-component* create_component(int id, void * comp);
-void add_component(object * obj , component * comp);
-void* get_component(object * obj , int component_id);
-
-int checkState(unsigned int mask);
-void changeState(unsigned int mask, int value);
-int getState(unsigned int mask);
-void flipState(unsigned int mask);
-
-void addCamera(object * cam);
-void add3dObject(object * obj);
-
-void nextCamera();
-void nextObject();
-
-void deleteCamera();
-void deleteCamera();
-void updateTransformObject();
 #endif // DEFINITIONS_H
 
