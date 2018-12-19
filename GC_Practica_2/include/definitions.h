@@ -199,6 +199,7 @@ typedef struct lighting_component{
 	int light_type;
 	color3 color;
 	GLfloat shininess;
+	int associated;
 
 
 } lighting_component;
@@ -271,7 +272,7 @@ component* create_component(int id, void * comp);
 void add_component(object * obj , component * comp);
 void* get_component(object * obj , int component_id);
 
-lighting_component* create_light(int type, GLfloat intensityA, GLfloat intensityD, GLfloat intensityS, GLdouble red, GLdouble green, GLdouble blue, GLfloat shiny);
+lighting_component* create_light(int type, GLfloat intensityA, GLfloat intensityD, GLfloat intensityS, GLdouble red, GLdouble green, GLdouble blue, GLfloat shiny, int as);
 
 int checkState(unsigned int mask);
 void changeState(unsigned int mask, int value);
