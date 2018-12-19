@@ -303,16 +303,66 @@ void keyboard(unsigned char key, int x, int y) {
     case '+':
         if (glutGetModifiers() == GLUT_ACTIVE_CTRL){
             zoom(KG_ZOOM_IN);
-        }
-        else{
-            uniformScale(1);
-        }
+        } else if (checkState(KG_LIGHTING_ACTIVE)) {
+        	printf("ENTERED \n");
+        	GLenum lightInd = 0;
+        	switch (_selected_light){
 
-        if (checkState(KG_LIGHTING_ACTIVE)) {
+        	case 0:
+        		lightInd = GL_LIGHT0;
+        		break;
+
+        	case 1:
+        		lightInd = GL_LIGHT1;
+        		break;
+
+        	case 2:
+        		lightInd = GL_LIGHT2;
+        		break;
+
+        	case 3:
+        		lightInd = GL_LIGHT3;
+        		break;
+
+        	case 4:
+        		lightInd = GL_LIGHT4;
+        		break;
+
+        	case 5:
+        		lightInd = GL_LIGHT5;
+        		break;
+
+        	case 6:
+        		lightInd = GL_LIGHT6;
+        		break;
+
+        	case 7:
+        		lightInd = GL_LIGHT7;
+        		break;
+
+
+
+
+
+        	}
+        	printf("%d \n", lightInd);
+        	printf("%d \n", _selected_light);
+        	//glGetLightfv(GLenum light,  GLenum pname,  GLfloat * params);
             // reduce el ángulo de apertura de un foco (si es lo que hay seleccionado)
-        	//if (_selected_light->f_component->light_type == PUNCTUAL) {
-          		// se aplica la reducción
-        	//}
+        	if (((lighting_component *)_lights[_selected_light]->f_component->comp)->light_type == FOCUS) {
+        		GLfloat  angle;
+        		glGetLightfv(lightInd, GL_SPOT_CUTOFF, &angle);
+        		printf("%f \n", angle);
+        		if (angle + 5.0f <= 180.0f) {
+        			angle = angle + 5.0f;
+        			glLightf(lightInd, GL_SPOT_CUTOFF, angle);
+        			glGetLightfv(lightInd, GL_SPOT_CUTOFF, &angle);
+        			printf("%f \n", angle);
+        		}
+        	}
+
+        } else {
+        	uniformScale(1);
         }
         break;
 
@@ -403,43 +453,15 @@ void keyboard(unsigned char key, int x, int y) {
         break;
 
     case '1':
-    	if (_lights[0] != 0)
-    		_selected_light = _lights[0];
-    	break;
-
     case '2':
-    	if (_lights[1] != 0)
-    	    _selected_light = _lights[1];
-        break;
-
     case '3':
-    	if (_lights[2] != 0)
-    	    _selected_light = _lights[2];
-        break;
-
     case '4':
-    	if (_lights[3] != 0)
-    	    _selected_light = _lights[3];
-        break;
-
     case '5':
-    	if (_lights[4] != 0)
-    	    _selected_light = _lights[4];
-        break;
-
     case '6':
-    	if (_lights[5] != 0)
-    	    _selected_light = _lights[5];
-        break;
-
     case '7':
-    	if (_lights[6] != 0)
-    	    _selected_light = _lights[6];
-        break;
-
     case '8':
-    	if (_lights[7] != 0)
-    	    _selected_light = _lights[7];
+    	if (_lights[((char)key) - '1'] != 0)
+    		_selected_light = ((char)key) - '1';
     	break;
 
     /* Alternatives version for control keys */

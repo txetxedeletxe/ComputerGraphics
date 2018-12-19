@@ -253,7 +253,7 @@ object * _selected_object;
 object * _first_camera;             /*Object currently selected*/
 object * _selected_camera;
 object * _lights[8];        /*The eight lights of the scene*/
-object * _selected_light;
+int _selected_light;
 
 object * _actual_camera;
 

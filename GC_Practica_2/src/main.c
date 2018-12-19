@@ -76,7 +76,7 @@ void initialization (){
 
     /*Foco del objeto -Falta realizar ajustes-*/
     /* Y tanto que necesita ajustes, esto no ilumina bien *CASI* nunca */
-    lighting_component * lco = create_light(PUNCTUAL, 1.0, 5.0, 5.0, 1.0, 0.0, 0.0, 20.0, 1);
+    lighting_component * lco = create_light(FOCUS, 1.0, 5.0, 5.0, 10.0, 0.0, 0.0, 20.0, 1);
     component * clo = create_component(COMPONENT_LIGHT,lco);
     object * objLightob = create_object();
     add_component(objLightob,clo);
