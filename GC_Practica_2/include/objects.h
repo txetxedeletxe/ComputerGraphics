@@ -20,6 +20,7 @@ struct linkedList{
 
 	void * content;
 	struct linkedList * ll;
+
 };
 
 typedef struct linkedList linkedList;
