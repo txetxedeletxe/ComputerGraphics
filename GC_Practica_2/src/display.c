@@ -109,6 +109,15 @@ void display(void) {
     draw_axes();
 
     transform_component * camera = (transform_component *) get_component(_actual_camera,COMPONENT_TRANSFORM);
+    lighting_component l;
+    if ((l = get_component(_actual_camera , COMPONENT_LIGHT))!=0 && checkState(KG_LIGHTING_ACTIVE)){
+    	GLfloat light2_position[] = { camera->undoStack->mat[12], camera->undoStack->mat[13], camera->undoStack->mat[14], 1.0 };
+    	GLfloat spot2_direction[] = { camera->undoStack->mat[8], camera->undoStack->mat[9], -camera->undoStack->mat[10] };
+
+    	glLightfv(GL_LIGHT3, GL_POSITION, light2_position);
+    	glLightfv(GL_LIGHT3, GL_SPOT_DIRECTION, spot2_direction);
+
+    }
     GLfloat* camera_mat = (GLfloat*) malloc(sizeof(GLfloat)*16);
     toCameraMatrix(camera->undoStack->mat , camera_mat);
 

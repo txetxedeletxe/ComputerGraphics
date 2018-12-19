@@ -42,7 +42,7 @@ transform_component* create_transform(){
 
 }
 
-lighting_component* create_light(int type, GLfloat intensityA, GLfloat intensityD, GLfloat intensityS, GLdouble red, GLdouble green, GLdouble blue, GLfloat shiny){
+lighting_component* create_light(int type, GLfloat intensityA, GLfloat intensityD, GLfloat intensityS, GLdouble red, GLdouble green, GLdouble blue, GLfloat shiny, int as){
 	lighting_component *lc = (lighting_component*) malloc(sizeof(lighting_component));
 
 	lc->light_type = type;
@@ -53,6 +53,7 @@ lighting_component* create_light(int type, GLfloat intensityA, GLfloat intensity
 	lc->color.r = red;
 	lc->color.g = green;
 	lc->color.b = blue;
+	lc->associated = as;
 
 	return lc;
 

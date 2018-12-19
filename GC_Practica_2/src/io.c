@@ -479,7 +479,7 @@ void specialKeyboard(int key, int x, int y) {
         	break;
 
         case GLUT_KEY_F12:
-        	if (checkState(KG_LIGHTING_ACTIVE))	flipState(KG_LIGHTING_MODE);
+        	if (checkState(KG_LIGHTING_ACTIVE))	flipState(KG_LIGHTING_MODE); //Se puede cambiar de flat a smooth solo cuando la iluminación este activada
         	break;
 
         default:
