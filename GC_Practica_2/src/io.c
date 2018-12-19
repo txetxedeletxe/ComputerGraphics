@@ -144,6 +144,9 @@ void keyboard(unsigned char key, int x, int y) {
     case 'N':
     case 'n':
     	new_camera = create_object();
+    	lighting_component * lcc = create_light(PUNCTUAL, 10.0, 5.0, 1.0, 1.0, 0.0, 1.0, 10.0, 1);
+    	component * ccl = create_component(COMPONENT_LIGHT,lcc);
+    	add_component(new_camera, ccl);
 
     	transform_component * trans = (transform_component * ) get_component(new_camera,COMPONENT_TRANSFORM);
     	trans->undoStack->mat[12] = 0;
@@ -287,6 +290,13 @@ void keyboard(unsigned char key, int x, int y) {
         else{
             uniformScale(0);
         }
+
+        if (checkState(KG_LIGHTING_ACTIVE)) {
+        	// reduce el ángulo de apertura de un foco (si es lo que hay seleccionado)
+        	//if (_selected_light->f_component->light_type == PUNCTUAL) {
+        		// se aplica la reducción
+        	//}
+        }
         break;
 
     /* Zoom in */
@@ -296,6 +306,13 @@ void keyboard(unsigned char key, int x, int y) {
         }
         else{
             uniformScale(1);
+        }
+
+        if (checkState(KG_LIGHTING_ACTIVE)) {
+            // reduce el ángulo de apertura de un foco (si es lo que hay seleccionado)
+        	//if (_selected_light->f_component->light_type == PUNCTUAL) {
+          		// se aplica la reducción
+        	//}
         }
         break;
 
@@ -385,6 +402,46 @@ void keyboard(unsigned char key, int x, int y) {
 
         break;
 
+    case '1':
+    	if (_lights[0] != 0)
+    		_selected_light = _lights[0];
+    	break;
+
+    case '2':
+    	if (_lights[1] != 0)
+    	    _selected_light = _lights[1];
+        break;
+
+    case '3':
+    	if (_lights[2] != 0)
+    	    _selected_light = _lights[2];
+        break;
+
+    case '4':
+    	if (_lights[3] != 0)
+    	    _selected_light = _lights[3];
+        break;
+
+    case '5':
+    	if (_lights[4] != 0)
+    	    _selected_light = _lights[4];
+        break;
+
+    case '6':
+    	if (_lights[5] != 0)
+    	    _selected_light = _lights[5];
+        break;
+
+    case '7':
+    	if (_lights[6] != 0)
+    	    _selected_light = _lights[6];
+        break;
+
+    case '8':
+    	if (_lights[7] != 0)
+    	    _selected_light = _lights[7];
+    	break;
+
     /* Alternatives version for control keys */
     // case 'w':
     // case 'W':
@@ -469,6 +526,77 @@ void specialKeyboard(int key, int x, int y) {
             transform(KG_Z_AXIS_NEGATIVE);
             break;
 
+        /* USE CASES DE ILUMINACIÓN */
+
+        /*
+          (hecho)  F9 		Activar/desactivar iluminación
+				   F1 - F8 	Encender/apagar la funte de luz correspondiente. F1, F2, F3 corresponderán al sol, a una bonbilla, y a un foco asociado al objeto seleccionado
+				   1 - 8 	Seleccionar la funte de luz correspondiente
+				   0 		Asignar tipo de fuente de luz a la fuente seleccionada (de 4 a 8, los tres primeros son fijos)
+		  (hecho)  F12 		Cambiar de tipo de iluminación al objeto seleccionado (flat <--> smooth)
+				   + 		Si la fuente de luz seleccionada es de tipo foco incrementar ángulo de apertura
+				   - 		decrementar ángulo de apertura del foco (si es que es un foco)
+				   a - A 	Aplicar transformaciones a las fuentes de luz (siempre que sea posible)
+		*/
+
+
+        /* Enciende y apaga el sol cuando la iluminación está activada */
+        case GLUT_KEY_F1:
+        	if (checkState(KG_LIGHTING_ACTIVE)) {
+        		if (glIsEnabled(GL_LIGHT0)) {
+        			glDisable(GL_LIGHT0);
+        			printf("SUN disabled! \n");
+        		} else {
+        			glEnable(GL_LIGHT0);
+        			printf("SUN enabled! \n");
+        		}
+        	}
+        	break;
+
+        /* Enciende y apaga una bombilla existente en el mundo */
+        case GLUT_KEY_F2:
+        	if (checkState(KG_LIGHTING_ACTIVE)) {
+        	     if (glIsEnabled(GL_LIGHT1)) {
+          	    	glDisable(GL_LIGHT1);
+           	    	printf("Bombilla light disabled! \n");
+        	     } else {
+          	    	glEnable(GL_LIGHT1);
+        	        printf("Bombilla light enabled! \n");
+        	     }
+        	 }
+        	 break;
+
+        /* Enciende y apaga el foco asociado al objecto seleccionado */
+        /* Necesita ajustes porque en fin */
+        case GLUT_KEY_F3:
+        	if (checkState(KG_LIGHTING_ACTIVE)) {
+        		if (glIsEnabled(GL_LIGHT2)) {
+        	    	glDisable(GL_LIGHT2);
+        	    	printf("Object light disabled! \n");
+        	    } else {
+        	    	glEnable(GL_LIGHT2);
+        	    	printf("Object light enabled! \n");
+        	    }
+        	}
+           	break;
+
+
+        /* FUNCIONES EXTRA */
+
+        /* Encender y apagar la luz de la cámara */
+        // NOTA: Sólo funciona de momento para la cámara principal.
+        case GLUT_KEY_F4:
+        	if (checkState(KG_LIGHTING_ACTIVE)) {
+        		if (glIsEnabled(GL_LIGHT3)) {
+        			glDisable(GL_LIGHT3);
+        			printf("Camera light disabled! \n");
+        		} else {
+        			glEnable(GL_LIGHT3);
+        			printf("Camera light enabled! \n");
+        		}
+        	}
+        	break;
+
         case GLUT_KEY_F9:
         	if(checkState(KG_LIGHTING_ACTIVE)){
         		glDisable(GL_LIGHTING);
@@ -479,7 +607,8 @@ void specialKeyboard(int key, int x, int y) {
         	break;
 
         case GLUT_KEY_F12:
-        	if (checkState(KG_LIGHTING_ACTIVE))	flipState(KG_LIGHTING_MODE); //Se puede cambiar de flat a smooth solo cuando la iluminación este activada
+        	if (checkState(KG_LIGHTING_ACTIVE))
+        		flipState(KG_LIGHTING_MODE); //Se puede cambiar de flat a smooth solo cuando la iluminación este activada
         	break;
 
         default:
