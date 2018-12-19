@@ -454,7 +454,7 @@ void specialKeyboard(int key, int x, int y) {
             break;
 
         case GLUT_KEY_DOWN:
-            //printf("Y_DOWN \n");
+            //printf("Y_DOWN ");
             transform(KG_Y_AXIS_NEGATIVE);
             break;
 
