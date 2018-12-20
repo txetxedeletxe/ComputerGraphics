@@ -94,7 +94,7 @@ void MKZ_DRAW_start(){
 	}
 	else
 	{
-		glFrustum(c_left,c_right,c_bottom,c_top,c_near,c_far);
+		glFrustum(c_left,c_right,c_bottom,c_top,1,1000);
 	}
 
 

@@ -38,7 +38,7 @@ void KG_redo_transformation();
 
 void KG_next_camera();
 void KG_object_camera();
-void KG_set_camera_projection(unsigned int p_mode);
+void KG_switch_camera_projection();
 
 void KG_lighting_switch();
 void KG_lights_switch(int l_index);

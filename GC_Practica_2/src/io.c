@@ -132,6 +132,11 @@ void event_callback(int event_id , void * event_info){
 			case '0':
 				KG_switch_light_type();
 				break;
+
+			case 'P':
+			case 'p':
+				KG_switch_camera_projection();
+				break;
 		}
 
 

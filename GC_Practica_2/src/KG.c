@@ -2,6 +2,8 @@
 #include "objects.h"
 #include "KG.h"
 
+#include <stdio.h>
+
 #define KG_WINDOW_WIDTH 640
 #define KG_WINDOW_HEIGHT 480
 
@@ -14,7 +16,7 @@
 
 #define KG_ORTHO_WIDTH 8
 #define KG_ORTHO_HEIGHT 6
-#define KG_ORTHO_DEPTH 1000
+#define KG_ORTHO_DEPTH 1
 
 
 /** Internal state */
@@ -38,6 +40,8 @@ void __KG_init(){
 	cameraList = 0;
 	objList = 0;
 	selectedLight = 0;
+	selectedCamera = 0;
+	selectedObject = 0;
 
 	t_type = KG_TRANSFORM_TYPE_TRANSLATE;
 	t_scope = KG_TRANSFORM_SCOPE_GLOBAL;
@@ -45,7 +49,7 @@ void __KG_init(){
 
 	/** Init first cam*/
 	MKZ_camera * cam = MKZ_OBJECT_create_camera();
-	cam->polygon_mode = MKZ_POLYGONMODE_FILLED;
+	cam->polygon_mode = MKZ_POLYGONMODE_WIREFRAME;
 	cam->skybox.r = KG_COL_BACK_R;
 	cam->skybox.g = KG_COL_BACK_G;
 	cam->skybox.b = KG_COL_BACK_B;
@@ -56,11 +60,20 @@ void __KG_init(){
 	v3->y = 1.0f/(KG_ORTHO_HEIGHT);
 	v3->z = 1.0f/(KG_ORTHO_DEPTH);
 
-	MKZ_TRANSFORM_set_absolute_scale(cam->obj.transform,v3);
+	//MKZ_TRANSFORM_set_absolute_scale(cam->obj.transform,v3);
+
+	v3->x = 0;
+	v3->y = 0;
+	v3->z = 7;
+
+	MKZ_TRANSFORM_translate_global(cam->obj.transform,v3);
 
 	MKZ_SCENE_set_camera(cam);
 
-	linkedlist_add(&cameraList,cam);
+	object * obj = create_object_camera(cam);
+
+	linkedlist_add(&cameraList,obj);
+	selectedCamera = cameraList;
 
 	free(v3);
 }
@@ -207,11 +220,17 @@ void KG_object_camera(){
 }
 
 
-void KG_set_camera_projection(unsigned int p_mode){
+void KG_switch_camera_projection(){
 
+	//printf("here\n");
 	if (selectedCamera != 0){
-		MKZ_camera * cam = (MKZ_camera *)selectedCamera->content;
-		cam->projection_mode = p_mode;
+		//printf("also here\n");
+		object * obj = (object *)selectedCamera->content;
+		MKZ_camera * cam = (MKZ_camera *) obj->object;
+		if (cam->projection_mode == MKZ_PROJECTIONMODE_PARALLEL)
+			cam->projection_mode = MKZ_PROJECTIONMODE_PERSPECTIVE;
+		else
+			cam->projection_mode = MKZ_PROJECTIONMODE_PARALLEL;
 	}
 }
 
