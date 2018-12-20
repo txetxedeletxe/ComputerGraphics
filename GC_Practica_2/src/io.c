@@ -491,7 +491,7 @@ void keyboard(unsigned char key, int x, int y) {
     /* Changes light type: DIRECTIONAL --> PUNCTUAL --> FOCUS */
     case '0':
     	printf("Selected light: %d \n", _selected_light);
-    	if (_selected_light >= 3 && _selected_light <= 7) {
+    	if (_selected_light >= 2 && _selected_light <= 7) {
     		printf("Selected light: %d \n", _selected_light);
     		object * l = _lights[_selected_light];
     		int type = ((lighting_component *)_lights[_selected_light]->f_component->comp)->light_type;

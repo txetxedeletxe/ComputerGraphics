@@ -5,8 +5,6 @@
 #include <math.h>
 #include <stdio.h>
 
-
-
 /**
  * @brief Calculates in mat the translation matrix in the specified direction
  * @param direction : (+-1, +-2, +-3), specifying the axis/direction
@@ -69,7 +67,6 @@ void transform(AXIS direction){
     	switch(getState(KG_TRANSFORMATIONS)){
 
     				case KG_TRANSFORMATIONS_TRANSLATE:
-
 
     					if (direction*direction == KG_Z_AXIS_POSITIVE*KG_Z_AXIS_POSITIVE){
 							translate(-direction,matrix);
