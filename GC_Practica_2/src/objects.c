@@ -2,12 +2,18 @@
 #include "objects.h"
 
 
-linkedList * linkedlist_add(linkedList * ll, void * content){
+void linkedlist_add(linkedList ** ll, void * content){
 
+	linkedList * l = *(ll);
 	linkedList * l2 = (linkedList *) malloc(sizeof(linkedList));
 	l2->content = content;
-	l2->ll = ll;
-	return l2;
+	l2->ll_before = 0;
+	l2->ll_after = l;
+
+	if (l != 0)
+		l->ll_before = l2;
+
+	*(ll) = l2;
 
 }
 
@@ -48,7 +54,7 @@ object * create_object_light(MKZ_lightObject * lo){
 
 void add_child(object * parent, object * child){
 
-	parent->children = linkedlist_add(parent->children, child);
+	linkedlist_add(&parent->children, child);
 }
 
 void free_matstack(matStack * matS){
@@ -59,9 +65,9 @@ void free_matstack(matStack * matS){
 	}
 }
 
-void free_linkedlist(linkedList * ll,void (*free_tool)(void* obj)){
+void free_linkedlist(linkedList * ll, void (*free_tool)(void* obj)){
 	if (ll != 0){
-			free_linkedlist(ll->ll);
+			free_linkedlist(ll->ll_after,free_tool);
 
 			if (free_tool == 0){
 				free(ll->content);
@@ -74,6 +80,10 @@ void free_linkedlist(linkedList * ll,void (*free_tool)(void* obj)){
 }
 
 void __free_object(void * obj);
+
+void free_object_linkedlist(linkedList * ll){
+	free_linkedlist(ll,__free_object);
+}
 
 void free_object(object * obj){
 
@@ -92,7 +102,7 @@ void free_object(object * obj){
 			break;
 	}
 
-	free_linkedlist(obj->children,__free_object);
+	free_object_linkedlist(obj->children);
 	free_matstack(obj->mat);
 	free(obj);
 }

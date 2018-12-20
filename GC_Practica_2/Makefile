@@ -13,7 +13,7 @@ HEADDIR = include
 
 CFLAGS = -I$(HEADDIR) -Llib $(LIB) $(ST_LIB) 
 
-_OBJ = main.o
+_OBJ = main.o objects.o io.o KG.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 

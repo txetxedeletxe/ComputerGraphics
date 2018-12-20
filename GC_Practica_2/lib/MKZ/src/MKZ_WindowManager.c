@@ -1,5 +1,5 @@
 
-#include "MKZ_WindowManager.h"
+#include "MKZ_Definitions.h"
 
 #include <GL/glut.h>
 #include <stdio.h>
@@ -13,6 +13,7 @@ char* windowTitle = "";
 void nothing(int event, void * state){}
 
 void keyboardFunction(unsigned char key, int x, int y){
+
 
 	MKZ_kb_event * kb_event = (MKZ_kb_event *) malloc(sizeof(MKZ_kb_event));
 
@@ -42,16 +43,17 @@ void MKZ_WM_init(){
 
 	callBack = nothing;
 
-	glutKeyboardFunc(keyboardFunction);
-	glutSpecialFunc(specialFunction);
-
 }
 
+void MKZ_WM_bind_callback(){
+	glutKeyboardFunc(keyboardFunction);
+	glutSpecialFunc(specialFunction);
+}
 void MKZ_WM_set_display_function(void (* display )( void )){
 	glutDisplayFunc(display);
 }
 
-void KMZ_WM_set_callBack_function(void (*cback)(int event,void * state)){
+void MKZ_WM_set_callBack_function(void (*cback)(int event,void * state)){
 	callBack = cback;
 }
 
