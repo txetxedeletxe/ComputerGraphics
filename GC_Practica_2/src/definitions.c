@@ -108,9 +108,15 @@ void flipState(unsigned int mask){
 	stateField = stateField ^ mask;
 }
 
-void updateTransformObject(){
+void updateTransformObject() {
 
-     _transform_object = (checkState(KG_TRANSFORM_CAMERA)) ? _actual_camera : _selected_object;
+	if (checkState(KG_TRANSFORM_CAMERA)) {
+		_transform_object = _actual_camera;
+	} else if (checkState(KG_TRANSFORM_LIGHTING)) {
+		_transform_object = _lights[_selected_light];
+	} else {
+		_transform_object = _selected_object;
+	}
 
 }
 void addVectors(vector3 *v1, vector3 *v2){

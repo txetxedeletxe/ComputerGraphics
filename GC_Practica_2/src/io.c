@@ -182,6 +182,7 @@ void keyboard(unsigned char key, int x, int y) {
     case 'O':
     case 'o':
     	changeState(KG_TRANSFORM_CAMERA,0);
+    	changeState(KG_TRANSFORM_LIGHTING, 0);
         updateTransformObject();
         
         break;
@@ -189,6 +190,7 @@ void keyboard(unsigned char key, int x, int y) {
     case 'K':
     case 'k':
     	changeState(KG_TRANSFORM_CAMERA,1);
+    	changeState(KG_TRANSFORM_LIGHTING, 0);
         updateTransformObject();
         
         break;
@@ -286,27 +288,68 @@ void keyboard(unsigned char key, int x, int y) {
     case '-':
         if (glutGetModifiers() == GLUT_ACTIVE_CTRL){
            zoom(KG_ZOOM_OUT);
-        }
-        else{
-            uniformScale(0);
-        }
+        } else if (checkState(KG_LIGHTING_ACTIVE)) {
+            	GLenum lightInd = 0;
+            	switch (_selected_light) {
 
-        if (checkState(KG_LIGHTING_ACTIVE)) {
-        	// reduce el ángulo de apertura de un foco (si es lo que hay seleccionado)
-        	//if (_selected_light->f_component->light_type == PUNCTUAL) {
-        		// se aplica la reducción
-        	//}
-        }
-        break;
+            	case 0:
+            		lightInd = GL_LIGHT0;
+            		break;
+
+            	case 1:
+            		lightInd = GL_LIGHT1;
+            		break;
+
+            	case 2:
+            		lightInd = GL_LIGHT2;
+            		break;
+
+            	case 3:
+            		lightInd = GL_LIGHT3;
+            		break;
+
+            	case 4:
+            		lightInd = GL_LIGHT4;
+            		break;
+
+            	case 5:
+            		lightInd = GL_LIGHT5;
+            		break;
+
+            	case 6:
+            		lightInd = GL_LIGHT6;
+            		break;
+
+            	case 7:
+            		lightInd = GL_LIGHT7;
+            		break;
+            	}
+            	printf("Light index %d \n", lightInd);
+            	printf("Selected light %d \n", _selected_light);
+            	if (((lighting_component *)_lights[_selected_light]->f_component->comp)->light_type == FOCUS) {
+            		GLfloat angle;
+            		glGetLightfv(lightInd, GL_SPOT_CUTOFF, &angle);
+            		printf("Current %f \n", angle);
+            		if (angle - KG_FOCUS_ANGLE_STEP >= 0.0f) {
+            			angle = angle - KG_FOCUS_ANGLE_STEP;
+            			glLightf(lightInd, GL_SPOT_CUTOFF, angle);
+            			glGetLightfv(lightInd, GL_SPOT_CUTOFF, &angle);
+            			printf("Updated angle %f \n", angle);
+            		}
+            	}
+
+            } else {
+            	uniformScale(0);
+            }
+            break;
 
     /* Zoom in */
     case '+':
         if (glutGetModifiers() == GLUT_ACTIVE_CTRL){
             zoom(KG_ZOOM_IN);
         } else if (checkState(KG_LIGHTING_ACTIVE)) {
-        	printf("ENTERED \n");
         	GLenum lightInd = 0;
-        	switch (_selected_light){
+        	switch (_selected_light) {
 
         	case 0:
         		lightInd = GL_LIGHT0;
@@ -339,25 +382,18 @@ void keyboard(unsigned char key, int x, int y) {
         	case 7:
         		lightInd = GL_LIGHT7;
         		break;
-
-
-
-
-
         	}
-        	printf("%d \n", lightInd);
-        	printf("%d \n", _selected_light);
-        	//glGetLightfv(GLenum light,  GLenum pname,  GLfloat * params);
-            // reduce el ángulo de apertura de un foco (si es lo que hay seleccionado)
+        	printf("Light index %d \n", lightInd);
+        	printf("Selected light %d \n", _selected_light);
         	if (((lighting_component *)_lights[_selected_light]->f_component->comp)->light_type == FOCUS) {
-        		GLfloat  angle;
+        		GLfloat angle;
         		glGetLightfv(lightInd, GL_SPOT_CUTOFF, &angle);
-        		printf("%f \n", angle);
-        		if (angle + 5.0f <= 180.0f) {
-        			angle = angle + 5.0f;
+        		printf("Current %f \n", angle);
+        		if (angle + KG_FOCUS_ANGLE_STEP <= 90.0f) {
+        			angle = angle + KG_FOCUS_ANGLE_STEP;
         			glLightf(lightInd, GL_SPOT_CUTOFF, angle);
         			glGetLightfv(lightInd, GL_SPOT_CUTOFF, &angle);
-        			printf("%f \n", angle);
+        			printf("Updated angle %f \n", angle);
         		}
         	}
 
@@ -452,6 +488,18 @@ void keyboard(unsigned char key, int x, int y) {
 
         break;
 
+    /* Changes light type: DIRECTIONAL --> PUNCTUAL --> FOCUS */
+    case '0':
+    	printf("Selected light: %d \n", _selected_light);
+    	if (_selected_light >= 3 && _selected_light <= 7) {
+    		printf("Selected light: %d \n", _selected_light);
+    		object * l = _lights[_selected_light];
+    		int type = ((lighting_component *)_lights[_selected_light]->f_component->comp)->light_type;
+    		type = (type + 1) % 3;
+    		((lighting_component *)_lights[_selected_light]->f_component->comp)->light_type = type;
+    	}
+    	break;
+
     case '1':
     case '2':
     case '3':
@@ -462,6 +510,15 @@ void keyboard(unsigned char key, int x, int y) {
     case '8':
     	if (_lights[((char)key) - '1'] != 0)
     		_selected_light = ((char)key) - '1';
+    	break;
+
+    /* Cambia el estado de las transformaciones de objetos */
+    case 'A':
+    case 'a':
+    	changeState(KG_TRANSFORM_LIGHTING, 1);
+		changeState(KG_TRANSFORM_CAMERA, 0);
+		printf("Lighting transformations state changed! \n");
+		updateTransformObject();
     	break;
 
     /* Alternatives version for control keys */

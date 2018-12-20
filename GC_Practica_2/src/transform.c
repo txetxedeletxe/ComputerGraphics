@@ -48,8 +48,6 @@ void shear(AXIS direction, GLfloat* mat);
  */
 void updateObjectMatrix(GLfloat * matrix);
 
-
-
 void transform(AXIS direction){
 
     if (!_transform_object)
@@ -182,9 +180,53 @@ void transform(AXIS direction){
 		free(matrix);
     }
 
+	if (getState(KG_TRANSFORM_LIGHTING))
+		updateLightAfterTransform(tc);
 
 }
 
+void updateLightAfterTransform(transform_component *tc) {
+	GLenum lightInd = 0;
+	switch (_selected_light) {
+		case 0:
+			lightInd = GL_LIGHT0;
+			break;
+		case 1:
+			lightInd = GL_LIGHT1;
+			break;
+
+		case 2:
+			lightInd = GL_LIGHT2;
+			break;
+
+		case 3:
+			lightInd = GL_LIGHT3;
+			break;
+
+		case 4:
+			lightInd = GL_LIGHT4;
+			break;
+
+		case 5:
+	    	lightInd = GL_LIGHT5;
+	    	break;
+
+	    case 6:
+	    	lightInd = GL_LIGHT6;
+	    	break;
+
+	    case 7:
+	    	lightInd = GL_LIGHT7;
+	    	break;
+	}
+
+	GLfloat light_position[] = { tc->undoStack->mat[12], tc->undoStack->mat[13], tc->undoStack->mat[14], 1.0 };
+	GLfloat spot_direction[] = { tc->undoStack->mat[8], tc->undoStack->mat[9], tc->undoStack->mat[10] };
+
+	glLightfv(lightInd, GL_POSITION, light_position);
+	glLightfv(lightInd, GL_SPOT_DIRECTION, spot_direction);
+
+}
 
 void undo(){
 

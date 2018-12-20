@@ -94,6 +94,8 @@
 #define KG_LIGHTING_MODE 512
 /*States whether the lighting is active or not*/
 #define KG_LIGHTING_ACTIVE 1024
+/* Stated whetHer the light transformations are active or not */
+#define KG_TRANSFORM_LIGHTING 2048
 
 
 /* Step units for transformations */
@@ -101,6 +103,9 @@
 #define KG_SCALE_STEP 1.1f
 #define KG_TRANSLATE_STEP 0.3f
 #define KG_SHEAR_STEP 0.05f
+
+/* Step units for focus angles */
+#define KG_FOCUS_ANGLE_STEP 2.0f // degrees
 
 /*Camara mode*/
 #define FLIGHT 0

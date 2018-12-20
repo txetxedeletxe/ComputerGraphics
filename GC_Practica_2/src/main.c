@@ -54,6 +54,7 @@ void initialization (){
     lighting_component * lcc = create_light(PUNCTUAL, 10.0, 5.0, 1.0, 1.0, 0.0, 1.0, 10.0, 1);
     component * ccl = create_component(COMPONENT_LIGHT,lcc);
     add_component(cam, ccl);
+    _lights[3] = cam;
 
     GLfloat light2_ambient[] = {lcc->color.r*lcc->intensity[0],lcc->color.g*lcc->intensity[0], lcc->color.b*lcc->intensity[0], 1.0};
     GLfloat light2_diffuse[] = { lcc->color.r*lcc->intensity[1], lcc->color.g*lcc->intensity[1], lcc->color.b*lcc->intensity[1], 1.0 };

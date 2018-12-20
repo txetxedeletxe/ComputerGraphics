@@ -108,6 +108,7 @@ void display(void) {
     /*First, we draw the axes*/
     draw_axes();
 
+    /* Change camera's light position */
     transform_component * camera = (transform_component *) get_component(_actual_camera,COMPONENT_TRANSFORM);
     lighting_component * l;
     if ((l = get_component(_actual_camera , COMPONENT_LIGHT))!=0 && checkState(KG_LIGHTING_ACTIVE)){
