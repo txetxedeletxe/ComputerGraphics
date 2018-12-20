@@ -4,6 +4,8 @@
 
 #include "MKZ_Geometry.h"
 #include "MKZ_Arithmetic.h"
+
+
 void MKZ_ARITHMETIC_nulMatrix(float* mat){
 
 	int i;
@@ -32,13 +34,28 @@ void MKZ_ARITHMETIC_identityMatrix(float* mat){
 
 }
 
+float MKZ_ARITHMETIC_determinant(float * mat){
+
+	float f = 0;
+
+	f += mat[0]*mat[5]*mat[10];
+	f += mat[4]*mat[9]*mat[2];
+	f += mat[8]*mat[1]*mat[6];
+
+	f -= mat[8]*mat[5]*mat[2];
+	f -= mat[4]*mat[1]*mat[10];
+	f -= mat[0]*mat[9]*mat[6];
+
+	return f;
+}
+
 void MKZ_ARITHMETIC_normalize_vector(MKZ_vector3 * v3){
 
 	float  dist = MKZ_ARITHMETIC_eulidean_norm_vector(v3);
 
-	v3->x /= dist;
-	v3->y /= dist;
-	v3->z /= dist;
+	v3->x = v3->x/dist;
+	v3->y = v3->y/dist;
+	v3->z = v3->z/dist;
 
 
 }
@@ -46,7 +63,7 @@ void MKZ_ARITHMETIC_normalize_vector(MKZ_vector3 * v3){
 void MKZ_ARITHMETIC_corssProduct_vector(MKZ_vector3* v1, MKZ_vector3* v2 , MKZ_vector3* v3){
 
 	v3->x = v1->y*v2->z - v1->z*v2->y;
-	v3->y = -v1->x*v2->z + v1->z*v2->x;
+	v3->y = v1->z*v2->x - v1->x*v2->z;
 	v3->z = v1->x*v2->y - v1->y*v2->x;
 
 }

@@ -19,10 +19,12 @@ void print_info(){
 			printf("Objeto\n");
 			tra_obj = (MKZ_object*)((KG_get_selected_object() != 0) ? &(KG_get_selected_object()->obj) : 0);
 			break;
+
 		case KG_TRANSFORM_TARGET_CAMERA:
 			printf("Camara\n");
 			tra_obj = (MKZ_object*)((KG_get_selected_camera() != 0) ? &(KG_get_selected_camera()->obj) : 0);
 			break;
+
 		case KG_TRANSFORM_TARGET_LIGHT:
 			printf("Light\n");
 			tra_obj = (MKZ_object*)((KG_get_selected_light() != 0) ? &(KG_get_selected_light()->obj) : 0);
@@ -240,6 +242,22 @@ void event_callback(int event_id , void * event_info){
 			case 'p':
 				KG_switch_camera_projection();
 				break;
+
+			case 'C':
+		        KG_object_camera();
+		        break;
+
+			case 'c':
+				KG_next_camera();
+				break;
+
+			case 'n':
+				KG_create_camera();
+				break;
+
+		    case 'Q':
+		        KG_camera_camera();
+		        break;
 		}
 
 

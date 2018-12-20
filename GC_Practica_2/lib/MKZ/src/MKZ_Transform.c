@@ -124,8 +124,8 @@ void MKZ_TRANSFORM_scaleUniform_global(float * tramat, float scalar){
 void MKZ_TRANSFORM_set_position_global(float * modMat, MKZ_point3 * position){
 
 	modMat[12] = position->x;
-	modMat[12] = position->y;
-	modMat[12] = position->z;
+	modMat[13] = position->y;
+	modMat[14] = position->z;
 
 }
 
@@ -177,19 +177,19 @@ void MKZ_TRANSFORM_look_at(float * modMat, MKZ_point3 * p3){
 
 
 		float  mod = MKZ_ARITHMETIC_eulidean_norm(modMat);
-
+		//mod = 1;
 		modMat[0] = newX.x*mod;
 		modMat[1] = newX.y*mod;
 		modMat[2] = newX.z*mod;
 
 		mod = MKZ_ARITHMETIC_eulidean_norm(modMat+4);
-
+		//mod = 1;
 		modMat[4]= vup.x*mod;
 		modMat[5]= vup.y*mod;
 		modMat[6]= vup.z*mod;
 
 		mod = MKZ_ARITHMETIC_eulidean_norm(modMat+8);
-
+		//mod = 1;
 		modMat[8] = -direction.x*mod;
 		modMat[9] = -direction.y*mod;
 		modMat[10] = -direction.z*mod;

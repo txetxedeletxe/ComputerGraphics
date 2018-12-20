@@ -12,6 +12,8 @@ void MKZ_ARITHMETIC_matMul(float * mat1,float * mat2,float * mat3);
 float MKZ_ARITHMETIC_eulidean_norm_vector(MKZ_vector3 * v3);
 float MKZ_ARITHMETIC_eulidean_norm(float * v3);
 
+float MKZ_ARITHMETIC_determinant(float * mat);
+
 /* matrices */
 void MKZ_ARITHMETIC_matrix_identity(float* mat);
 void MKZ_ARITHMETIC_matrix_nul(float* mat);

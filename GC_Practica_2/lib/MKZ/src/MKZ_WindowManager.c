@@ -39,7 +39,6 @@ void MKZ_WM_init(){
 
 	int a = 0;
 	glutInit(&a,0);
-	glutInitDisplayMode(GLUT_RGB);
 
 	callBack = nothing;
 

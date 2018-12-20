@@ -4,6 +4,8 @@
 #include "MKZ_Definitions.h"
 
 #include <GL/gl.h>
+#include <GL/glut.h>
+
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
@@ -36,10 +38,11 @@ void MKZ_DRAW_init(){
 	c_near 		= 1;
 	c_far 		= 1000;
 
+	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 	glClearColor(0, 0, 0, 1);
-	//glEnable(GL_CULL_FACE);
-	//glEnable(GL_DEPTH_TEST);
-	//glDepthFunc(GL_LESS);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 }
@@ -129,7 +132,6 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 			glVertex3d(mesh->vertex_table[v_index].coord.x,
 					mesh->vertex_table[v_index].coord.y,
 					mesh->vertex_table[v_index].coord.z);
-
 		}
 
 		glEnd();
@@ -144,5 +146,5 @@ void MKZ_DRAW_disable_drawMask(unsigned int d_mask){
 }
 
 void MKZ_DRAW_end(){
-	glFlush();
+	glutSwapBuffers();
 }

@@ -29,6 +29,8 @@ int KG_load_object(char * filename);
 void KG_select_next_object();
 void KG_delete_selected_object();
 
+void KG_create_camera();
+
 void KG_transform_type_set(int t_type);
 void KG_transform_scope_set(int t_scope);
 void KG_transform_target_set(int t_target);
@@ -40,6 +42,7 @@ void KG_redo_transformation();
 
 void KG_next_camera();
 void KG_object_camera();
+void KG_camera_camera();
 void KG_switch_camera_projection();
 
 void KG_lighting_switch();
