@@ -29,7 +29,8 @@ typedef struct linkedList linkedList;
 typedef struct{
 
 	void * object;
-	matStack * mat;
+	matStack * undoStack;
+	matStack * redoStack;
 	int objectType;
 	linkedList * children;
 
@@ -38,6 +39,11 @@ typedef struct{
 void linkedlist_add(linkedList ** ll, void * content);
 void free_linkedlist(linkedList * ll,void (*free_tool)(void* obj));
 void free_object_linkedlist(linkedList * ll);
+
+void matStack_push(matStack **ms , float * n_mat);
+float * matStack_pop(matStack ** ms);
+void free_matstack(matStack * matS);
+
 object * create_object_meshed(MKZ_meshedObject * mo);
 object * create_object_camera(MKZ_camera * ca);
 object * create_object_light(MKZ_lightObject * lo);

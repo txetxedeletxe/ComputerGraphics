@@ -2,6 +2,9 @@
 
 #include <stdio.h>
 
+
+void MKZ_TRANSFORM_matrix_global(float * modMat, float * transformMat);
+
 void MKZ_TRANSFORM_to_cameraMatrix(float* transform_mat , float* camera_mat){
 
 	MKZ_ARITHMETIC_identityMatrix(camera_mat);
@@ -146,6 +149,50 @@ void MKZ_TRANSFORM_set_absolute_scale(float* modMat, MKZ_vector3 * scaleVector){
 	modMat[8] *= f2;
 	modMat[9] *= f2;
 	modMat[10] *= f2;
+}
+
+void MKZ_TRANSFORM_look_at(float * modMat, MKZ_point3 * p3){
+
+	//direct es el vector dirección de la camaŕa al objeto.
+		float direct_x = p3->x - modMat[12];
+		float direct_y = p3->y - modMat[13];
+		float direct_z = p3->z - modMat[14];
+
+		MKZ_vector3 direction;
+		direction.x = direct_x;
+		direction.y = direct_y;
+		direction.z = direct_z;
+
+		MKZ_vector3 vup;
+		vup.x = modMat[4];
+		vup.y = modMat[5];
+		vup.z = modMat[6];
+
+		MKZ_vector3 newX;
+
+		MKZ_ARITHMETIC_normalize_vector(&direction);
+		MKZ_ARITHMETIC_normalize_vector(&vup);
+		MKZ_ARITHMETIC_corssProduct_vector( &direction, &vup, &newX);
+		MKZ_ARITHMETIC_corssProduct_vector( &newX , &direction, &vup);
+
+
+		float  mod = MKZ_ARITHMETIC_eulidean_norm(modMat);
+
+		modMat[0] = newX.x*mod;
+		modMat[1] = newX.y*mod;
+		modMat[2] = newX.z*mod;
+
+		mod = MKZ_ARITHMETIC_eulidean_norm(modMat+4);
+
+		modMat[4]= vup.x*mod;
+		modMat[5]= vup.y*mod;
+		modMat[6]= vup.z*mod;
+
+		mod = MKZ_ARITHMETIC_eulidean_norm(modMat+8);
+
+		modMat[8] = -direction.x*mod;
+		modMat[9] = -direction.y*mod;
+		modMat[10] = -direction.z*mod;
 }
 
 MKZ_vector3 * MKZ_TRANSFORM_get_absolute_scale(float* tramat){

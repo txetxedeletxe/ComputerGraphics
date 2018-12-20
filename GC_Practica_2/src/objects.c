@@ -17,11 +17,35 @@ void linkedlist_add(linkedList ** ll, void * content){
 
 }
 
+void matStack_push(matStack **ms , float * n_mat){
+
+	matStack * m = *(ms);
+	matStack * m2 = (matStack *) malloc(sizeof(matStack));
+
+	m2->mat = n_mat;
+	m2->matStack = m;
+	*(ms) = m2;
+
+}
+
+float * matStack_pop(matStack ** ms){
+
+	matStack * m = *(ms);
+	float * mat = m->mat;
+	*(ms) = m->matStack;
+	free(m);
+
+	return mat;
+
+
+}
+
 object * create_object_meshed(MKZ_meshedObject * mo){
 
 	object * obj = (object *) malloc(sizeof(object));
 
-	obj->mat = 0;
+	obj->undoStack = 0;
+	obj->redoStack = 0;
 	obj->objectType = KG_OBJECT_TYPE_MESH;
 	obj->object = mo;
 	obj->children = 0;
@@ -32,7 +56,8 @@ object * create_object_camera(MKZ_camera * ca){
 
 	object * obj = (object *) malloc(sizeof(object));
 
-	obj->mat = 0;
+	obj->undoStack = 0;
+	obj->redoStack = 0;
 	obj->objectType = KG_OBJECT_TYPE_CAMERA;
 	obj->object = ca;
 	obj->children = 0;
@@ -43,7 +68,8 @@ object * create_object_light(MKZ_lightObject * lo){
 
 	object * obj = (object *) malloc(sizeof(object));
 
-	obj->mat = 0;
+	obj->undoStack = 0;
+	obj->redoStack = 0;
 	obj->objectType = KG_OBJECT_TYPE_LIGHT;
 	obj->object = lo;
 	obj->children = 0;
@@ -103,7 +129,8 @@ void free_object(object * obj){
 	}
 
 	free_object_linkedlist(obj->children);
-	free_matstack(obj->mat);
+	free_matstack(obj->undoStack);
+	free_matstack(obj->redoStack);
 	free(obj);
 }
 

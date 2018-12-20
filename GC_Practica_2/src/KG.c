@@ -16,8 +16,12 @@
 
 #define KG_ORTHO_WIDTH 8
 #define KG_ORTHO_HEIGHT 6
-#define KG_ORTHO_DEPTH 1
+#define KG_ORTHO_DEPTH 10
 
+
+#define KG_TRANSLATE_STEP 0.3f
+#define KG_ROTATE_STEP 0.05235987755
+#define KG_SCALE_STEP 1.1f
 
 /** Internal state */
 /* objects */
@@ -31,9 +35,11 @@ int selectedLight;
 
 
 /** transform state **/
-unsigned int t_type;
-unsigned int t_scope;
-unsigned int t_target;
+int t_type;
+int t_scope;
+int t_target;
+
+void KG_save_object_matrix(object * obj, MKZ_object * mkz_obj);
 
 void __KG_init(){
 
@@ -60,11 +66,11 @@ void __KG_init(){
 	v3->y = 1.0f/(KG_ORTHO_HEIGHT);
 	v3->z = 1.0f/(KG_ORTHO_DEPTH);
 
-	//MKZ_TRANSFORM_set_absolute_scale(cam->obj.transform,v3);
+	MKZ_TRANSFORM_set_absolute_scale(cam->obj.transform,v3);
 
 	v3->x = 0;
 	v3->y = 0;
-	v3->z = 7;
+	v3->z = 15;
 
 	MKZ_TRANSFORM_translate_global(cam->obj.transform,v3);
 
@@ -146,6 +152,11 @@ void KG_delete_selected_object(){
 				objList->ll_before = 0;
 
 			selectedObject->ll_after = 0;
+
+			object * obj = (object *) selectedObject->content;
+			MKZ_meshedObject * mo = (MKZ_meshedObject *) obj->object;
+			MKZ_SCENE_remove_mesh(mo->obj.id);
+
 			free_object_linkedlist(selectedObject);
 			selectedObject = objList;
 		}
@@ -161,6 +172,10 @@ void KG_delete_selected_object(){
 			selectedObject->ll_after = 0;
 			selectedObject->ll_before = 0;
 
+			object * obj = (object *) selectedObject->content;
+			MKZ_meshedObject * mo = (MKZ_meshedObject *) obj->object;
+			MKZ_SCENE_remove_mesh(mo->obj.id);
+
 			free_object_linkedlist(selectedObject);
 
 			selectedObject = ll;
@@ -170,35 +185,544 @@ void KG_delete_selected_object(){
 			}
 		}
 	}
+
+	if (selectedObject == 0 && t_target == KG_TRANSFORM_TARGET_CAMERA){
+		t_scope = KG_TRANSFORM_SCOPE_LOCAL;
+	}
+
 }
 
-void KG_transform_type_set(unsigned int transform_type){
+void KG_transform_type_set(int transform_type){
 
 	t_type = transform_type;
+
 }
 
-void KG_transform_scope_set(unsigned int transform_scope){
+void KG_transform_scope_set(int transform_scope){
 	t_scope = transform_scope;
+
+	if (t_target == KG_TRANSFORM_TARGET_CAMERA){
+		if (selectedObject == 0)
+			t_scope = KG_TRANSFORM_SCOPE_LOCAL;
+		else if (selectedCamera != 0 && t_scope == KG_TRANSFORM_SCOPE_GLOBAL)
+		{
+			object * obj = (object *) selectedCamera->content;
+			MKZ_camera * ca = (MKZ_camera *) obj->object;
+
+			KG_save_object_matrix(obj,&ca->obj);
+
+			obj = (object *) selectedCamera->content;
+			MKZ_meshedObject * mo = (MKZ_meshedObject *) obj->object;
+
+			MKZ_point3 p3;
+			p3.x = mo->obj.transform[12];
+			p3.y = mo->obj.transform[13];
+			p3.z = mo->obj.transform[14];
+			MKZ_TRANSFORM_look_at(ca->obj.transform,&p3);
+		}
+
+	}
+
+
 }
 
-void KG_transform_target_set(unsigned int transform_target){
+void KG_transform_target_set(int transform_target){
 	t_target = transform_target;
+	t_scope = KG_TRANSFORM_SCOPE_LOCAL;
+	t_type = KG_TRANSFORM_TYPE_TRANSLATE;
 }
+
+void KG_save_object_matrix(object * obj, MKZ_object * mkz_obj){
+
+	/** copy matrix to stack */
+
+
+	float * mat = MKZ_ARITHMETIC_create_matrix();
+	MKZ_ARITHMETIC_copy_matrix(mkz_obj->transform,mat);
+	matStack_push(&obj->undoStack,mat);
+
+	/**cannot redo **/
+	free_matstack(obj->redoStack);
+	obj->redoStack = 0;
+
+}
+
+void KG_transform_object(int axis){
+
+	if (selectedObject != 0){
+
+		object * obj = (object *) selectedObject->content;
+		MKZ_meshedObject * mo = (MKZ_meshedObject *) obj->object;
+
+		KG_save_object_matrix(obj,&mo->obj);
+
+		int sense = axis;
+		int magnitude = axis;
+
+		if (magnitude < 0){
+			magnitude = -magnitude;
+		}
+
+		sense = sense/magnitude;
+
+		MKZ_vector3 * v3 = MKZ_GEOMETRY_create_vector3();
+
+		float scaleFactor = 1.0f;
+
+		float * n_mat = MKZ_ARITHMETIC_create_matrix();
+
+		switch (t_type){
+
+		case KG_TRANSFORM_TYPE_TRANSLATE:
+
+			switch (magnitude){
+
+			case KG_TRANSFORM_AXIS_X:
+				v3->x = sense * KG_TRANSLATE_STEP;
+				break;
+
+			case KG_TRANSFORM_AXIS_Y:
+				v3->y = sense * KG_TRANSLATE_STEP;
+				break;
+
+			case KG_TRANSFORM_AXIS_Z:
+				v3->z = sense * KG_TRANSLATE_STEP;
+				break;
+
+			}
+
+			MKZ_ARITHMETIC_matrix_translate(v3,n_mat);
+			break;
+
+		case KG_TRANSFORM_TYPE_ROTATE:
+
+			switch (magnitude){
+
+			case KG_TRANSFORM_AXIS_X:
+				MKZ_ARITHMETIC_matrix_rotateY(sense*KG_ROTATE_STEP,n_mat);
+				break;
+
+			case KG_TRANSFORM_AXIS_Y:
+				MKZ_ARITHMETIC_matrix_rotateX(sense*KG_ROTATE_STEP,n_mat);
+				break;
+
+			case KG_TRANSFORM_AXIS_Z:
+				MKZ_ARITHMETIC_matrix_rotateZ(sense*KG_ROTATE_STEP,n_mat);
+				break;
+
+			}
+			break;
+
+		case KG_TRANSFORM_TYPE_SCALE:
+
+			if (sense > 0){
+				scaleFactor *= KG_SCALE_STEP;
+			}
+			else{
+				scaleFactor /= KG_SCALE_STEP;
+			}
+
+			switch (magnitude){
+
+			case KG_TRANSFORM_AXIS_X:
+				MKZ_ARITHMETIC_matrix_scaleX(scaleFactor,n_mat);
+				break;
+
+			case KG_TRANSFORM_AXIS_Y:
+				MKZ_ARITHMETIC_matrix_scaleY(scaleFactor,n_mat);
+				break;
+
+			case KG_TRANSFORM_AXIS_Z:
+				MKZ_ARITHMETIC_matrix_scaleZ(scaleFactor,n_mat);
+				break;
+
+			}
+			break;
+
+		}
+
+		MKZ_GEOMETRY_free_vector3(v3);
+
+
+		if (t_scope == KG_TRANSFORM_SCOPE_LOCAL){
+			MKZ_TRANSFORM_matrix_local(n_mat,mo->obj.transform);
+		}else{
+			//printf("t_c : %d \n", t_scope);
+			MKZ_TRANSFORM_matrix_global(n_mat,mo->obj.transform);
+		}
+
+
+	}
+
+}
+
+void KG_transform_camera(int axis){
+
+	if (selectedCamera != 0){
+
+
+		object * obj = (object *) selectedCamera->content;
+		MKZ_camera* ca = (MKZ_camera *) obj->object;
+
+		KG_save_object_matrix(obj,&ca->obj);
+
+
+		int sense = axis;
+		int magnitude = axis;
+
+		if (magnitude < 0){
+			magnitude = -magnitude;
+		}
+
+		sense = sense/magnitude;
+
+		MKZ_vector3 * v3 = MKZ_GEOMETRY_create_vector3();
+
+		float scaleFactor = 1.0f;
+
+		if (t_scope == KG_TRANSFORM_SCOPE_GLOBAL){
+
+			object * objobj = (object *) selectedObject->content;
+			MKZ_meshedObject * mo = (MKZ_meshedObject *) objobj->object;
+			v3->x = -mo->obj.transform[12];
+			v3->y = -mo->obj.transform[13];
+			v3->z = -mo->obj.transform[14];
+
+			if (magnitude == KG_TRANSFORM_AXIS_Z){
+
+				v3->x += ca->obj.transform[12];
+				v3->y += ca->obj.transform[13];
+				v3->z += ca->obj.transform[14];
+
+				float dist = MKZ_ARITHMETIC_eulidean_norm_vector(v3);
+
+				v3->x /= dist;
+				v3->y /= dist;
+				v3->z /= dist;
+
+				v3->x *= KG_TRANSLATE_STEP;
+				v3->y *= KG_TRANSLATE_STEP;
+				v3->z *= KG_TRANSLATE_STEP;
+
+				if (sense == 1){
+
+					if (dist > KG_TRANSLATE_STEP){
+						v3->x = -v3->x;
+						v3->y = -v3->y;
+						v3->z = -v3->z;
+						MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
+					}
+				}
+				else{
+
+					MKZ_TRANSFORM_translate_global(ca->obj.transform,v3);
+				}
+			}
+			else
+			{
+
+				switch(magnitude){
+
+				case KG_TRANSFORM_AXIS_X:
+					MKZ_TRANSFORM_translate_global(ca->obj.transform,v3);
+					MKZ_TRANSFORM_rotateY_global(ca->obj.transform,KG_ROTATE_STEP*sense);
+					v3->x = -v3->x;
+					v3->y = -v3->y;
+					v3->z = -v3->z;
+					MKZ_TRANSFORM_translate_global(ca->obj.transform,v3);
+					break;
+
+				case KG_TRANSFORM_AXIS_Y:
+					MKZ_TRANSFORM_translate_global(ca->obj.transform,v3);
+					MKZ_TRANSFORM_rotateX_global(ca->obj.transform,KG_ROTATE_STEP*sense);
+					v3->x = -v3->x;
+					v3->y = -v3->y;
+					v3->z = -v3->z;
+					MKZ_TRANSFORM_translate_global(ca->obj.transform,v3);
+					break;
+				}
+			}
+
+
+		}
+
+		switch (t_type){
+
+		case KG_TRANSFORM_TYPE_TRANSLATE:
+
+			switch (magnitude){
+
+			case KG_TRANSFORM_AXIS_X:
+				v3->x = sense * KG_TRANSLATE_STEP;
+				break;
+
+			case KG_TRANSFORM_AXIS_Y:
+				v3->y = sense * KG_TRANSLATE_STEP;
+				break;
+
+			case KG_TRANSFORM_AXIS_Z:
+				v3->z = sense * KG_TRANSLATE_STEP;
+				break;
+
+			}
+
+			MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
+			break;
+
+		case KG_TRANSFORM_TYPE_ROTATE:
+
+			switch (magnitude){
+
+			case KG_TRANSFORM_AXIS_X:
+				MKZ_TRANSFORM_rotateY_local(ca->obj.transform,-sense*KG_ROTATE_STEP);
+				break;
+
+			case KG_TRANSFORM_AXIS_Y:
+				MKZ_TRANSFORM_rotateX_local(ca->obj.transform,sense*KG_ROTATE_STEP);
+				break;
+
+			case KG_TRANSFORM_AXIS_Z:
+				MKZ_TRANSFORM_rotateZ_local(ca->obj.transform,sense*KG_ROTATE_STEP);
+				break;
+
+			}
+			break;
+
+		case KG_TRANSFORM_TYPE_SCALE:
+
+			if (sense > 0){
+				scaleFactor *= KG_SCALE_STEP;
+			}
+			else{
+				scaleFactor /= KG_SCALE_STEP;
+			}
+
+			switch (magnitude){
+
+			case KG_TRANSFORM_AXIS_X:
+				MKZ_TRANSFORM_scaleX_local(ca->obj.transform,scaleFactor*KG_SCALE_STEP);
+				break;
+
+			case KG_TRANSFORM_AXIS_Y:
+				MKZ_TRANSFORM_scaleY_local(ca->obj.transform,scaleFactor*KG_SCALE_STEP);
+				break;
+
+			case KG_TRANSFORM_AXIS_Z:
+				MKZ_TRANSFORM_scaleZ_local(ca->obj.transform,scaleFactor*KG_SCALE_STEP);
+				break;
+
+			}
+			break;
+
+		}
+
+		MKZ_GEOMETRY_free_vector3(v3);
+
+
+
+	}
+
+
+}
+
+void KG_transform_light(int axis){
+
+}
+
+
 
 void KG_transform(int axis){
 
+	switch(t_target){
+
+	case KG_TRANSFORM_TARGET_OBJECT:
+		KG_transform_object(axis);
+		break;
+	case KG_TRANSFORM_TARGET_CAMERA:
+		KG_transform_camera(axis);
+		break;
+	case KG_TRANSFORM_TARGET_LIGHT:
+		KG_transform_light(axis);
+		break;
+	}
+
+}
+
+void KG_uniform_scale_object(int sense){
+
+	if (selectedObject != 0){
+
+		object * obj = (object *) selectedObject->content;
+		MKZ_meshedObject * mo = (MKZ_meshedObject * ) obj->object;
+
+		KG_save_object_matrix(obj,&mo->obj);
+
+		float f = 1.0f;
+
+		if (sense < 0){
+			f /= KG_SCALE_STEP;
+		}
+		else{
+			f *= KG_SCALE_STEP;
+		}
+
+		if (t_scope == KG_TRANSFORM_SCOPE_GLOBAL){
+			MKZ_TRANSFORM_scaleUniform_global(mo->obj.transform,f);
+		}else{
+			MKZ_TRANSFORM_scaleUniform_local(mo->obj.transform,f);
+		}
+	}
+}
+
+void KG_uniform_scale_camera(int sense){
+
+	if (selectedCamera != 0){
+
+			object * obj = (object *) selectedCamera->content;
+			MKZ_camera * ca = (MKZ_camera * ) obj->object;
+
+			KG_save_object_matrix(obj,&ca->obj);
+
+			float f = 1.0f;
+
+			if (sense < 0){
+				f /= KG_SCALE_STEP;
+			}
+			else{
+				f *= KG_SCALE_STEP;
+			}
+
+			if (t_scope == KG_TRANSFORM_SCOPE_GLOBAL){
+				MKZ_TRANSFORM_scaleUniform_global(ca->obj.transform,f);
+			}else{
+				MKZ_TRANSFORM_scaleUniform_local(ca->obj.transform,f);
+			}
+		}
+
+}
+
+void KG_uniform_scale_light(int sense){
+
+	if (selectedObject != 0){
+
+		MKZ_meshedObject * lo = (MKZ_meshedObject * ) lightList[selectedLight].object;
+
+		KG_save_object_matrix(&lightList[selectedLight],&lo->obj);
+
+		float f = 1.0f;
+
+		if (sense < 0){
+			f /= KG_SCALE_STEP;
+		}
+		else{
+			f *= KG_SCALE_STEP;
+		}
+
+		if (t_scope == KG_TRANSFORM_SCOPE_GLOBAL){
+			MKZ_TRANSFORM_scaleUniform_global(lo->obj.transform,f);
+		}else{
+			MKZ_TRANSFORM_scaleUniform_local(lo->obj.transform,f);
+		}
+	}
 
 }
 
 void KG_uniform_scale(int sense){
 
+	switch(t_target){
+
+		case KG_TRANSFORM_TARGET_OBJECT:
+			KG_uniform_scale_object(sense);
+			break;
+		case KG_TRANSFORM_TARGET_CAMERA:
+			KG_uniform_scale_camera(sense);
+			break;
+		case KG_TRANSFORM_TARGET_LIGHT:
+			KG_uniform_scale_light(sense);
+			break;
+		}
 }
 
 void KG_undo_transformation(){
 
+	object * obj;
+	MKZ_object * mkz_obj;
+
+	switch(t_target){
+
+		case KG_TRANSFORM_TARGET_OBJECT:
+
+			if (selectedObject == 0)
+				return;
+
+			obj = (object *) selectedObject->content;
+			mkz_obj = (MKZ_object *)&(((MKZ_meshedObject * ) obj->object)->obj);
+			break;
+
+
+		case KG_TRANSFORM_TARGET_CAMERA:
+			if (selectedCamera == 0)
+				return;
+
+			obj = (object *) selectedCamera->content;
+			mkz_obj = (MKZ_object *)&(((MKZ_camera * ) obj->object)->obj);
+			break;
+
+		case KG_TRANSFORM_TARGET_LIGHT:
+
+			obj = (object *) &lightList[selectedLight];
+			mkz_obj = (MKZ_object *)&(((MKZ_lightObject * ) obj->object)->obj);
+			break;
+	}
+
+	if (obj->undoStack != 0){
+
+		matStack_push(&obj->redoStack,mkz_obj->transform);
+		float * n_mat = matStack_pop(&obj->undoStack);
+		mkz_obj->transform = n_mat;
+	}
 }
 
 void KG_redo_transformation(){
+
+	object * obj;
+	MKZ_object * mkz_obj;
+
+	switch(t_target){
+
+			case KG_TRANSFORM_TARGET_OBJECT:
+
+				if (selectedObject == 0)
+					return;
+
+				obj = (object *) selectedObject->content;
+				mkz_obj = (MKZ_object *)&(((MKZ_meshedObject * ) obj->object)->obj);
+				break;
+
+
+			case KG_TRANSFORM_TARGET_CAMERA:
+				if (selectedCamera == 0)
+					return;
+
+				obj = (object *) selectedCamera->content;
+				mkz_obj = (MKZ_object *)&(((MKZ_camera * ) obj->object)->obj);
+				break;
+
+			case KG_TRANSFORM_TARGET_LIGHT:
+				if (selectedLight == 0)
+					return;
+
+				obj = (object *) &lightList[selectedLight];
+				mkz_obj = (MKZ_object *)&(((MKZ_lightObject * ) obj->object)->obj);
+				break;
+		}
+
+	if (obj->redoStack != 0){
+
+			matStack_push(&obj->undoStack,mkz_obj->transform);
+			float * n_mat = matStack_pop(&obj->redoStack);
+			mkz_obj->transform = n_mat;
+		}
 
 }
 
@@ -256,5 +780,48 @@ void KG_switch_light_type(){
 
 void KG_switch_lighting_mode(){
 
+}
+
+
+int KG_get_transformation_target(){
+	return t_target;
+}
+
+int KG_get_transformation_scope(){
+	return t_scope;
+}
+
+int KG_get_transformation_type(){
+	return t_type;
+}
+
+MKZ_meshedObject * KG_get_selected_object(){
+
+	if (selectedObject == 0)
+		return 0;
+
+	object * obj = (object*) selectedObject->content;
+	MKZ_meshedObject * mo = (MKZ_meshedObject*) obj->object;
+
+	return mo;
+}
+
+MKZ_lightObject * KG_get_selected_light(){
+
+
+	object * obj = (object *)lightList[selectedLight].object;
+	MKZ_lightObject * lo = (MKZ_lightObject *)obj->object;
+	return lo;
+}
+
+MKZ_camera * KG_get_selected_camera(){
+
+	if (selectedCamera == 0)
+		return 0;
+
+	object * obj = (object*) selectedObject->content;
+	MKZ_camera * ca = (MKZ_camera*) obj->object;
+
+	return ca;
 }
 

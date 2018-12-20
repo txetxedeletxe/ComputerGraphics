@@ -33,8 +33,8 @@ void MKZ_DRAW_init(){
 	c_right 	= 1;
 	c_bottom 	= -1;
 	c_top 		= 1;
-	c_near 		= -1;
-	c_far 		= 1;
+	c_near 		= 1;
+	c_far 		= 1000;
 
 	glClearColor(0, 0, 0, 1);
 	//glEnable(GL_CULL_FACE);
@@ -94,7 +94,7 @@ void MKZ_DRAW_start(){
 	}
 	else
 	{
-		glFrustum(c_left,c_right,c_bottom,c_top,1,1000);
+		glFrustum(c_left,c_right,c_bottom,c_top,c_near,c_far);
 	}
 
 

@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #include "MKZ_Geometry.h"
-
+#include "MKZ_Arithmetic.h"
 void MKZ_ARITHMETIC_nulMatrix(float* mat){
 
 	int i;
@@ -29,6 +29,25 @@ void MKZ_ARITHMETIC_identityMatrix(float* mat){
 	for (int i = 0 ; i < 16; i++) {
 		mat[i] = ((i % 4) == (i / 4)) ? 1 : 0;
 	}
+
+}
+
+void MKZ_ARITHMETIC_normalize_vector(MKZ_vector3 * v3){
+
+	float  dist = MKZ_ARITHMETIC_eulidean_norm_vector(v3);
+
+	v3->x /= dist;
+	v3->y /= dist;
+	v3->z /= dist;
+
+
+}
+
+void MKZ_ARITHMETIC_corssProduct_vector(MKZ_vector3* v1, MKZ_vector3* v2 , MKZ_vector3* v3){
+
+	v3->x = v1->y*v2->z - v1->z*v2->y;
+	v3->y = -v1->x*v2->z + v1->z*v2->x;
+	v3->z = v1->x*v2->y - v1->y*v2->x;
 
 }
 

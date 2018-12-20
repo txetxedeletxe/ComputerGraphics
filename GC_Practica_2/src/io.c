@@ -4,6 +4,99 @@
 #include <stdio.h>
 
 
+void print_info(){
+	printf("\n############################Info#########################\n\n");
+
+	printf("-----------------------Transforamciones------------------\n");
+
+	printf("Modo de transformacion: ");
+	int target = KG_get_transformation_target();
+
+	MKZ_object * tra_obj;
+
+	switch (target) {
+		case KG_TRANSFORM_TARGET_OBJECT:
+			printf("Objeto\n");
+			tra_obj = (MKZ_object*)((KG_get_selected_object() != 0) ? &(KG_get_selected_object()->obj) : 0);
+			break;
+		case KG_TRANSFORM_TARGET_CAMERA:
+			printf("Camara\n");
+			tra_obj = (MKZ_object*)((KG_get_selected_camera() != 0) ? &(KG_get_selected_camera()->obj) : 0);
+			break;
+		case KG_TRANSFORM_TARGET_LIGHT:
+			printf("Light\n");
+			tra_obj = (MKZ_object*)((KG_get_selected_light() != 0) ? &(KG_get_selected_light()->obj) : 0);
+			break;
+	}
+
+	printf("Matriz de transformacion:\n");
+
+	if (tra_obj == 0){
+		printf("Objeto vacio.\n");
+	}
+	else{
+		MKZ_ARITHMETIC_print_matrix(tra_obj->transform);
+	}
+
+
+	printf("Tipo de transformacion: ");
+
+	switch (KG_get_transformation_type()){
+
+	case KG_TRANSFORM_TYPE_TRANSLATE:
+		printf("Translate");
+		break;
+
+	case KG_TRANSFORM_TYPE_ROTATE:
+		printf("Rotate");
+		break;
+
+	case KG_TRANSFORM_TYPE_SCALE:
+		printf("Scale");
+		break;
+
+
+	}
+
+	printf("\n");
+
+	printf("Alcance de transformacion: ");
+
+	if (KG_get_transformation_scope() == KG_TRANSFORM_SCOPE_GLOBAL){
+		printf("Global\n");
+	}else{
+		printf("Local\n");
+	}
+
+	printf("---------------------------Camara-----------------------\n");
+	printf("Modo de visualizacion:\n");
+
+	/*
+	if (checkState(KG_CAMERA_OBJECT)){
+		printf("Objeto\n");
+	}
+	else{
+		printf("Camara\n");
+	}
+	 */
+
+
+	printf("Matriz de transformacion de la camara:\n");
+	MKZ_camera * cam = KG_get_selected_camera();
+	MKZ_ARITHMETIC_print_matrix(cam->obj.transform);
+
+	printf("Modo de proyeccion: ");
+
+	if (cam->projection_mode == KG_CAMERA_PROJECTION_PARALLEL){
+		printf("Ortho\n");
+	}
+	else{
+		printf("Perspective\n");
+	}
+	//printf("State value: %d\n",stateField);
+
+}
+
 void print_help(){
     printf("KbG Irakasgaiaren Praktika. Programa honek 3D objektuak \n");
     printf("aldatzen eta bistaratzen ditu.  \n\n");
@@ -25,8 +118,9 @@ void event_callback(int event_id , void * event_info){
 
 		MKZ_kb_event * kb = (MKZ_kb_event *) event_info;
 
-		unsigned char key = kb->key;
+		char key = kb->key;
 		char fname[128];
+		//printf("%d",key);
 		switch (key){
 
 			case 'f':
@@ -53,17 +147,26 @@ void event_callback(int event_id , void * event_info){
 		    	KG_delete_selected_object();
 		    	break;
 
+		    case 27: /* <ESC> */
+				exit(0);
+				break;
+
 		    case 26: /* Undo */
 		    	KG_undo_transformation();
 		    	break;
 
-		    case 25: /* Undo */
+		    case 25:/* Redo */
 		    	KG_redo_transformation();
 		    	break;
 
 		    case '?':
 		    	print_help();
 		        break;
+
+		    case 'H':
+		    case 'h':
+		    	print_info();
+		    	break;
 
 		    /* TRANSFORM TYPE */
 		    case 'M':
@@ -100,12 +203,12 @@ void event_callback(int event_id , void * event_info){
 			/* TRANSFORM SCOPE */
 			case 'G':
 			case 'g':
-				KG_transform_target_set(KG_TRANSFORM_SCOPE_GLOBAL);
+				KG_transform_scope_set(KG_TRANSFORM_SCOPE_GLOBAL);
 				break;
 
 			case 'L':
 			case 'l':
-				KG_transform_target_set(KG_TRANSFORM_SCOPE_LOCAL);
+				KG_transform_scope_set(KG_TRANSFORM_SCOPE_LOCAL);
 				break;
 
 			case '+':
