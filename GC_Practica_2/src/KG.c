@@ -50,10 +50,12 @@ void KG_save_object_matrix(object * obj){
 
 	/** copy matrix to stack */
 
+
 	MKZ_object * mkz_obj = get_mkz_object(obj);
 
 	float * mat = MKZ_ARITHMETIC_create_matrix();
 	MKZ_ARITHMETIC_copy_matrix(mkz_obj->transform,mat);
+	MKZ_ARITHMETIC_print_matrix(mat);
 	matStack_push(&obj->undoStack,mat);
 
 	/**cannot redo **/
@@ -122,7 +124,6 @@ void __KG_init(){
 	v3->z = 15;
 
 	MKZ_TRANSFORM_translate_global(cam->obj.transform,v3);
-
 	MKZ_SCENE_set_camera(cam);
 
 	object * obj = create_object_camera(cam);
@@ -134,10 +135,11 @@ void __KG_init(){
 	MKZ_lightObject * lo = MKZ_OBJECT_create_lightObject();
 	lo->light_type = MKZ_LIGHT_TYPE_POINT;
 	MKZ_SCENE_add_light(lo);
+
 	obj = create_object_light(lo);
-
-
+	KG_save_object_matrix(obj);
 	lightList[0] = obj;
+
 	//printf("%d\n",lightList[0]);
 
 	free(v3);
@@ -145,8 +147,6 @@ void __KG_init(){
 
 
 void KG_transform_object(int axis){
-
-
 
 	if (t_target == KG_TRANSFORM_TARGET_OBJECT && selectedObject == 0)
 		return;
@@ -163,7 +163,6 @@ void KG_transform_object(int axis){
 
 
 	MKZ_object * mo = get_mkz_object(obj);
-
 
 	int sense = axis;
 	int magnitude = axis;
@@ -253,6 +252,8 @@ void KG_transform_object(int axis){
 	MKZ_GEOMETRY_free_vector3(v3);
 
 
+	fprintf(stdout,"obj_ptr: %d\n",obj);
+	fprintf(stdout,"mkz_obj_ptr: %d\n",mo);
 	if (t_scope == KG_TRANSFORM_SCOPE_LOCAL){
 		MKZ_TRANSFORM_matrix_local(n_mat,mo->transform);
 	}else{

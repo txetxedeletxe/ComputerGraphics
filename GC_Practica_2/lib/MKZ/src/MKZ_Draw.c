@@ -5,7 +5,7 @@
 
 #include <GL/gl.h>
 #include <GL/glut.h>
-
+#include <math.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -293,7 +293,6 @@ void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 
 	glEnable(light_ind);
 
-
 	if (lo->light_type != MKZ_LIGHT_TYPE_DIRECTIONAL)
 		glLightfv(light_ind, GL_POSITION, lo->obj.transform+12);
 	else{
@@ -345,11 +344,15 @@ void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 		glLightfv(light_ind, GL_SPOT_DIRECTION, f);
 
 		float det = MKZ_ARITHMETIC_determinant(lo->obj.transform);
-		det *= 30;
+		printf("det: %f",det);
 
-		if (det > 90){
+		det = (75.0/(1.0+exp(-(det-2)*(det-2)))) +15;
+		printf("det: %f",det);
+		if (det > 90)
 			det = 90;
-		}
+
+		if (det < 15)
+			det = 15;
 
 		glLightf(light_ind, GL_SPOT_CUTOFF, det);
 
