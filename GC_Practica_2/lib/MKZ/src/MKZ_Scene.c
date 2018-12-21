@@ -1,3 +1,4 @@
+#include "MKZ_Definitions.h"
 #include "MKZ_Datastruct.h"
 #include "MKZ_Objects.h"
 #include "MKZ_Draw.h"
@@ -16,13 +17,17 @@ MKZ_linkedList * objectList;
 /** lights **/
 MKZ_linkedList * lightList;
 
+unsigned int global_mask;
 /** Exported **/
 /* Init */
+
 void MKZ_SCENE_init(){
 
 
 		objectList = 0;
 		lightList = 0;
+		global_mask = 0;
+
 		default_camera = MKZ_OBJECT_create_camera();
 		camera = default_camera;
 
@@ -32,22 +37,49 @@ void MKZ_SCENE_init(){
 
 void MKZ_SCENE_draw(){
 
+		MKZ_camera * aux_camera = 0;
+		aux_camera = ((global_mask & MKZ_GLOBAL_BG_COLOR) != 0) ? default_camera : camera;
+		MKZ_DRAW_set_background_color(&aux_camera->skybox);
 
-		MKZ_DRAW_set_background_color(&camera->skybox);
-		MKZ_DRAW_set_projectionMode(camera->projection_mode);
-		MKZ_DRAW_set_poligonMode(camera->polygon_mode);
-		MKZ_DRAW_set_cameraMat(camera->obj.transform);
+		aux_camera = ((global_mask & MKZ_GLOBAL_PROJECTION) != 0) ? default_camera : camera;
+		MKZ_DRAW_set_projectionMode(aux_camera->projection_mode);
+
+		aux_camera = ((global_mask & MKZ_GLOBAL_POLYGON) != 0) ? default_camera : camera;
+		MKZ_DRAW_set_poligonMode(aux_camera->polygon_mode);
+
+		aux_camera = ((global_mask & MKZ_GLOBAL_TRANSFORM) != 0) ? default_camera : camera;
+		MKZ_DRAW_set_cameraMat(aux_camera->obj.transform);
+
+		aux_camera = ((global_mask & MKZ_GLOBAL_LIGHTING_ENABLE) != 0) ? default_camera : camera;
+		MKZ_DRAW_set_lighting(aux_camera->lighting_enable);
+
+		aux_camera = ((global_mask & MKZ_GLOBAL_LIGHTING_MODE) != 0) ? default_camera : camera;
+		MKZ_DRAW_set_lighting_mode(aux_camera->lighting_mode);
+
+		MKZ_DRAW_clear_lights();
+
+		MKZ_linkedList * aux = lightList;
+
+		while (aux != 0){
+					MKZ_lightObject * lo = (MKZ_lightObject *)aux->content;
+					if (lo->obj.active)
+						MKZ_DRAW_add_light(lo);
+					aux = aux->ll;
+
+		}
 
 		MKZ_DRAW_clear();
 		MKZ_DRAW_start();
 
 
-		MKZ_linkedList * aux = objectList;
+		aux = objectList;
 
 
 		while (aux != 0){
 
-			MKZ_DRAW_object((MKZ_meshedObject *)aux->content);
+			MKZ_meshedObject * lo = (MKZ_meshedObject *)aux->content;
+			if (lo->obj.active)
+				MKZ_DRAW_object(lo);
 			aux = aux->ll;
 		}
 
@@ -116,6 +148,12 @@ MKZ_lightObject * MKZ_SCENE_get_light(int id){
 
 MKZ_camera * MKZ_SCENE_get_camera(){
 	return camera;
+}
+
+MKZ_camera * MKZ_SCENE_get_default_camera(){
+
+	return default_camera;
+
 }
 
 void MKZ_SCENE_remove_mesh(int id){
@@ -187,5 +225,11 @@ void MKZ_SCENE_restore_camera(){
 
 }
 
+void MKZ_SCENE_set_global_mask(unsigned int g_mask){
+	global_mask = g_mask;
+}
 
+unsigned int MKZ_SCENE_get_global_mask(){
+	return global_mask;
+}
 

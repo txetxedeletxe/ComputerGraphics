@@ -105,6 +105,29 @@ void free_linkedlist(linkedList * ll, void (*free_tool)(void* obj)){
 		}
 }
 
+MKZ_object * get_mkz_object(object * obj){
+
+	MKZ_object * mkz_obj = 0;
+
+	switch(obj->objectType){
+
+	case KG_OBJECT_TYPE_MESH:
+		mkz_obj = &((MKZ_meshedObject *) obj->object)->obj;
+		break;
+
+	case KG_OBJECT_TYPE_CAMERA:
+		mkz_obj = &((MKZ_camera *) obj->object)->obj;
+		break;
+
+	case KG_OBJECT_TYPE_LIGHT:
+		mkz_obj = &((MKZ_lightObject *) obj->object)->obj;
+		break;
+	}
+
+
+	return mkz_obj;
+}
+
 void __free_object(void * obj);
 
 void free_object_linkedlist(linkedList * ll){

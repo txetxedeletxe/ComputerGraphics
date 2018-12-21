@@ -21,8 +21,8 @@ float MKZ_ARITHMETIC_dotProduct(float * v1, float * v2);
 float MKZ_ARITHMETIC_eulidean_norm_vector(MKZ_vector3 * v3);
 float MKZ_ARITHMETIC_eulidean_norm(float * v3);
 
-
 float MKZ_ARITHMETIC_determinant(float * mat);
+
 
 /** Transformation matrix **/
 void MKZ_ARITHMETIC_matrix_translate(MKZ_vector3 * v3,float* mat);

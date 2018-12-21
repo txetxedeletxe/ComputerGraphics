@@ -29,9 +29,17 @@ typedef struct {
 
 	int light_type;
 
-	float intensity;
+	float intensityAmbient;
+	float intensityDifuse;
+	float intensitySpecular;
+
 	MKZ_color3 color;
 
+	float atenuationConstant;
+	float atenuationLinear;
+	float atenuationQuadratic;
+
+	float spotExponent;
 
 }MKZ_lightObject;
 
@@ -43,6 +51,9 @@ typedef struct{
 
 	int projection_mode;
 	int polygon_mode;
+
+	int lighting_enable;
+	int lighting_mode;
 
 
 }MKZ_camera;

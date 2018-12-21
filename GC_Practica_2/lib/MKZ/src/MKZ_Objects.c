@@ -32,8 +32,18 @@ MKZ_lightObject * MKZ_OBJECT_create_lightObject(){
 	mlo->color.r = 1;
 	mlo->color.g = 1;
 	mlo->color.b = 1;
-	mlo->intensity = 1;
+	mlo->intensityAmbient = 1;
+	mlo->intensityDifuse = 1;
+	mlo->intensitySpecular = 1;
+
+	mlo->atenuationConstant = 1;
+	mlo->atenuationLinear = 1;
+	mlo->atenuationQuadratic = 1;
+
+	mlo->spotExponent = 1;
+
 	mlo->light_type = 0;
+
 	return mlo;
 }
 
@@ -44,6 +54,8 @@ MKZ_camera * MKZ_OBJECT_create_camera(){
 	mc->projection_mode = MKZ_PROJECTIONMODE_PARALLEL;
 	mc->polygon_mode = MKZ_POLYGONMODE_FILLED;
 	MKZ_GEOMETRY_reset_to_black(&mc->skybox);
+	mc->lighting_enable = 0;
+	mc->lighting_mode = 0;
 	return mc;
 
 }

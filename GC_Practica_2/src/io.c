@@ -122,7 +122,7 @@ void event_callback(int event_id , void * event_info){
 
 		char key = kb->key;
 		char fname[128];
-		//printf("%d",key);
+		//fprintf(stdout,"%d",key);
 		switch (key){
 
 			case 'f':
@@ -266,7 +266,7 @@ void event_callback(int event_id , void * event_info){
 		MKZ_kb_special_event * kb = (MKZ_kb_special_event *) event_info;
 
 		int key = kb->key;
-
+		//fprintf(stdout,"%d",key);
 		switch (key){
 
 			case MKZ_KEY_RIGHT:
@@ -299,7 +299,7 @@ void event_callback(int event_id , void * event_info){
 				KG_lighting_switch();
 				break;
 
-			case MKZ_KEY_F12:
+			case MKZ_KEY_F11:
 				KG_switch_lighting_mode();
 				break;
 

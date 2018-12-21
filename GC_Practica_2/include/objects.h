@@ -48,6 +48,7 @@ object * create_object_meshed(MKZ_meshedObject * mo);
 object * create_object_camera(MKZ_camera * ca);
 object * create_object_light(MKZ_lightObject * lo);
 
+MKZ_object * get_mkz_object(object * obj);
 void add_child(object * parent, object * child);
 
 void free_object(object * obj);
