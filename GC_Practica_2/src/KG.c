@@ -132,6 +132,7 @@ void __KG_init(){
 
 
 	MKZ_lightObject * lo = MKZ_OBJECT_create_lightObject();
+	lo->light_type = MKZ_LIGHT_TYPE_POINT;
 	MKZ_SCENE_add_light(lo);
 	obj = create_object_light(lo);
 
@@ -255,10 +256,10 @@ void KG_transform_object(int axis){
 	if (t_scope == KG_TRANSFORM_SCOPE_LOCAL){
 		MKZ_TRANSFORM_matrix_local(n_mat,mo->transform);
 	}else{
-		//printf("t_c : %d \n", t_scope);
 		MKZ_TRANSFORM_matrix_global(n_mat,mo->transform);
 	}
 
+	MKZ_ARITHMETIC_print_matrix(mo->transform);
 
 	KG_update_children(obj);
 	KG_save_object_matrix(obj);
