@@ -273,7 +273,7 @@ void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 		case 2:
 			light_ind = GL_LIGHT2;
 			break;
-		case 3:printf("light_enabled");
+		case 3:
 			light_ind = GL_LIGHT3;
 			break;
 		case 4:

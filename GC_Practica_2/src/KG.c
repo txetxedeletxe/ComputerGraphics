@@ -27,9 +27,10 @@
 
 /** Internal state */
 /* objects */
+object * lightList[8];
 linkedList * cameraList;
 linkedList * objList;
-object * lightList[8];
+
 
 linkedList * selectedCamera;
 linkedList * selectedObject;
@@ -131,11 +132,12 @@ void __KG_init(){
 
 
 	MKZ_lightObject * lo = MKZ_OBJECT_create_lightObject();
-	lo->light_type = MKZ_LIGHT_TYPE_FOCAL;
+	MKZ_SCENE_add_light(lo);
 	obj = create_object_light(lo);
 
+
 	lightList[0] = obj;
-	MKZ_SCENE_add_light(lo);
+	//printf("%d\n",lightList[0]);
 
 	free(v3);
 }
@@ -143,27 +145,207 @@ void __KG_init(){
 
 void KG_transform_object(int axis){
 
-	if (selectedObject != 0){
-
-		object * obj = (object *) selectedObject->content;
-		MKZ_object * mo = get_mkz_object(obj);
 
 
-		int sense = axis;
-		int magnitude = axis;
+	if (t_target == KG_TRANSFORM_TARGET_OBJECT && selectedObject == 0)
+		return;
 
-		if (magnitude < 0){
-			magnitude = -magnitude;
+	if (t_target == KG_TRANSFORM_TARGET_LIGHT && lightList[selectedLight] == 0)
+		return;
+
+	object * obj;
+
+	if (t_target == KG_TRANSFORM_TARGET_OBJECT)
+		obj = (object *) selectedObject->content;
+	else
+		obj = lightList[selectedLight];
+
+
+	MKZ_object * mo = get_mkz_object(obj);
+
+
+	int sense = axis;
+	int magnitude = axis;
+
+	if (magnitude < 0){
+		magnitude = -magnitude;
+	}
+
+	sense = sense/magnitude;
+
+	MKZ_vector3 * v3 = MKZ_GEOMETRY_create_vector3();
+
+	float scaleFactor = 1.0f;
+
+	float * n_mat = MKZ_ARITHMETIC_create_matrix();
+
+	switch (t_type){
+
+	case KG_TRANSFORM_TYPE_TRANSLATE:
+
+		switch (magnitude){
+
+		case KG_TRANSFORM_AXIS_X:
+			v3->x = sense * KG_TRANSLATE_STEP;
+			break;
+
+		case KG_TRANSFORM_AXIS_Y:
+			v3->y = sense * KG_TRANSLATE_STEP;
+			break;
+
+		case KG_TRANSFORM_AXIS_Z:
+			v3->z = sense * KG_TRANSLATE_STEP;
+			break;
+
 		}
 
-		sense = sense/magnitude;
+		MKZ_ARITHMETIC_matrix_translate(v3,n_mat);
+		break;
 
-		MKZ_vector3 * v3 = MKZ_GEOMETRY_create_vector3();
+	case KG_TRANSFORM_TYPE_ROTATE:
 
-		float scaleFactor = 1.0f;
+		switch (magnitude){
 
-		float * n_mat = MKZ_ARITHMETIC_create_matrix();
+		case KG_TRANSFORM_AXIS_X:
+			MKZ_ARITHMETIC_matrix_rotateY(sense*KG_ROTATE_STEP,n_mat);
+			break;
 
+		case KG_TRANSFORM_AXIS_Y:
+			MKZ_ARITHMETIC_matrix_rotateX(sense*KG_ROTATE_STEP,n_mat);
+			break;
+
+		case KG_TRANSFORM_AXIS_Z:
+			MKZ_ARITHMETIC_matrix_rotateZ(sense*KG_ROTATE_STEP,n_mat);
+			break;
+
+		}
+		break;
+
+	case KG_TRANSFORM_TYPE_SCALE:
+
+		if (sense > 0){
+			scaleFactor *= KG_SCALE_STEP;
+		}
+		else{
+			scaleFactor /= KG_SCALE_STEP;
+		}
+
+		switch (magnitude){
+
+		case KG_TRANSFORM_AXIS_X:
+			MKZ_ARITHMETIC_matrix_scaleX(scaleFactor,n_mat);
+			break;
+
+		case KG_TRANSFORM_AXIS_Y:
+			MKZ_ARITHMETIC_matrix_scaleY(scaleFactor,n_mat);
+			break;
+
+		case KG_TRANSFORM_AXIS_Z:
+			MKZ_ARITHMETIC_matrix_scaleZ(scaleFactor,n_mat);
+			break;
+
+		}
+		break;
+
+	}
+
+	MKZ_GEOMETRY_free_vector3(v3);
+
+
+	if (t_scope == KG_TRANSFORM_SCOPE_LOCAL){
+		MKZ_TRANSFORM_matrix_local(n_mat,mo->transform);
+	}else{
+		//printf("t_c : %d \n", t_scope);
+		MKZ_TRANSFORM_matrix_global(n_mat,mo->transform);
+	}
+
+
+	KG_update_children(obj);
+	KG_save_object_matrix(obj);
+
+
+}
+
+void KG_transform_camera(int axis){
+
+	if (selectedCamera == 0)
+		return;
+
+	object * obj = (object *) selectedCamera->content;
+	MKZ_object* ca = get_mkz_object(obj);
+
+
+	int sense = axis;
+	int magnitude = axis;
+
+	if (magnitude < 0){
+		magnitude = -magnitude;
+	}
+
+	sense = sense/magnitude;
+
+	MKZ_vector3 * v3 = MKZ_GEOMETRY_create_vector3();
+
+	float scaleFactor = 1.0f;
+
+	if (t_scope == KG_TRANSFORM_SCOPE_GLOBAL){
+
+		object * objobj = (object *) selectedObject->content;
+		MKZ_meshedObject * mo = (MKZ_meshedObject *) objobj->object;
+		v3->x = mo->obj.transform[12] - ca->transform[12];
+		v3->y = mo->obj.transform[13] - ca->transform[13];
+		v3->z = mo->obj.transform[14] - ca->transform[14];
+
+		float dist = MKZ_ARITHMETIC_eulidean_norm_vector(v3);
+
+		v3->x = 0;
+		v3->y = 0;
+
+
+		if (magnitude == KG_TRANSFORM_AXIS_Z){
+
+			v3->z = -KG_TRANSLATE_STEP/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
+
+			if (sense == 1){
+
+				if (dist > KG_TRANSLATE_STEP){
+					MKZ_TRANSFORM_translate_local(ca->transform,v3);
+				}
+			}
+			else{
+
+				v3->z = -v3->z;
+				MKZ_TRANSFORM_translate_local(ca->transform,v3);
+			}
+		}
+		else
+		{
+
+			v3->z = -dist/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
+			switch(magnitude){
+
+			case KG_TRANSFORM_AXIS_X:
+				MKZ_TRANSFORM_translate_local(ca->transform,v3);
+				MKZ_TRANSFORM_rotateY_local(ca->transform,KG_ROTATE_STEP*sense);
+				v3->z = dist/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
+				MKZ_TRANSFORM_translate_local(ca->transform,v3);
+				break;
+
+			case KG_TRANSFORM_AXIS_Y:
+				MKZ_TRANSFORM_translate_local(ca->transform,v3);
+				MKZ_TRANSFORM_rotateX_local(ca->transform,KG_ROTATE_STEP*sense);
+				v3->z = dist/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
+				MKZ_TRANSFORM_translate_local(ca->transform,v3);
+				break;
+			}
+		}
+
+		v3->x = mo->obj.transform[12];
+		v3->y = mo->obj.transform[13];
+		v3->z = mo->obj.transform[14];
+		MKZ_TRANSFORM_look_at(ca->transform, v3);
+	}
+	else{
 		switch (t_type){
 
 		case KG_TRANSFORM_TYPE_TRANSLATE:
@@ -184,7 +366,7 @@ void KG_transform_object(int axis){
 
 			}
 
-			MKZ_ARITHMETIC_matrix_translate(v3,n_mat);
+			MKZ_TRANSFORM_translate_local(ca->transform,v3);
 			break;
 
 		case KG_TRANSFORM_TYPE_ROTATE:
@@ -192,15 +374,15 @@ void KG_transform_object(int axis){
 			switch (magnitude){
 
 			case KG_TRANSFORM_AXIS_X:
-				MKZ_ARITHMETIC_matrix_rotateY(sense*KG_ROTATE_STEP,n_mat);
+				MKZ_TRANSFORM_rotateY_local(ca->transform,-sense*KG_ROTATE_STEP);
 				break;
 
 			case KG_TRANSFORM_AXIS_Y:
-				MKZ_ARITHMETIC_matrix_rotateX(sense*KG_ROTATE_STEP,n_mat);
+				MKZ_TRANSFORM_rotateX_local(ca->transform,sense*KG_ROTATE_STEP);
 				break;
 
 			case KG_TRANSFORM_AXIS_Z:
-				MKZ_ARITHMETIC_matrix_rotateZ(sense*KG_ROTATE_STEP,n_mat);
+				MKZ_TRANSFORM_rotateZ_local(ca->transform,sense*KG_ROTATE_STEP);
 				break;
 
 			}
@@ -218,204 +400,33 @@ void KG_transform_object(int axis){
 			switch (magnitude){
 
 			case KG_TRANSFORM_AXIS_X:
-				MKZ_ARITHMETIC_matrix_scaleX(scaleFactor,n_mat);
+				MKZ_TRANSFORM_scaleX_local(ca->transform,scaleFactor);
 				break;
 
 			case KG_TRANSFORM_AXIS_Y:
-				MKZ_ARITHMETIC_matrix_scaleY(scaleFactor,n_mat);
+				MKZ_TRANSFORM_scaleY_local(ca->transform,scaleFactor);
 				break;
 
 			case KG_TRANSFORM_AXIS_Z:
-				MKZ_ARITHMETIC_matrix_scaleZ(scaleFactor,n_mat);
+				MKZ_TRANSFORM_scaleZ_local(ca->transform,scaleFactor);
 				break;
 
 			}
 			break;
 
 		}
-
-		MKZ_GEOMETRY_free_vector3(v3);
-
-
-		if (t_scope == KG_TRANSFORM_SCOPE_LOCAL){
-			MKZ_TRANSFORM_matrix_local(n_mat,mo->transform);
-		}else{
-			//printf("t_c : %d \n", t_scope);
-			MKZ_TRANSFORM_matrix_global(n_mat,mo->transform);
-		}
-
-
-		KG_update_children(obj);
-		KG_save_object_matrix(obj);
 	}
+	float det = MKZ_ARITHMETIC_determinant(ca->transform);
+	//printf("det: %f\n",det);
+	MKZ_GEOMETRY_free_vector3(v3);
 
-}
-
-void KG_transform_camera(int axis){
-
-	if (selectedCamera != 0){
-
-
-		object * obj = (object *) selectedCamera->content;
-		MKZ_object* ca = get_mkz_object(obj);
-
-
-		int sense = axis;
-		int magnitude = axis;
-
-		if (magnitude < 0){
-			magnitude = -magnitude;
-		}
-
-		sense = sense/magnitude;
-
-		MKZ_vector3 * v3 = MKZ_GEOMETRY_create_vector3();
-
-		float scaleFactor = 1.0f;
-
-		if (t_scope == KG_TRANSFORM_SCOPE_GLOBAL){
-
-			object * objobj = (object *) selectedObject->content;
-			MKZ_meshedObject * mo = (MKZ_meshedObject *) objobj->object;
-			v3->x = mo->obj.transform[12] - ca->transform[12];
-			v3->y = mo->obj.transform[13] - ca->transform[13];
-			v3->z = mo->obj.transform[14] - ca->transform[14];
-
-			float dist = MKZ_ARITHMETIC_eulidean_norm_vector(v3);
-
-			v3->x = 0;
-			v3->y = 0;
-
-
-			if (magnitude == KG_TRANSFORM_AXIS_Z){
-
-				v3->z = -KG_TRANSLATE_STEP/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
-
-				if (sense == 1){
-
-					if (dist > KG_TRANSLATE_STEP){
-						MKZ_TRANSFORM_translate_local(ca->transform,v3);
-					}
-				}
-				else{
-
-					v3->z = -v3->z;
-					MKZ_TRANSFORM_translate_local(ca->transform,v3);
-				}
-			}
-			else
-			{
-
-				v3->z = -dist/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
-				switch(magnitude){
-
-				case KG_TRANSFORM_AXIS_X:
-					MKZ_TRANSFORM_translate_local(ca->transform,v3);
-					MKZ_TRANSFORM_rotateY_local(ca->transform,KG_ROTATE_STEP*sense);
-					v3->z = dist/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
-					MKZ_TRANSFORM_translate_local(ca->transform,v3);
-					break;
-
-				case KG_TRANSFORM_AXIS_Y:
-					MKZ_TRANSFORM_translate_local(ca->transform,v3);
-					MKZ_TRANSFORM_rotateX_local(ca->transform,KG_ROTATE_STEP*sense);
-					v3->z = dist/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
-					MKZ_TRANSFORM_translate_local(ca->transform,v3);
-					break;
-				}
-			}
-
-			v3->x = mo->obj.transform[12];
-			v3->y = mo->obj.transform[13];
-			v3->z = mo->obj.transform[14];
-			MKZ_TRANSFORM_look_at(ca->transform, v3);
-		}
-		else{
-			switch (t_type){
-
-			case KG_TRANSFORM_TYPE_TRANSLATE:
-
-				switch (magnitude){
-
-				case KG_TRANSFORM_AXIS_X:
-					v3->x = sense * KG_TRANSLATE_STEP;
-					break;
-
-				case KG_TRANSFORM_AXIS_Y:
-					v3->y = sense * KG_TRANSLATE_STEP;
-					break;
-
-				case KG_TRANSFORM_AXIS_Z:
-					v3->z = sense * KG_TRANSLATE_STEP;
-					break;
-
-				}
-
-				MKZ_TRANSFORM_translate_local(ca->transform,v3);
-				break;
-
-			case KG_TRANSFORM_TYPE_ROTATE:
-
-				switch (magnitude){
-
-				case KG_TRANSFORM_AXIS_X:
-					MKZ_TRANSFORM_rotateY_local(ca->transform,-sense*KG_ROTATE_STEP);
-					break;
-
-				case KG_TRANSFORM_AXIS_Y:
-					MKZ_TRANSFORM_rotateX_local(ca->transform,sense*KG_ROTATE_STEP);
-					break;
-
-				case KG_TRANSFORM_AXIS_Z:
-					MKZ_TRANSFORM_rotateZ_local(ca->transform,sense*KG_ROTATE_STEP);
-					break;
-
-				}
-				break;
-
-			case KG_TRANSFORM_TYPE_SCALE:
-
-				if (sense > 0){
-					scaleFactor *= KG_SCALE_STEP;
-				}
-				else{
-					scaleFactor /= KG_SCALE_STEP;
-				}
-
-				switch (magnitude){
-
-				case KG_TRANSFORM_AXIS_X:
-					MKZ_TRANSFORM_scaleX_local(ca->transform,scaleFactor);
-					break;
-
-				case KG_TRANSFORM_AXIS_Y:
-					MKZ_TRANSFORM_scaleY_local(ca->transform,scaleFactor);
-					break;
-
-				case KG_TRANSFORM_AXIS_Z:
-					MKZ_TRANSFORM_scaleZ_local(ca->transform,scaleFactor);
-					break;
-
-				}
-				break;
-
-			}
-		}
-		float det = MKZ_ARITHMETIC_determinant(ca->transform);
-		//printf("det: %f\n",det);
-		MKZ_GEOMETRY_free_vector3(v3);
-
-		KG_update_children(obj);
-		KG_save_object_matrix(obj);
-
-	}
+	KG_update_children(obj);
+	KG_save_object_matrix(obj);
 
 
 }
 
-void KG_transform_light(int axis){
 
-}
 
 
 /** Exported part **/
@@ -483,65 +494,68 @@ void KG_select_next_object(){
 	if (special_function != 0)
 		return;
 
-	if (selectedObject != 0){
-		selectedObject = selectedObject->ll_after;
+	if (selectedObject == 0)
+		return;
 
-		if (selectedObject == 0){
-			selectedObject = objList;
-		}
+	selectedObject = selectedObject->ll_after;
 
+	if (selectedObject == 0){
+		selectedObject = objList;
 	}
+
+
 
 }
 
 void KG_delete_selected_object(){
 
 	if (special_function != 0)
-			return;
+		return;
 
-	if (selectedObject != 0){
+	if (selectedObject == 0)
+		return;
 
-		if (selectedObject->ll_before == 0){
+	if (selectedObject->ll_before == 0){
 
-			objList = selectedObject->ll_after;
+		objList = selectedObject->ll_after;
 
-			if (objList != 0)
-				objList->ll_before = 0;
+		if (objList != 0)
+			objList->ll_before = 0;
 
-			selectedObject->ll_after = 0;
+		selectedObject->ll_after = 0;
 
-			object * obj = (object *) selectedObject->content;
-			MKZ_meshedObject * mo = (MKZ_meshedObject *) obj->object;
-			MKZ_SCENE_remove_mesh(mo->obj.id);
+		object * obj = (object *) selectedObject->content;
+		MKZ_meshedObject * mo = (MKZ_meshedObject *) obj->object;
+		MKZ_SCENE_remove_mesh(mo->obj.id);
 
-			free_object_linkedlist(selectedObject);
+		free_object_linkedlist(selectedObject);
+		selectedObject = objList;
+	}
+	else{
+
+		selectedObject->ll_before->ll_after = selectedObject->ll_after;
+
+		if (selectedObject->ll_after != 0)
+			selectedObject->ll_after->ll_before = selectedObject->ll_before;
+
+		linkedList * ll = selectedObject->ll_after;
+
+		selectedObject->ll_after = 0;
+		selectedObject->ll_before = 0;
+
+		object * obj = (object *) selectedObject->content;
+		MKZ_meshedObject * mo = (MKZ_meshedObject *) obj->object;
+		MKZ_SCENE_remove_mesh(mo->obj.id);
+
+		free_object_linkedlist(selectedObject);
+
+		selectedObject = ll;
+
+		if (selectedObject == 0){
 			selectedObject = objList;
 		}
-		else{
-
-			selectedObject->ll_before->ll_after = selectedObject->ll_after;
-
-			if (selectedObject->ll_after != 0)
-				selectedObject->ll_after->ll_before = selectedObject->ll_before;
-
-			linkedList * ll = selectedObject->ll_after;
-
-			selectedObject->ll_after = 0;
-			selectedObject->ll_before = 0;
-
-			object * obj = (object *) selectedObject->content;
-			MKZ_meshedObject * mo = (MKZ_meshedObject *) obj->object;
-			MKZ_SCENE_remove_mesh(mo->obj.id);
-
-			free_object_linkedlist(selectedObject);
-
-			selectedObject = ll;
-
-			if (selectedObject == 0){
-				selectedObject = objList;
-			}
-		}
 	}
+
 
 	if (selectedObject == 0 && t_target == KG_TRANSFORM_TARGET_CAMERA){
 		t_scope = KG_TRANSFORM_SCOPE_LOCAL;
@@ -608,18 +622,10 @@ void KG_transform(int axis){
 	if (special_function != 0)
 			return;
 
-	switch(t_target){
-
-	case KG_TRANSFORM_TARGET_OBJECT:
-		KG_transform_object(axis);
-		break;
-	case KG_TRANSFORM_TARGET_CAMERA:
+	if (t_target == KG_TRANSFORM_TARGET_CAMERA)
 		KG_transform_camera(axis);
-		break;
-	case KG_TRANSFORM_TARGET_LIGHT:
-		KG_transform_light(axis);
-		break;
-	}
+	else
+		KG_transform_object(axis);
 
 }
 
@@ -741,7 +747,7 @@ void KG_redo_transformation(){
 				break;
 
 			case KG_TRANSFORM_TARGET_LIGHT:
-				if (selectedLight == 0)
+				if (lightList[selectedLight] == 0)
 					return;
 
 				obj = (object *) lightList[selectedLight];
@@ -764,19 +770,21 @@ void KG_redo_transformation(){
 void KG_next_camera(){
 
 	if (special_function != 0)
-			return;
+		return;
 
-	if (selectedCamera != 0){
-		selectedCamera = selectedCamera->ll_after;
+	if (selectedCamera == 0)
+		return;
 
-		if (selectedCamera == 0){
-			selectedCamera = cameraList;
-		}
-		object * obj = (object *) selectedCamera->content;
-		MKZ_camera * cam = (MKZ_camera *) obj->object;
-		MKZ_SCENE_set_camera(cam);
+	selectedCamera = selectedCamera->ll_after;
 
+	if (selectedCamera == 0){
+		selectedCamera = cameraList;
 	}
+	object * obj = (object *) selectedCamera->content;
+	MKZ_camera * cam = (MKZ_camera *) obj->object;
+	MKZ_SCENE_set_camera(cam);
+
+
 }
 
 void KG_object_camera(){
@@ -784,29 +792,29 @@ void KG_object_camera(){
 	if (special_function != 0)
 		return;
 
-	if (selectedObject != 0){
+	if (selectedObject == 0)
+		return;
 
-		object * obj = (object *)selectedObject->content;
+	object * obj = (object *)selectedObject->content;
 
-		linkedList* aux = obj->children;
-		MKZ_camera * cam = 0;
-		while (aux != 0){
+	linkedList* aux = obj->children;
+	MKZ_camera * cam = 0;
+	while (aux != 0){
 
-			object * obj_aux = (object *) aux->content;
+		object * obj_aux = (object *) aux->content;
 
-			if (obj_aux->objectType == KG_OBJECT_TYPE_CAMERA){
-				cam = (MKZ_camera *) obj_aux->object;
-				break;
-			}
-
-			aux = aux->ll_after;
+		if (obj_aux->objectType == KG_OBJECT_TYPE_CAMERA){
+			cam = (MKZ_camera *) obj_aux->object;
+			break;
 		}
 
-		if (cam != 0){
+		aux = aux->ll_after;
+	}
 
-			MKZ_SCENE_set_camera(cam);
-			special_function = KG_SP_FUNC_OBJECT_CAMERA;
-		}
+	if (cam != 0){
+
+		MKZ_SCENE_set_camera(cam);
+		special_function = KG_SP_FUNC_OBJECT_CAMERA;
 	}
 }
 
@@ -815,13 +823,14 @@ void KG_camera_camera(){
 	if (special_function != KG_SP_FUNC_OBJECT_CAMERA)
 		return;
 
-	if (selectedCamera != 0){
+	if (selectedCamera == 0)
+		return;
 
-		object * obj = (object *) selectedCamera->content;
-		MKZ_camera * cam = (MKZ_camera *) obj->object;
-		MKZ_SCENE_set_camera(cam);
-		special_function = 0;
-	}
+	object * obj = (object *) selectedCamera->content;
+	MKZ_camera * cam = (MKZ_camera *) obj->object;
+	MKZ_SCENE_set_camera(cam);
+	special_function = 0;
+
 
 }
 
@@ -829,16 +838,18 @@ void KG_camera_camera(){
 void KG_switch_camera_projection(){
 
 
-	if (selectedCamera != 0){
-		MKZ_camera * cam = MKZ_SCENE_get_camera();
+	if (selectedCamera == 0)
+		return;
 
-		if (cam->projection_mode == MKZ_PROJECTIONMODE_PARALLEL){
-			cam->projection_mode = MKZ_PROJECTIONMODE_PERSPECTIVE;
-		}
-		else{
-			cam->projection_mode = MKZ_PROJECTIONMODE_PARALLEL;
-		}
+	MKZ_camera * cam = MKZ_SCENE_get_camera();
+
+	if (cam->projection_mode == MKZ_PROJECTIONMODE_PARALLEL){
+		cam->projection_mode = MKZ_PROJECTIONMODE_PERSPECTIVE;
 	}
+	else{
+		cam->projection_mode = MKZ_PROJECTIONMODE_PARALLEL;
+	}
+
 }
 
 void KG_lighting_switch(){
@@ -850,6 +861,9 @@ void KG_lighting_switch(){
 
 
 void KG_lights_switch(int l_index){
+
+	if (lightList[l_index] == 0)
+		return;
 
 	MKZ_object * obj = get_mkz_object(lightList[l_index]);
 
@@ -864,6 +878,13 @@ void KG_light_select(int l_index){
 
 
 void KG_switch_light_type(){
+
+	if (lightList[selectedLight] == 0)
+		return;
+
+	MKZ_lightObject * lo = (MKZ_lightObject *) lightList[selectedLight]->object;
+
+	lo->light_type = (lo->light_type + 1) % 3;
 
 
 }
@@ -905,7 +926,6 @@ MKZ_meshedObject * KG_get_selected_object(){
 }
 
 MKZ_lightObject * KG_get_selected_light(){
-
 
 	object * obj = lightList[selectedLight];
 	MKZ_lightObject * lo = (MKZ_lightObject *)obj->object;

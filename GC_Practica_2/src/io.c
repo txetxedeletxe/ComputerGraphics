@@ -109,8 +109,6 @@ void print_help(){
     printf("<F>\t\t Objektua bat kargatu\n");
     printf("<TAB>\t\t Kargaturiko objektuen artean bat hautatu\n");
     printf("<DEL>\t\t Hautatutako objektua ezabatu\n");
-    printf("<CTRL + ->\t Bistaratze-eremua handitu\n");
-    printf("<CTRL + +>\t Bistaratze-eremua txikitu\n");
     printf("\n\n");
 }
 

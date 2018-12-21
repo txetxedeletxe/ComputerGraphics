@@ -9,10 +9,8 @@
 /** GENERAL INITIALIZATION **/
 void initialization (){
 
-
 	print_help();
 	KG_load_object("resources/abioia.obj");
-
 
 }
 

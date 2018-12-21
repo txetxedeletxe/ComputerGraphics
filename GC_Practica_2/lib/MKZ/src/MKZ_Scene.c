@@ -56,6 +56,10 @@ void MKZ_SCENE_draw(){
 		aux_camera = ((global_mask & MKZ_GLOBAL_LIGHTING_MODE) != 0) ? default_camera : camera;
 		MKZ_DRAW_set_lighting_mode(aux_camera->lighting_mode);
 
+
+		MKZ_DRAW_clear();
+		MKZ_DRAW_start();
+
 		MKZ_DRAW_clear_lights();
 
 		MKZ_linkedList * aux = lightList;
@@ -67,9 +71,6 @@ void MKZ_SCENE_draw(){
 					aux = aux->ll;
 
 		}
-
-		MKZ_DRAW_clear();
-		MKZ_DRAW_start();
 
 
 		aux = objectList;
