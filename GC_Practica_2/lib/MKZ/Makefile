@@ -19,7 +19,7 @@ libMKZ.a: $(OBJ)
 	$(LIBC) ../$@ $^
 	
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) -c -o $@ $^ $(FLAGS) $(LIB)
+	$(CC) -g -c -o $@ $^ $(FLAGS) $(LIB)
 
 clean:
 	rm obj/*

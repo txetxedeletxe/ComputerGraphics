@@ -270,7 +270,7 @@ void MKZ_DRAW_clear_lights(){
 
 void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 
-
+	//printf("Light ptr: %d\n",lo);
 	glLoadMatrixf(baseChange_mat);
 
 	GLenum light_ind;

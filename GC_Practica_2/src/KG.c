@@ -26,7 +26,7 @@
 
 /** Internal state */
 /* objects */
-object * lightList[8];
+object * lList[8];
 linkedList * cameraList;
 linkedList * objList;
 
@@ -52,13 +52,12 @@ void KG_save_object_matrix(object * obj){
 
 	float * mat = MKZ_ARITHMETIC_create_matrix();
 	MKZ_ARITHMETIC_copy_matrix(mkz_obj->transform,mat);
-	//MKZ_ARITHMETIC_print_matrix(mat);
 	matStack_push(&obj->undoStack,mat);
 
 	/**cannot redo **/
 	free_matstack(obj->redoStack);
 	obj->redoStack = 0;
-
+	//MKZ_ARITHMETIC_print_matrix(mat);
 }
 
 void KG_update_children(object * obj){
@@ -81,6 +80,11 @@ void KG_update_children(object * obj){
 }
 
 void __KG_init(){
+
+	int i = 0;
+	for (i = 0 ; i < 8 ; i++){
+		lList[i] = 0;
+	}
 
 	cameraList = 0;
 	objList = 0;
@@ -138,11 +142,11 @@ void __KG_init(){
 
 	obj = create_object_light(lo);
 	KG_save_object_matrix(obj);
-	lightList[0] = obj;
+	lList[0] = obj;
 
 	//printf("%d\n",lightList[0]);
 
-	free(v3);
+	MKZ_GEOMETRY_free_vector3(v3);
 }
 
 
@@ -151,7 +155,7 @@ void KG_transform_object(int axis){
 	if (t_target == KG_TRANSFORM_TARGET_OBJECT && selectedObject == 0)
 		return;
 
-	if (t_target == KG_TRANSFORM_TARGET_LIGHT && lightList[selectedLight] == 0)
+	if (t_target == KG_TRANSFORM_TARGET_LIGHT && lList[selectedLight] == 0)
 		return;
 
 	object * obj;
@@ -159,7 +163,7 @@ void KG_transform_object(int axis){
 	if (t_target == KG_TRANSFORM_TARGET_OBJECT)
 		obj = (object *) selectedObject->content;
 	else
-		obj = lightList[selectedLight];
+		obj = lList[selectedLight];
 
 
 	MKZ_object * mo = get_mkz_object(obj);
@@ -650,7 +654,7 @@ void KG_uniform_scale(int sense){
 			traend = (object*) cameraList->content;
 			break;
 		case KG_TRANSFORM_TARGET_LIGHT:
-			traend = lightList[selectedLight];
+			traend = lList[selectedLight];
 			break;
 	}
 
@@ -705,7 +709,7 @@ void KG_undo_transformation(){
 			break;
 
 		case KG_TRANSFORM_TARGET_LIGHT:
-			obj = (object *) lightList[selectedLight];
+			obj = (object *) lList[selectedLight];
 			break;
 	}
 
@@ -750,10 +754,10 @@ void KG_redo_transformation(){
 				break;
 
 			case KG_TRANSFORM_TARGET_LIGHT:
-				if (lightList[selectedLight] == 0)
+				if (lList[selectedLight] == 0)
 					return;
 
-				obj = (object *) lightList[selectedLight];
+				obj = (object *) lList[selectedLight];
 				mkz_obj = (MKZ_object *)&(((MKZ_lightObject * ) obj->object)->obj);
 				break;
 		}
@@ -865,10 +869,10 @@ void KG_lighting_switch(){
 
 void KG_lights_switch(int l_index){
 
-	if (lightList[l_index] == 0)
+	if (lList[l_index] == 0)
 		return;
 
-	MKZ_object * obj = get_mkz_object(lightList[l_index]);
+	MKZ_object * obj = get_mkz_object(lList[l_index]);
 
 	obj->active = 1 - obj->active;
 }
@@ -882,10 +886,10 @@ void KG_light_select(int l_index){
 
 void KG_switch_light_type(){
 
-	if (lightList[selectedLight] == 0)
+	if (lList[selectedLight] == 0)
 		return;
 
-	MKZ_lightObject * lo = (MKZ_lightObject *) lightList[selectedLight]->object;
+	MKZ_lightObject * lo = (MKZ_lightObject *) lList[selectedLight]->object;
 
 	lo->light_type = (lo->light_type + 1) % 3;
 
@@ -934,7 +938,7 @@ MKZ_meshedObject * KG_get_selected_object(){
 
 MKZ_lightObject * KG_get_selected_light(){
 
-	object * obj = lightList[selectedLight];
+	object * obj = lList[selectedLight];
 	MKZ_lightObject * lo = (MKZ_lightObject *)obj->object;
 	return lo;
 }

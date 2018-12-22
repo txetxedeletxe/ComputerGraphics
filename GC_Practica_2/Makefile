@@ -20,13 +20,13 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 all: main
 
 main: $(LLIBDIR)/$(LLIB) $(OBJ)
-	$(CC) -o $@ $(OBJ) $(CFLAGS) 
+	$(CC) -g -o $@ $(OBJ) $(CFLAGS) 
 
 $(LLIBDIR)/$(LLIB):
 	make -C lib/MKZ
 	
 $(ODIR)/%.o: $(SRCDIR)/%.c
-	$(CC) -c -o $@ $^ $(CFLAGS)
+	$(CC) -g -c -o $@ $^ $(CFLAGS)
 
 clean:
 	make -C lib/MKZ clean
