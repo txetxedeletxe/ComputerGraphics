@@ -15,7 +15,7 @@ MKZ_camera * camera;
 MKZ_linkedList * objectList;
 
 /** lights **/
-MKZ_linkedList * lList;
+MKZ_linkedList * lightList;
 
 unsigned int global_mask;
 /** Exported **/
@@ -25,7 +25,7 @@ void MKZ_SCENE_init(){
 
 
 		objectList = 0;
-		lList = 0;
+		lightList = 0;
 		global_mask = 0;
 
 		default_camera = MKZ_OBJECT_create_camera();
@@ -65,7 +65,7 @@ void MKZ_SCENE_draw(){
 
 		MKZ_DRAW_clear_lights();
 
-		MKZ_linkedList * aux = lList;
+		MKZ_linkedList * aux = lightList;
 
 		while (aux != 0){
 					//printf("aux: %d\n",aux);
@@ -103,8 +103,8 @@ void MKZ_SCENE_add_light(MKZ_lightObject * lo){
 
 		MKZ_linkedList * ll = MKZ_DATASTRUCT_create_linkedList();
 		ll->content = lo;
-		ll->ll  = lList;
-		lList = ll;
+		ll->ll  = lightList;
+		lightList = ll;
 
 }
 
@@ -131,7 +131,7 @@ MKZ_meshedObject *  MKZ_SCENE_get_mesh(int id){
 
 MKZ_lightObject * MKZ_SCENE_get_light(int id){
 
-	MKZ_linkedList * aux = lList;
+	MKZ_linkedList * aux = lightList;
 
 	MKZ_lightObject * lo;
 		while (aux != 0){
@@ -191,7 +191,7 @@ void MKZ_SCENE_remove_mesh(int id){
 
 void MKZ_SCENE_remove_light(int id){
 
-	MKZ_linkedList * aux = lList;
+	MKZ_linkedList * aux = lightList;
 
 	if (aux == 0)
 		return;
@@ -199,7 +199,7 @@ void MKZ_SCENE_remove_light(int id){
 	MKZ_lightObject * lo = (MKZ_lightObject *)aux->content;
 
 	if (lo->obj.id == id){
-		objectList = aux->ll;
+		lightList = aux->ll;
 		free(aux);
 		return;
 	}
