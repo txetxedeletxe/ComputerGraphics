@@ -23,14 +23,12 @@
 #define KG_ROTATE_STEP 0.05235987755
 #define KG_SCALE_STEP 1.1f
 
-#define KG_SP_FUNC_OBJECT_CAMERA 1
 
 /** Internal state */
 /* objects */
 object * lightList[8];
 linkedList * cameraList;
 linkedList * objList;
-
 
 linkedList * selectedCamera;
 linkedList * selectedObject;
@@ -50,12 +48,11 @@ void KG_save_object_matrix(object * obj){
 
 	/** copy matrix to stack */
 
-
 	MKZ_object * mkz_obj = get_mkz_object(obj);
 
 	float * mat = MKZ_ARITHMETIC_create_matrix();
 	MKZ_ARITHMETIC_copy_matrix(mkz_obj->transform,mat);
-	MKZ_ARITHMETIC_print_matrix(mat);
+	//MKZ_ARITHMETIC_print_matrix(mat);
 	matStack_push(&obj->undoStack,mat);
 
 	/**cannot redo **/
@@ -104,8 +101,11 @@ void __KG_init(){
 	cam->skybox.b = KG_COL_BACK_B;
 	cam->lighting_enable = 1;
 	cam->lighting_mode = MKZ_LIGHTING_FLAT;
+	cam->culling_enabled = 1;
 
-	MKZ_SCENE_set_global_mask(MKZ_GLOBAL_BG_COLOR | MKZ_GLOBAL_POLYGON | MKZ_GLOBAL_LIGHTING_ENABLE | MKZ_GLOBAL_LIGHTING_MODE);
+	//Set of parameters that are global, i.e. camera independent
+	MKZ_SCENE_set_global_mask(MKZ_GLOBAL_BG_COLOR | MKZ_GLOBAL_POLYGON |
+			MKZ_GLOBAL_LIGHTING_ENABLE | MKZ_GLOBAL_LIGHTING_MODE | MKZ_GLOBAL_CULLING);
 
 	/** Init first cam*/
 	cam = MKZ_OBJECT_create_camera();
@@ -252,15 +252,16 @@ void KG_transform_object(int axis){
 	MKZ_GEOMETRY_free_vector3(v3);
 
 
-	fprintf(stdout,"obj_ptr: %d\n",obj);
-	fprintf(stdout,"mkz_obj_ptr: %d\n",mo);
+	//fprintf(stdout,"obj_ptr: %d\n",obj);
+	//fprintf(stdout,"mkz_obj_ptr: %d\n",mo);
+
 	if (t_scope == KG_TRANSFORM_SCOPE_LOCAL){
 		MKZ_TRANSFORM_matrix_local(n_mat,mo->transform);
 	}else{
 		MKZ_TRANSFORM_matrix_global(n_mat,mo->transform);
 	}
 
-	MKZ_ARITHMETIC_print_matrix(mo->transform);
+	//MKZ_ARITHMETIC_print_matrix(mo->transform);
 
 	KG_update_children(obj);
 	KG_save_object_matrix(obj);
@@ -914,6 +915,10 @@ int KG_get_transformation_scope(){
 
 int KG_get_transformation_type(){
 	return t_type;
+}
+
+int KG_get_special_state(){
+	return special_function;
 }
 
 MKZ_meshedObject * KG_get_selected_object(){

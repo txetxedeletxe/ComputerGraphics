@@ -47,6 +47,9 @@ void MKZ_SCENE_draw(){
 		aux_camera = ((global_mask & MKZ_GLOBAL_POLYGON) != 0) ? default_camera : camera;
 		MKZ_DRAW_set_poligonMode(aux_camera->polygon_mode);
 
+		aux_camera  = ((global_mask & MKZ_GLOBAL_CULLING) != 0) ? default_camera : camera;
+		MKZ_DRAW_set_culling(aux_camera->culling_enabled);
+
 		aux_camera = ((global_mask & MKZ_GLOBAL_TRANSFORM) != 0) ? default_camera : camera;
 		MKZ_DRAW_set_cameraMat(aux_camera->obj.transform);
 
@@ -72,9 +75,7 @@ void MKZ_SCENE_draw(){
 
 		}
 
-
 		aux = objectList;
-
 
 		while (aux != 0){
 
@@ -83,8 +84,6 @@ void MKZ_SCENE_draw(){
 				MKZ_DRAW_object(lo);
 			aux = aux->ll;
 		}
-
-
 
 		MKZ_DRAW_end();
 }

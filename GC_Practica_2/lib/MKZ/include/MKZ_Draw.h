@@ -12,6 +12,7 @@ void MKZ_DRAW_reset_identity_camera();
 void MKZ_DRAW_set_background_color(MKZ_color3 * bg);
 void MKZ_DRAW_set_lighting(int boolean);
 void MKZ_DRAW_set_lighting_mode(int mode);
+void MKZ_DRAW_set_culling(int boolean);
 void MKZ_DRAW_start();
 void MKZ_DRAW_clear();
 void MKZ_DRAW_clear_lights();

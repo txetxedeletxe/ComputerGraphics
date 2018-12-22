@@ -26,7 +26,7 @@ void print_info(){
 			break;
 
 		case KG_TRANSFORM_TARGET_LIGHT:
-			printf("Light\n");
+			printf("Luz\n");
 			tra_obj = (MKZ_object*)((KG_get_selected_light() != 0) ? &(KG_get_selected_light()->obj) : 0);
 			break;
 	}
@@ -46,15 +46,15 @@ void print_info(){
 	switch (KG_get_transformation_type()){
 
 	case KG_TRANSFORM_TYPE_TRANSLATE:
-		printf("Translate");
+		printf("Translacion");
 		break;
 
 	case KG_TRANSFORM_TYPE_ROTATE:
-		printf("Rotate");
+		printf("Rotacion");
 		break;
 
 	case KG_TRANSFORM_TYPE_SCALE:
-		printf("Scale");
+		printf("Escalado");
 		break;
 
 
@@ -73,29 +73,22 @@ void print_info(){
 	printf("---------------------------Camara-----------------------\n");
 	printf("Modo de visualizacion:\n");
 
-	/*
-	if (checkState(KG_CAMERA_OBJECT)){
-		printf("Objeto\n");
-	}
-	else{
-		printf("Camara\n");
-	}
-	 */
+	if (KG_get_special_state() == KG_SP_FUNC_OBJECT_CAMERA)
+		printf("Puto de vista del objeto\n");
 
 
 	printf("Matriz de transformacion de la camara:\n");
-	MKZ_camera * cam = KG_get_selected_camera();
+	MKZ_camera * cam = MKZ_SCENE_get_camera();
 	MKZ_ARITHMETIC_print_matrix(cam->obj.transform);
 
 	printf("Modo de proyeccion: ");
 
 	if (cam->projection_mode == KG_CAMERA_PROJECTION_PARALLEL){
-		printf("Ortho\n");
+		printf("Paralelo\n");
 	}
 	else{
-		printf("Perspective\n");
+		printf("Perspectiva\n");
 	}
-	//printf("State value: %d\n",stateField);
 
 }
 

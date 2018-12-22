@@ -42,10 +42,11 @@ void MKZ_DRAW_init(){
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 	glClearColor(0, 0, 0, 1);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 
 	next_light = 0;
 	lighting_enabled = 0;
@@ -72,8 +73,20 @@ void MKZ_DRAW_set_poligonMode(int p_mode){
 
 	glPolygonMode(GL_FRONT_AND_BACK , p_mode);
 
+
 }
 
+void MKZ_DRAW_set_culling(int boolean){
+
+	if (boolean){
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_DEPTH_TEST);
+	}
+	else{
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+	}
+}
 
 void MKZ_DRAW_set_renderVolume(double left, double right, double bottom, double top, double near, double far){
 
@@ -127,7 +140,6 @@ void MKZ_DRAW_set_lighting_mode(int mode){
 
 void MKZ_DRAW_start(){
 
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	//fprintf(stdout,"P_mode : %d\n", projection_mode);
@@ -147,7 +159,7 @@ void MKZ_DRAW_start(){
 }
 
 void MKZ_DRAW_clear(){
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 }
 
@@ -259,7 +271,8 @@ void MKZ_DRAW_clear_lights(){
 void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 
 
-	//printf("light_enabled : %d",next_light);
+	glLoadMatrixf(baseChange_mat);
+
 	GLenum light_ind;
 	float f[4];
 	switch(next_light){
@@ -344,10 +357,14 @@ void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 		glLightfv(light_ind, GL_SPOT_DIRECTION, f);
 
 		float det = MKZ_ARITHMETIC_determinant(lo->obj.transform);
-		printf("det: %f",det);
+		//printf("det: %f\n",det);
 
-		det = (75.0/(1.0+exp(-(det-2)*(det-2)))) +15;
-		printf("det: %f",det);
+		float a = 1.0/10.0f;
+
+		det = (75.0/(1.0+exp(-a*(log(det)-2)))) +15; //Funcion sigmoide parametrizada
+
+		//printf("det: %f\n",det);
+
 		if (det > 90)
 			det = 90;
 

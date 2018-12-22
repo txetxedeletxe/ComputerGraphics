@@ -21,6 +21,8 @@
 #define KG_CAMERA_PROJECTION_PARALLEL 0
 #define KG_CAMERA_PROJECTION_PERSPECTIVE 1
 
+#define KG_SP_FUNC_OBJECT_CAMERA 1
+
 void KG_init();
 void KG_set_callback(void (*func)(int event,void * state));
 void KG_enter_loop();
@@ -57,6 +59,8 @@ void KG_switch_lighting_mode();
 int KG_get_transformation_target();
 int KG_get_transformation_scope();
 int KG_get_transformation_type();
+
+int KG_get_special_state();
 
 MKZ_meshedObject * KG_get_selected_object();
 MKZ_lightObject * KG_get_selected_light();

@@ -51,6 +51,7 @@ typedef struct{
 
 	int projection_mode;
 	int polygon_mode;
+	int culling_enabled;
 
 	int lighting_enable;
 	int lighting_mode;

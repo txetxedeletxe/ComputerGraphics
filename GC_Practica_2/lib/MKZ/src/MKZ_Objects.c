@@ -56,6 +56,7 @@ MKZ_camera * MKZ_OBJECT_create_camera(){
 	MKZ_GEOMETRY_reset_to_black(&mc->skybox);
 	mc->lighting_enable = 0;
 	mc->lighting_mode = 0;
+	mc->culling_enabled = 1;
 	return mc;
 
 }
