@@ -171,6 +171,10 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 
 
 	MKZ_mesh * mesh = mo->mesh;
+	//fprintf(stdout,"%d\n",mesh);
+	if (mesh == 0)
+		return;
+
 	int f;
 	int v;
 	int v_index;
@@ -181,6 +185,11 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 	MKZ_vector3 v1;
 	MKZ_vector3 v2;
 	MKZ_vector3 v3;
+
+	MKZ_point3 p1;
+	MKZ_point3 p2;
+	MKZ_point3 p3;
+
 
 	if (lighting_enabled){
 
@@ -194,13 +203,37 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 
 			MKZ_face face =  mesh->face_table[f];
 
-			v1.x = mesh->vertex_table[face.vertex_table[1]].coord.x - mesh->vertex_table[face.vertex_table[0]].coord.x;
-			v1.y = mesh->vertex_table[face.vertex_table[1]].coord.y - mesh->vertex_table[face.vertex_table[0]].coord.y;
-			v1.z = mesh->vertex_table[face.vertex_table[1]].coord.z - mesh->vertex_table[face.vertex_table[0]].coord.z;
 
-			v2.x = mesh->vertex_table[face.vertex_table[2]].coord.x - mesh->vertex_table[face.vertex_table[0]].coord.x;
-			v2.y = mesh->vertex_table[face.vertex_table[2]].coord.y - mesh->vertex_table[face.vertex_table[0]].coord.y;
-			v2.z = mesh->vertex_table[face.vertex_table[2]].coord.z - mesh->vertex_table[face.vertex_table[0]].coord.z;
+			p1.x = mesh->vertex_table[face.vertex_table[0]].coord.x;
+			p1.y = mesh->vertex_table[face.vertex_table[0]].coord.y;
+			p1.z = mesh->vertex_table[face.vertex_table[0]].coord.z;
+
+			p2.x = mesh->vertex_table[face.vertex_table[1]].coord.x;
+			p2.y = mesh->vertex_table[face.vertex_table[1]].coord.y;
+			p2.z = mesh->vertex_table[face.vertex_table[1]].coord.z;
+
+			p3.x = mesh->vertex_table[face.vertex_table[2]].coord.x;
+			p3.y = mesh->vertex_table[face.vertex_table[2]].coord.y;
+			p3.z = mesh->vertex_table[face.vertex_table[2]].coord.z;
+
+			/*
+			MKZ_ARITHMETIC_transform_vector(baseChange_mat,&p1);
+			MKZ_ARITHMETIC_transform_vector(mo->obj.transform,&p1);
+
+			MKZ_ARITHMETIC_transform_vector(baseChange_mat,&p2);
+			MKZ_ARITHMETIC_transform_vector(mo->obj.transform,&p2);
+
+			MKZ_ARITHMETIC_transform_vector(baseChange_mat,&p3);
+			MKZ_ARITHMETIC_transform_vector(mo->obj.transform,&p3);
+			*/
+
+			v1.x = p2.x - p1.x;
+			v1.y = p2.y - p1.y;
+			v1.z = p2.z - p1.z;
+
+			v2.x = p3.x - p1.x;
+			v2.y = p3.y - p1.y;
+			v2.z = p3.z - p1.z;
 
 			MKZ_ARITHMETIC_corssProduct_vector(&v1,&v2,&v3);
 

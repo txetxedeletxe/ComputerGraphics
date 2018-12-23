@@ -190,17 +190,19 @@ MKZ_mesh * MKZ_GEOMETRY_load_mesh(char * file_name){
 	int vertex_count;
 	int face_count;
 
-	MKZ_point3 * p3;
-	MKZ_face * fc;
+	MKZ_point3 * p3 = 0;
+	MKZ_face * fc = 0;
 
 
 	int error = MKZ_IO_read_objFile(file_name, &p3, &fc, &vertex_count, &face_count);
 	MKZ_mesh * mesh = 0;
-	if (!error)
+	if (error == 0)
 		mesh = MKZ_GEOMETRY_create_mesh(p3, fc, vertex_count, face_count);
 
-	free(p3);
-	free(fc);
+	if (p3 != 0)
+		free(p3);
+	if (fc != 0)
+		free(fc);
 
 	return mesh;
 }

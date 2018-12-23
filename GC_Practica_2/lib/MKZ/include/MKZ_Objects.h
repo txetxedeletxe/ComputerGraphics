@@ -50,6 +50,9 @@ typedef struct{
 	MKZ_color3 skybox;
 
 	int projection_mode;
+
+	double v_x, v_y, v_near, v_far;
+
 	int polygon_mode;
 	int culling_enabled;
 

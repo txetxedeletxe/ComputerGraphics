@@ -59,6 +59,10 @@ void MKZ_SCENE_draw(){
 		aux_camera = ((global_mask & MKZ_GLOBAL_LIGHTING_MODE) != 0) ? default_camera : camera;
 		MKZ_DRAW_set_lighting_mode(aux_camera->lighting_mode);
 
+		aux_camera = ((global_mask & MKZ_GLOBAL_RENDER_VOLUME) != 0) ? default_camera : camera;
+		MKZ_DRAW_set_renderVolume(-aux_camera->v_x/2,aux_camera->v_x/2,
+				-aux_camera->v_y/2,aux_camera->v_y/2,
+				aux_camera->v_near,aux_camera->v_far);
 
 		MKZ_DRAW_clear();
 		MKZ_DRAW_start();
@@ -70,8 +74,9 @@ void MKZ_SCENE_draw(){
 		while (aux != 0){
 					//printf("aux: %d\n",aux);
 					MKZ_lightObject * lo = (MKZ_lightObject *)aux->content;
-					if (lo->obj.active)
+					if (lo->obj.active){
 						MKZ_DRAW_add_light(lo);
+					}
 					aux = aux->ll;
 
 		}
@@ -81,8 +86,9 @@ void MKZ_SCENE_draw(){
 		while (aux != 0){
 			//printf("aux: %d\n",aux);
 			MKZ_meshedObject * lo = (MKZ_meshedObject *)aux->content;
-			if (lo->obj.active)
+			if (lo->obj.active){
 				MKZ_DRAW_object(lo);
+			}
 			aux = aux->ll;
 		}
 

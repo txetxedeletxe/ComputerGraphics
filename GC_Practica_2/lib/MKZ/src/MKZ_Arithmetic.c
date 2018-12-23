@@ -49,6 +49,15 @@ float MKZ_ARITHMETIC_determinant(float * mat){
 	return f;
 }
 
+void MKZ_ARITHMETIC_normalize(float * v3){
+
+	float dist = MKZ_ARITHMETIC_eulidean_norm(v3);
+
+	v3[0] = v3[0]/dist;
+	v3[1] = v3[1]/dist;
+	v3[2] = v3[2]/dist;
+}
+
 void MKZ_ARITHMETIC_normalize_vector(MKZ_vector3 * v3){
 
 	float  dist = MKZ_ARITHMETIC_eulidean_norm_vector(v3);
@@ -92,6 +101,22 @@ float MKZ_ARITHMETIC_eulidean_norm_vector(MKZ_vector3 * v3){
 
 float MKZ_ARITHMETIC_eulidean_norm(float * v3){
 	return sqrt(v3[0]*v3[0] + v3[1]*v3[1] + v3[2]*v3[2]);
+}
+
+void MKZ_ARITHMETIC_transform_vector(float * mat, MKZ_vector3 * v3){
+
+	float vx = 0;
+	float vy = 0;
+	float vz = 0;
+
+	vx = mat[0]*v3->x + mat[4]*v3->y + mat[8]*v3->z;
+	vy = mat[1]*v3->x + mat[5]*v3->y + mat[9]*v3->z;
+	vz = mat[2]*v3->x + mat[6]*v3->y + mat[10]*v3->z;
+
+	v3->x = vx;
+	v3->y = vy;
+	v3->z = vz;
+
 }
 
 void MKZ_ARITHMETIC_copy_matrix(float * vin , float * vout){

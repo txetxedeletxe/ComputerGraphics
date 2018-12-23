@@ -57,6 +57,11 @@ MKZ_camera * MKZ_OBJECT_create_camera(){
 	mc->lighting_enable = 0;
 	mc->lighting_mode = 0;
 	mc->culling_enabled = 1;
+	mc->v_x = 2;
+	mc->v_y = 2;
+	mc->v_near = 1;
+	mc->v_far = 1000;
+
 	return mc;
 
 }

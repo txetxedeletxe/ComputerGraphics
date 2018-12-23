@@ -12,6 +12,7 @@ void MKZ_ARITHMETIC_nulMatrix(float* mat);
 
 void MKZ_ARITHMETIC_matMul(float * mat1,float * mat2,float * mat3);
 
+void MKZ_ARITHMETIC_normalize(float * v3);
 void MKZ_ARITHMETIC_normalize_vector(MKZ_vector3 * v3);
 void MKZ_ARITHMETIC_corssProduct_vector(MKZ_vector3* v1, MKZ_vector3* v2 , MKZ_vector3* v3);
 
@@ -20,6 +21,8 @@ float MKZ_ARITHMETIC_dotProduct(float * v1, float * v2);
 
 float MKZ_ARITHMETIC_eulidean_norm_vector(MKZ_vector3 * v3);
 float MKZ_ARITHMETIC_eulidean_norm(float * v3);
+
+void MKZ_ARITHMETIC_transform_vector(float * mat, MKZ_vector3 * v3);
 
 float MKZ_ARITHMETIC_determinant(float * mat);
 

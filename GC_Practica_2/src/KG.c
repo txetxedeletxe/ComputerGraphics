@@ -2,6 +2,7 @@
 #include "objects.h"
 #include "KG.h"
 
+#include <math.h>
 #include <stdio.h>
 
 #define KG_WINDOW_WIDTH 640
@@ -14,10 +15,10 @@
 #define KG_COL_BACK_B                       0.60f
 #define KG_COL_BACK_A                       1.00f
 
-#define KG_ORTHO_WIDTH 8
-#define KG_ORTHO_HEIGHT 6
-#define KG_ORTHO_DEPTH 10
-
+#define KG_VIEW_WIDTH 2
+#define KG_VIEW_HEIGHT 2
+#define KG_VIEW_NEAR 1
+#define KG_VIEW_FAR 1000
 
 #define KG_TRANSLATE_STEP 0.3f
 #define KG_ROTATE_STEP 0.05235987755
@@ -34,7 +35,6 @@ linkedList * selectedCamera;
 linkedList * selectedObject;
 int selectedLight;
 
-
 /** transform state **/
 int t_type;
 int t_scope;
@@ -42,6 +42,11 @@ int t_target;
 
 /** special functions**/
 int special_function;
+
+
+/** Resources **/
+
+MKZ_mesh * meshList[100];
 
 /** Private Functions **/
 void KG_save_object_matrix(object * obj){
@@ -72,10 +77,9 @@ void KG_update_children(object * obj){
 		MKZ_object * ch_mkz = get_mkz_object(ch_obj);
 
 		MKZ_ARITHMETIC_matMul(tramat,ch_obj->undoStack->mat,ch_mkz->transform);
-
+		KG_update_children(ch_obj);
 		ch = ch->ll_after;
 	}
-
 
 }
 
@@ -84,6 +88,10 @@ void __KG_init(){
 	int i = 0;
 	for (i = 0 ; i < 8 ; i++){
 		lList[i] = 0;
+	}
+
+	for (i = 0 ; i < 100 ; i++){
+		meshList[i] = 0;
 	}
 
 	cameraList = 0;
@@ -96,6 +104,8 @@ void __KG_init(){
 	t_scope = KG_TRANSFORM_SCOPE_GLOBAL;
 	t_target = KG_TRANSFORM_TARGET_OBJECT;
 	special_function = 0;
+
+	meshList[0] = MKZ_GEOMETRY_load_mesh("resources/cubo.obj");
 
 	/** init scene**/
 	MKZ_camera * cam  = MKZ_SCENE_get_default_camera();
@@ -116,16 +126,17 @@ void __KG_init(){
 
 	cam->projection_mode = MKZ_PROJECTIONMODE_PERSPECTIVE;
 
-	MKZ_vector3 * v3 = MKZ_GEOMETRY_create_vector3();
-	v3->x = 1.0f/(KG_ORTHO_WIDTH);
-	v3->y = 1.0f/(KG_ORTHO_HEIGHT);
-	v3->z = 1.0f/(KG_ORTHO_DEPTH);
+	cam->v_x = KG_VIEW_WIDTH;
+	cam->v_y = KG_VIEW_HEIGHT;
+	cam->v_near = KG_VIEW_NEAR;
+	cam->v_far = KG_VIEW_FAR;
 
-	MKZ_TRANSFORM_set_absolute_scale(cam->obj.transform,v3);
+	MKZ_vector3 * v3 = MKZ_GEOMETRY_create_vector3();
+
 
 	v3->x = 0;
 	v3->y = 0;
-	v3->z = 15;
+	v3->z = 10;
 
 	MKZ_TRANSFORM_translate_global(cam->obj.transform,v3);
 	MKZ_SCENE_set_camera(cam);
@@ -135,16 +146,115 @@ void __KG_init(){
 	linkedlist_add(&cameraList,obj);
 	selectedCamera = cameraList;
 
-
+	/** First light, sun yellow*/
 	MKZ_lightObject * lo = MKZ_OBJECT_create_lightObject();
-	lo->light_type = MKZ_LIGHT_TYPE_POINT;
+	lo->light_type = MKZ_LIGHT_TYPE_DIRECTIONAL;
+	lo->intensityAmbient = 0.1;
+	lo->intensityDifuse= 0.3;
+	lo->intensitySpecular = 3;
+	lo->color.r = 225.0/255.0;
+	lo->color.g = 239.0/255.0;
+	lo->color.b = 23.0/255.0;
+
+	MKZ_TRANSFORM_rotateX_global(lo->obj.transform,1);
+	MKZ_TRANSFORM_rotateY_global(lo->obj.transform,1);
 	MKZ_SCENE_add_light(lo);
 
 	obj = create_object_light(lo);
 	KG_save_object_matrix(obj);
 	lList[0] = obj;
 
-	//printf("%d\n",lightList[0]);
+	/** Second light, red lightbulb **/
+	lo = MKZ_OBJECT_create_lightObject();
+	lo->light_type = MKZ_LIGHT_TYPE_POINT;
+	lo->obj.transform[12] = 1;
+	lo->obj.transform[13] = 2;
+	lo->obj.transform[14] = 3;
+	lo->intensityAmbient = 1;
+	lo->intensityDifuse = 10;
+	lo->intensitySpecular = 10;
+	lo->color.r = 1;
+	lo->color.g = 0;
+	lo->color.b = 0;
+
+	MKZ_meshedObject * mo = MKZ_OBJECT_create_meshedObject();
+	mo->mesh = meshList[0];
+	MKZ_TRANSFORM_scaleUniform_local(mo->obj.transform,0.05);
+	object * mo_object = create_object_meshed(mo);
+	KG_save_object_matrix(mo_object);
+
+	MKZ_SCENE_add_light(lo);
+	MKZ_SCENE_add_mesh(mo);
+
+	obj = create_object_light(lo);
+	KG_save_object_matrix(obj);
+	lList[1] = obj;
+
+	linkedlist_add(&obj->children,mo_object);
+	KG_update_children(obj);
+
+
+	/** luz adicional, verde **/
+
+	lo = MKZ_OBJECT_create_lightObject();
+	lo->light_type = MKZ_LIGHT_TYPE_POINT;
+	lo->obj.transform[12] = -2;
+	lo->obj.transform[13] = 2;
+	lo->obj.transform[14] = 1;
+	lo->intensityAmbient = 1;
+	lo->intensityDifuse = 10;
+	lo->intensitySpecular = 10;
+	lo->color.r = 0;
+	lo->color.g = 1;
+	lo->color.b = 0;
+
+	mo = MKZ_OBJECT_create_meshedObject();
+	mo->mesh = meshList[0];
+	MKZ_TRANSFORM_scaleUniform_local(mo->obj.transform,0.05);
+	mo_object = create_object_meshed(mo);
+	KG_save_object_matrix(mo_object);
+
+	MKZ_SCENE_add_light(lo);
+	MKZ_SCENE_add_mesh(mo);
+
+	obj = create_object_light(lo);
+	KG_save_object_matrix(obj);
+	lList[3] = obj;
+
+	linkedlist_add(&obj->children,mo_object);
+	KG_update_children(obj);
+
+	/** luz adicional, azul **/
+
+	lo = MKZ_OBJECT_create_lightObject();
+	lo->light_type = MKZ_LIGHT_TYPE_POINT;
+	lo->obj.transform[12] = -1;
+	lo->obj.transform[13] = -1;
+	lo->obj.transform[14] = 3;
+	lo->intensityAmbient = 1;
+	lo->intensityDifuse = 10;
+	lo->intensitySpecular = 10;
+	lo->color.r = 0;
+	lo->color.g = 0;
+	lo->color.b = 1;
+
+	mo = MKZ_OBJECT_create_meshedObject();
+	mo->mesh = meshList[0];
+	MKZ_TRANSFORM_scaleUniform_local(mo->obj.transform,0.05);
+	mo_object = create_object_meshed(mo);
+	KG_save_object_matrix(mo_object);
+
+	MKZ_SCENE_add_light(lo);
+	MKZ_SCENE_add_mesh(mo);
+
+	obj = create_object_light(lo);
+	KG_save_object_matrix(obj);
+	lList[4] = obj;
+
+	linkedlist_add(&obj->children,mo_object);
+	KG_update_children(obj);
+
+
 
 	MKZ_GEOMETRY_free_vector3(v3);
 }
@@ -155,7 +265,7 @@ void KG_transform_object(int axis){
 	if (t_target == KG_TRANSFORM_TARGET_OBJECT && selectedObject == 0)
 		return;
 
-	if (t_target == KG_TRANSFORM_TARGET_LIGHT && lList[selectedLight] == 0)
+	if (t_target == KG_TRANSFORM_TARGET_LIGHT && (selectedLight == 2 || lList[selectedLight] == 0))
 		return;
 
 	object * obj;
@@ -270,7 +380,6 @@ void KG_transform_object(int axis){
 	KG_update_children(obj);
 	KG_save_object_matrix(obj);
 
-
 }
 
 void KG_transform_camera(int axis){
@@ -279,7 +388,7 @@ void KG_transform_camera(int axis){
 		return;
 
 	object * obj = (object *) selectedCamera->content;
-	MKZ_object* ca = get_mkz_object(obj);
+	MKZ_camera * ca = (MKZ_camera *)obj->object;
 
 
 	int sense = axis;
@@ -299,9 +408,9 @@ void KG_transform_camera(int axis){
 
 		object * objobj = (object *) selectedObject->content;
 		MKZ_meshedObject * mo = (MKZ_meshedObject *) objobj->object;
-		v3->x = mo->obj.transform[12] - ca->transform[12];
-		v3->y = mo->obj.transform[13] - ca->transform[13];
-		v3->z = mo->obj.transform[14] - ca->transform[14];
+		v3->x = mo->obj.transform[12] - ca->obj.transform[12];
+		v3->y = mo->obj.transform[13] - ca->obj.transform[13];
+		v3->z = mo->obj.transform[14] - ca->obj.transform[14];
 
 		float dist = MKZ_ARITHMETIC_eulidean_norm_vector(v3);
 
@@ -311,38 +420,38 @@ void KG_transform_camera(int axis){
 
 		if (magnitude == KG_TRANSFORM_AXIS_Z){
 
-			v3->z = -KG_TRANSLATE_STEP/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
+			v3->z = -KG_TRANSLATE_STEP/MKZ_ARITHMETIC_eulidean_norm(ca->obj.transform+8);
 
 			if (sense == 1){
 
 				if (dist > KG_TRANSLATE_STEP){
-					MKZ_TRANSFORM_translate_local(ca->transform,v3);
+					MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
 				}
 			}
 			else{
 
 				v3->z = -v3->z;
-				MKZ_TRANSFORM_translate_local(ca->transform,v3);
+				MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
 			}
 		}
 		else
 		{
 
-			v3->z = -dist/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
+			v3->z = -dist/MKZ_ARITHMETIC_eulidean_norm(ca->obj.transform+8);
 			switch(magnitude){
 
 			case KG_TRANSFORM_AXIS_X:
-				MKZ_TRANSFORM_translate_local(ca->transform,v3);
-				MKZ_TRANSFORM_rotateY_local(ca->transform,KG_ROTATE_STEP*sense);
-				v3->z = dist/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
-				MKZ_TRANSFORM_translate_local(ca->transform,v3);
+				MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
+				MKZ_TRANSFORM_rotateY_local(ca->obj.transform,KG_ROTATE_STEP*sense);
+				v3->z = dist/MKZ_ARITHMETIC_eulidean_norm(ca->obj.transform+8);
+				MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
 				break;
 
 			case KG_TRANSFORM_AXIS_Y:
-				MKZ_TRANSFORM_translate_local(ca->transform,v3);
-				MKZ_TRANSFORM_rotateX_local(ca->transform,KG_ROTATE_STEP*sense);
-				v3->z = dist/MKZ_ARITHMETIC_eulidean_norm(ca->transform+8);
-				MKZ_TRANSFORM_translate_local(ca->transform,v3);
+				MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
+				MKZ_TRANSFORM_rotateX_local(ca->obj.transform,KG_ROTATE_STEP*sense);
+				v3->z = dist/MKZ_ARITHMETIC_eulidean_norm(ca->obj.transform+8);
+				MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
 				break;
 			}
 		}
@@ -350,7 +459,7 @@ void KG_transform_camera(int axis){
 		v3->x = mo->obj.transform[12];
 		v3->y = mo->obj.transform[13];
 		v3->z = mo->obj.transform[14];
-		MKZ_TRANSFORM_look_at(ca->transform, v3);
+		MKZ_TRANSFORM_look_at(ca->obj.transform, v3);
 	}
 	else{
 		switch (t_type){
@@ -373,7 +482,7 @@ void KG_transform_camera(int axis){
 
 			}
 
-			MKZ_TRANSFORM_translate_local(ca->transform,v3);
+			MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
 			break;
 
 		case KG_TRANSFORM_TYPE_ROTATE:
@@ -381,15 +490,15 @@ void KG_transform_camera(int axis){
 			switch (magnitude){
 
 			case KG_TRANSFORM_AXIS_X:
-				MKZ_TRANSFORM_rotateY_local(ca->transform,-sense*KG_ROTATE_STEP);
+				MKZ_TRANSFORM_rotateY_local(ca->obj.transform,-sense*KG_ROTATE_STEP);
 				break;
 
 			case KG_TRANSFORM_AXIS_Y:
-				MKZ_TRANSFORM_rotateX_local(ca->transform,sense*KG_ROTATE_STEP);
+				MKZ_TRANSFORM_rotateX_local(ca->obj.transform,sense*KG_ROTATE_STEP);
 				break;
 
 			case KG_TRANSFORM_AXIS_Z:
-				MKZ_TRANSFORM_rotateZ_local(ca->transform,sense*KG_ROTATE_STEP);
+				MKZ_TRANSFORM_rotateZ_local(ca->obj.transform,sense*KG_ROTATE_STEP);
 				break;
 
 			}
@@ -407,15 +516,15 @@ void KG_transform_camera(int axis){
 			switch (magnitude){
 
 			case KG_TRANSFORM_AXIS_X:
-				MKZ_TRANSFORM_scaleX_local(ca->transform,scaleFactor);
+				ca->v_x *= scaleFactor;
 				break;
 
 			case KG_TRANSFORM_AXIS_Y:
-				MKZ_TRANSFORM_scaleY_local(ca->transform,scaleFactor);
+				ca->v_y *= scaleFactor;
 				break;
 
 			case KG_TRANSFORM_AXIS_Z:
-				MKZ_TRANSFORM_scaleZ_local(ca->transform,scaleFactor);
+				ca->v_far *= scaleFactor;
 				break;
 
 			}
@@ -423,7 +532,7 @@ void KG_transform_camera(int axis){
 
 		}
 	}
-	float det = MKZ_ARITHMETIC_determinant(ca->transform);
+	//float det = MKZ_ARITHMETIC_determinant(ca->transform);
 	//printf("det: %f\n",det);
 	MKZ_GEOMETRY_free_vector3(v3);
 
@@ -481,16 +590,58 @@ int KG_load_object(char * filename){
 		MKZ_camera * cam = MKZ_OBJECT_create_camera();
 
 		cam->obj.transform[10] = -1;
-		cam->obj.transform[13] = 2;
+		cam->obj.transform[13] = 1;
+
+		cam->v_x = KG_VIEW_WIDTH;
+		cam->v_y = KG_VIEW_HEIGHT;
+		cam->v_far = KG_VIEW_FAR;
+		cam->v_near = KG_VIEW_NEAR;
+		cam->projection_mode = MKZ_PROJECTIONMODE_PERSPECTIVE;
 
 		object * obj_cam = create_object_camera(cam);
 		linkedlist_add(&obj->children,obj_cam);
 
 		KG_save_object_matrix(obj_cam);
 
-		if (selectedObject == 0)
+		MKZ_lightObject * light = MKZ_OBJECT_create_lightObject();
+		light->light_type = MKZ_LIGHT_TYPE_FOCAL;
+		light->intensityAmbient = 1;
+		light->intensityDifuse = 5;
+		light->intensitySpecular = 5;
+		light->spotExponent = 3;
+
+		light->obj.transform[12]=2;
+		light->obj.transform[13]=2;
+		light->obj.transform[14]=2;
+
+		MKZ_TRANSFORM_rotateX_local(light->obj.transform,1);
+		MKZ_TRANSFORM_rotateY_local(light->obj.transform,2);
+
+
+		object * obj_light = create_object_light(light);
+		linkedlist_add(&obj->children,obj_light);
+		KG_save_object_matrix(obj_light);
+
+
+		MKZ_meshedObject * torch = MKZ_OBJECT_create_meshedObject();
+		torch->mesh = meshList[0];
+		torch->obj.active = 0;
+		MKZ_TRANSFORM_scaleUniform_local(torch->obj.transform,0.01);
+		object * torch_obj = create_object_meshed(torch);
+		KG_save_object_matrix(torch_obj);
+		linkedlist_add(&obj_light->children,torch_obj);
+
+		KG_update_children(obj);
+		MKZ_SCENE_add_mesh(torch);
+
+
+		if (selectedObject == 0){
 			selectedObject = objList;
 
+			lList[2] = obj_light;
+			MKZ_SCENE_add_light(light);
+			torch->obj.active = 1;
+		}
 		return 0;
 	}
 
@@ -510,6 +661,60 @@ void KG_select_next_object(){
 		selectedObject = objList;
 	}
 
+	/* deactivate previous focus */
+	object * obj = lList[2];
+	MKZ_object * mkz_obj = get_mkz_object(obj);
+	MKZ_SCENE_remove_light(mkz_obj->id);
+
+	linkedList * aux = obj->children;
+
+	/* deactivate focus mesh  */
+	while (aux != 0){
+
+		obj = (object *) aux->content;
+		if (obj->objectType == KG_OBJECT_TYPE_MESH){
+
+			MKZ_object * mkz_o = get_mkz_object(obj);
+			mkz_o->active = 0;
+			break;
+		}
+		aux = aux->ll_after;
+	}
+
+	obj = (object *) selectedObject->content;
+
+	aux = obj->children;
+
+	/* Turn the torch on and activate the mesh */
+	while (aux != 0){
+
+		obj = (object *) aux->content;
+
+		if (obj->objectType == KG_OBJECT_TYPE_LIGHT){
+
+			MKZ_lightObject * lo = (MKZ_lightObject *) obj->object;
+			MKZ_SCENE_add_light(lo);
+			lList[2] = obj;
+
+			aux = obj->children;
+
+			while (aux != 0){
+
+				obj = (object *) aux->content;
+
+				if (obj->objectType == KG_OBJECT_TYPE_MESH){
+
+					MKZ_object * mkz_o = get_mkz_object(obj);
+					mkz_o->active = 1;
+					break;
+
+				}
+				aux = aux->ll_after;
+			}
+			break;
+		}
+		aux = aux->ll_after;
+	}
 
 
 }
@@ -532,6 +737,38 @@ void KG_delete_selected_object(){
 		selectedObject->ll_after = 0;
 
 		object * obj = (object *) selectedObject->content;
+
+		linkedList * aux = obj->children;
+
+		while (aux != 0){
+
+				object * aux_obj = (object *) aux->content;
+
+				if (aux_obj->objectType == KG_OBJECT_TYPE_LIGHT){
+
+					MKZ_object * mkz_o = get_mkz_object(aux_obj);
+					MKZ_SCENE_remove_light(mkz_o->id);
+					lList[2] = 0;
+
+					aux = aux_obj->children;
+
+					while (aux!= 0){
+						object * aux_obj = (object *) aux->content;
+
+						if (aux_obj->objectType == KG_OBJECT_TYPE_MESH){
+							MKZ_object * mkz_o = get_mkz_object(aux_obj);
+							MKZ_SCENE_remove_mesh(mkz_o->id);
+							break;
+						}
+						aux = aux->ll_after;
+					}
+
+					break;
+				}
+
+				aux = aux->ll_after;
+			}
+
 		MKZ_meshedObject * mo = (MKZ_meshedObject *) obj->object;
 		MKZ_SCENE_remove_mesh(mo->obj.id);
 
@@ -551,6 +788,38 @@ void KG_delete_selected_object(){
 		selectedObject->ll_before = 0;
 
 		object * obj = (object *) selectedObject->content;
+
+		linkedList * aux = obj->children;
+
+		while (aux != 0){
+
+				object * aux_obj = (object *) aux->content;
+
+				if (aux_obj->objectType == KG_OBJECT_TYPE_LIGHT){
+
+					MKZ_object * mkz_o = get_mkz_object(aux_obj);
+					MKZ_SCENE_remove_light(mkz_o->id);
+					lList[2] = 0;
+
+					aux = aux_obj->children;
+
+					while (aux!= 0){
+						object * aux_obj = (object *) aux->content;
+
+						if (aux_obj->objectType == KG_OBJECT_TYPE_MESH){
+							MKZ_object * mkz_o = get_mkz_object(aux_obj);
+							MKZ_SCENE_remove_mesh(mkz_o->id);
+							break;
+						}
+						aux = aux->ll_after;
+					}
+
+					break;
+				}
+
+				aux = aux->ll_after;
+			}
+
 		MKZ_meshedObject * mo = (MKZ_meshedObject *) obj->object;
 		MKZ_SCENE_remove_mesh(mo->obj.id);
 
@@ -561,6 +830,45 @@ void KG_delete_selected_object(){
 		if (selectedObject == 0){
 			selectedObject = objList;
 		}
+	}
+
+
+	if (selectedObject != 0){
+
+		object * obj = (object *) selectedObject->content;
+
+		linkedList * aux = obj->children;
+
+		while (aux != 0){
+
+			obj = (object *) aux->content;
+
+			if (obj->objectType == KG_OBJECT_TYPE_LIGHT){
+
+				MKZ_lightObject * lo = (MKZ_lightObject *) obj->object;
+				MKZ_SCENE_add_light(lo);
+				lList[2] = obj;
+
+				aux = obj->children;
+
+				while (aux != 0){
+
+					obj = (object *) aux->content;
+					if (obj->objectType == KG_OBJECT_TYPE_MESH){
+
+						MKZ_object * mkz_o = get_mkz_object(obj);
+						mkz_o->active = 1;
+						break;
+					}
+					aux = aux->ll_after;
+				}
+
+				break;
+			}
+
+			aux = aux->ll_after;
+		}
+
 	}
 
 
@@ -643,6 +951,15 @@ void KG_uniform_scale(int sense){
 	if (special_function != 0)
 		return;
 
+	float s_factor = 1.0f;
+
+	if (sense < 0){
+		s_factor /= KG_SCALE_STEP;
+	}
+	else{
+		s_factor *= KG_SCALE_STEP;
+	}
+
 	object * traend = 0;
 
 	switch(t_target){
@@ -652,7 +969,12 @@ void KG_uniform_scale(int sense){
 			break;
 		case KG_TRANSFORM_TARGET_CAMERA:
 			traend = (object*) cameraList->content;
-			break;
+			MKZ_camera * cam = (MKZ_camera *) traend->object;
+
+			cam->v_far *=s_factor;
+			cam->v_x *= s_factor;
+			cam->v_y *= s_factor;
+			return;
 		case KG_TRANSFORM_TARGET_LIGHT:
 			traend = lList[selectedLight];
 			break;
@@ -661,14 +983,6 @@ void KG_uniform_scale(int sense){
 	if (traend == 0)
 		return;
 
-	float s_factor = 1.0f;
-
-	if (sense < 0){
-		s_factor /= KG_SCALE_STEP;
-	}
-	else{
-		s_factor *= KG_SCALE_STEP;
-	}
 
 
 	MKZ_object * obj = get_mkz_object(traend);
@@ -889,9 +1203,17 @@ void KG_switch_light_type(){
 	if (lList[selectedLight] == 0)
 		return;
 
+	if (selectedLight < 3)
+		return;
+
 	MKZ_lightObject * lo = (MKZ_lightObject *) lList[selectedLight]->object;
 
-	lo->light_type = (lo->light_type + 1) % 3;
+	if (lo->light_type == MKZ_LIGHT_TYPE_POINT)
+		lo->light_type = MKZ_LIGHT_TYPE_DIRECTIONAL;
+	else if (lo->light_type == MKZ_LIGHT_TYPE_DIRECTIONAL)
+		lo->light_type = MKZ_LIGHT_TYPE_FOCAL;
+	else
+		lo->light_type = MKZ_LIGHT_TYPE_POINT;
 
 
 }
@@ -958,7 +1280,19 @@ MKZ_camera * KG_get_selected_camera(){
 void KG_create_camera(){
 
 	MKZ_camera * cam = MKZ_OBJECT_create_camera();
+
+	MKZ_camera * cam2 = (MKZ_camera *)((object *)selectedCamera->content)->object;
+
+	cam->v_x = cam2->v_x;
+	cam->v_y = cam2->v_y;
+	cam->v_near = cam2->v_near;
+	cam->v_far = cam2->v_far;
+
+	cam->projection_mode = cam2->projection_mode;
+	MKZ_ARITHMETIC_copy_matrix(cam2->obj.transform,cam->obj.transform);
+
 	object * obj = create_object_camera(cam);
+	KG_save_object_matrix(obj);
 	linkedlist_add(&cameraList, obj);
 
 	selectedCamera = cameraList;
