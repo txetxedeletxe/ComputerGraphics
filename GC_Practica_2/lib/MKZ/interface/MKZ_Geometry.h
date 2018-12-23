@@ -43,17 +43,27 @@ typedef struct {
 
 typedef struct{
 
-	float ** r;
-	float ** g;
-	float ** b;
+	float * floatMap; //array size = n*n
 
-}MKZ_RGBmap;
+	int n;
+
+}MKZ_map;
 
 typedef struct{
 
-	MKZ_RGBmap * ambientMap;
-	MKZ_RGBmap * difuseMap;
-	MKZ_RGBmap * specularMap;
+	MKZ_map * ambientMapR;
+	MKZ_map * ambientMapG;
+	MKZ_map * ambientMapB;
+
+	MKZ_map * difuseMapR;
+	MKZ_map * difuseMapG;
+	MKZ_map * difuseMapB;
+
+	MKZ_map * specularMapR;
+	MKZ_map * specularMapG;
+	MKZ_map * specularMapB;
+
+	float shininess;
 
 }MKZ_material;
 
@@ -81,5 +91,12 @@ void MKZ_GEOMETRY_free_color3(MKZ_color3 * col);
 MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces , int vertex_count , int face_count);
 MKZ_mesh * MKZ_GEOMETRY_load_mesh(char * filename);
 void MKZ_GEOMETRY_free_mesh(MKZ_mesh * mesh);
+
+/** MATERIAL **/
+MKZ_material * MKZ_GEOMETRY_create_material();
+MKZ_map * MKZ_GEOMETRY_create_map(int size);
+
+void MKZ_GEOMETRY_free_material(MKZ_material * mat);
+void MKZ_GEOMETRY_free_map(MKZ_map * map);
 
 #endif

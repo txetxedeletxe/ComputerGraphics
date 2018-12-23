@@ -47,6 +47,7 @@ int special_function;
 /** Resources **/
 
 MKZ_mesh * meshList[100];
+MKZ_map * mapList[100];
 
 /** Private Functions **/
 void KG_save_object_matrix(object * obj){
@@ -254,6 +255,11 @@ void __KG_init(){
 	linkedlist_add(&obj->children,mo_object);
 	KG_update_children(obj);
 
+
+	for (i = 0 ; i < 100 ; i++){
+		mapList[i] = MKZ_GEOMETRY_create_map(1);
+		mapList[i]->floatMap[0] = ((float)rand())/((float)RAND_MAX);
+	}
 
 
 	MKZ_GEOMETRY_free_vector3(v3);
@@ -579,6 +585,26 @@ int KG_load_object(char * filename){
 
 		MKZ_meshedObject * mo = MKZ_OBJECT_create_meshedObject();
 		mo->mesh = mesh;
+
+
+		MKZ_material * mat = MKZ_GEOMETRY_create_material();
+
+		unsigned int r = rand() %100;
+		mat->ambientMapR = mapList[r];
+		mat->difuseMapR = mapList[r];
+		mat->specularMapR = mapList[r];
+		r = rand() % 100;
+		mat->ambientMapG = mapList[r];
+		mat->difuseMapG = mapList[r];
+		mat->specularMapG = mapList[r];
+		r = rand() % 100;
+		mat->ambientMapB = mapList[r];
+		mat->difuseMapB = mapList[r];
+		mat->specularMapB = mapList[r];
+
+		mat->shininess = 127.0*((float)rand())/((float)RAND_MAX);
+
+		mo->material = mat;
 
 		MKZ_SCENE_add_mesh(mo);
 

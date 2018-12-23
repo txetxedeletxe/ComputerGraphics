@@ -219,3 +219,49 @@ void MKZ_GEOMETRY_free_mesh(MKZ_mesh * mesh){
 	free(mesh->face_table);
 	free(mesh);
 }
+
+MKZ_material * MKZ_GEOMETRY_create_material(){
+
+	MKZ_material * mat = (MKZ_material *) malloc(sizeof(MKZ_material));
+
+	mat->ambientMapR = 0;
+	mat->ambientMapG = 0;
+	mat->ambientMapB = 0;
+
+	mat->difuseMapR = 0;
+	mat->difuseMapG = 0;
+	mat->difuseMapB = 0;
+
+	mat->specularMapR = 0;
+	mat->specularMapG = 0;
+	mat->specularMapB = 0;
+
+	mat->shininess = 1;
+
+	return mat;
+}
+
+MKZ_map * MKZ_GEOMETRY_create_map(int size){
+
+	MKZ_map * map = (MKZ_map *) malloc(sizeof(MKZ_map));
+	map->n = size;
+	map->floatMap = (float*) malloc(sizeof(float)*size*size);
+
+	int i;
+
+	for (i = 0 ; i < size*size ; i++){
+		map->floatMap[i] = 0;
+	}
+
+	return map;
+}
+
+void MKZ_GEOMETRY_free_material(MKZ_material * mat){
+	free(mat);
+}
+
+void MKZ_GEOMETRY_free_map(MKZ_map * map){
+
+	free(map->floatMap);
+	free(map);
+}

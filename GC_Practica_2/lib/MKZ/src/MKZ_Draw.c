@@ -24,6 +24,8 @@ int next_light;
 int lighting_mode;
 int lighting_enabled;
 
+MKZ_material * defaultMaterial;
+
 void MKZ_DRAW_init(){
 
 
@@ -52,14 +54,29 @@ void MKZ_DRAW_init(){
 	lighting_enabled = 0;
 	lighting_mode = MKZ_LIGHTING_FLAT;
 
-	GLfloat mat_ambient[] = {0.2, 0.2, 0.2, 1.0};
-	GLfloat mat_difuse[] = { 0.8, 0.8, 0.8, 1.0 };
-	GLfloat mat_specular[] = { 0, 0, 0, 1 };
-	GLfloat mat_shininess[] = { 100.0 };
-	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_difuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	/*default material */
+	MKZ_material * mat = MKZ_GEOMETRY_create_material();
+	MKZ_map * map = MKZ_GEOMETRY_create_map(1);
+	map->floatMap[0] = 0.2;
+	mat->ambientMapR = map;
+	mat->ambientMapG = map;
+	mat->ambientMapB = map;
+
+	map = MKZ_GEOMETRY_create_map(1);
+	map->floatMap[0] = 0.8;
+	mat->difuseMapR = map;
+	mat->difuseMapG = map;
+	mat->difuseMapB = map;
+
+	map = MKZ_GEOMETRY_create_map(1);
+	map->floatMap[0] = 0;
+	mat->specularMapR = map;
+	mat->specularMapG = map;
+	mat->specularMapB = map;
+
+	mat->shininess = 100;
+
+	defaultMaterial = mat;
 
 }
 
@@ -171,6 +188,7 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 
 
 	MKZ_mesh * mesh = mo->mesh;
+	MKZ_material * material = mo->material;
 	//fprintf(stdout,"%d\n",mesh);
 	if (mesh == 0)
 		return;
@@ -192,6 +210,52 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 
 
 	if (lighting_enabled){
+
+		GLfloat mat_ambient[4];
+		GLfloat mat_difuse[4];
+		GLfloat mat_specular[4];
+		GLfloat mat_shininess[1];
+
+		if (material == 0){
+			mat_ambient[0] = defaultMaterial->ambientMapR->floatMap[0];
+			mat_ambient[1] = defaultMaterial->ambientMapG->floatMap[0];
+			mat_ambient[2] = defaultMaterial->ambientMapB->floatMap[0];
+
+			mat_difuse[0] = defaultMaterial->difuseMapR->floatMap[0];
+			mat_difuse[1] = defaultMaterial->difuseMapG->floatMap[0];
+			mat_difuse[2] = defaultMaterial->difuseMapB->floatMap[0];
+
+			mat_specular[0] = defaultMaterial->specularMapR->floatMap[0];
+			mat_specular[1] = defaultMaterial->specularMapG->floatMap[0];
+			mat_specular[2] = defaultMaterial->specularMapB->floatMap[0];
+
+			mat_shininess[0] = defaultMaterial->shininess;
+		}
+		else{
+			mat_ambient[0] = material->ambientMapR->floatMap[0];
+			mat_ambient[1] = material->ambientMapG->floatMap[0];
+			mat_ambient[2] = material->ambientMapB->floatMap[0];
+
+			mat_difuse[0] = material->difuseMapR->floatMap[0];
+			mat_difuse[1] = material->difuseMapG->floatMap[0];
+			mat_difuse[2] = material->difuseMapB->floatMap[0];
+
+			mat_specular[0] = material->specularMapR->floatMap[0];
+			mat_specular[1] = material->specularMapG->floatMap[0];
+			mat_specular[2] = material->specularMapB->floatMap[0];
+
+			mat_shininess[0] = material->shininess;
+		}
+
+
+		mat_ambient[3] = 1;
+		mat_difuse[3] = 1;
+		mat_specular[3] = 1;
+
+		glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_difuse);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+		glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
 		for (v = 0 ; v < mesh->num_vertices ; v++){
 			vertex_normals[v][0] = 0;
@@ -264,7 +328,24 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 		}
 
 	}
+	else{
 
+		GLfloat color[4];
+
+		if (material == 0){
+			color[0] = defaultMaterial->ambientMapR->floatMap[0];
+			color[1] = defaultMaterial->ambientMapG->floatMap[0];
+			color[2] = defaultMaterial->ambientMapB->floatMap[0];
+		}
+		else{
+			color[0] = material->ambientMapR->floatMap[0];
+			color[1] = material->ambientMapG->floatMap[0];
+			color[2] = material->ambientMapB->floatMap[0];
+		}
+
+		color[3] = 1;
+		glColor3fv(color);
+	}
 
 	for (f = 0; f < mesh->num_faces; f++) {
 		glBegin(GL_POLYGON);
