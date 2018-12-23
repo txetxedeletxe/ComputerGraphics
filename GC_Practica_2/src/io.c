@@ -279,11 +279,11 @@ void event_callback(int event_id , void * event_info){
 
 			/* Z - AXIS */
 			case MKZ_KEY_PAGE_UP:
-				KG_transform(KG_TRANSFORM_AXIS_Z);
+				KG_transform(-KG_TRANSFORM_AXIS_Z);
 				break;
 
 			case MKZ_KEY_PAGE_DOWN:
-				KG_transform(-KG_TRANSFORM_AXIS_Z);
+				KG_transform(KG_TRANSFORM_AXIS_Z);
 				break;
 
 			case MKZ_KEY_F9:

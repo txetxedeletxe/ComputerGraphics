@@ -23,6 +23,7 @@ float MKZ_ARITHMETIC_eulidean_norm_vector(MKZ_vector3 * v3);
 float MKZ_ARITHMETIC_eulidean_norm(float * v3);
 
 void MKZ_ARITHMETIC_transform_vector(float * mat, MKZ_vector3 * v3);
+void MKZ_ARITHMETIC_transform(float * mat, float * v3);
 
 float MKZ_ARITHMETIC_determinant(float * mat);
 

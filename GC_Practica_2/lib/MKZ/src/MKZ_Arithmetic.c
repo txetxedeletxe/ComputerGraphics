@@ -109,9 +109,9 @@ void MKZ_ARITHMETIC_transform_vector(float * mat, MKZ_vector3 * v3){
 	float vy = 0;
 	float vz = 0;
 
-	vx = mat[0]*v3->x + mat[4]*v3->y + mat[8]*v3->z;
-	vy = mat[1]*v3->x + mat[5]*v3->y + mat[9]*v3->z;
-	vz = mat[2]*v3->x + mat[6]*v3->y + mat[10]*v3->z;
+	vx = mat[0]*v3->x + mat[4]*v3->y + mat[8]*v3->z 	+ mat[12];
+	vy = mat[1]*v3->x + mat[5]*v3->y + mat[9]*v3->z 	+ mat[13];
+	vz = mat[2]*v3->x + mat[6]*v3->y + mat[10]*v3->z	+ mat[14];
 
 	v3->x = vx;
 	v3->y = vy;
@@ -119,6 +119,21 @@ void MKZ_ARITHMETIC_transform_vector(float * mat, MKZ_vector3 * v3){
 
 }
 
+void MKZ_ARITHMETIC_transform(float * mat, float * v3){
+	float vx = 0;
+	float vy = 0;
+	float vz = 0;
+
+	vx = mat[0]*v3[0] 	+ mat[4]*v3[1]  + mat[8]*v3[2] 	+ mat[12];
+	vy = mat[1]*v3[0]  	+ mat[5]*v3[1]  + mat[9]*v3[2] 	+ mat[13];
+	vz = mat[2]*v3[0]  	+ mat[6]*v3[1]  + mat[10]*v3[2] + mat[14];
+
+	v3[0] = vx;
+	v3[1] = vy;
+	v3[2] = vz;
+
+
+}
 void MKZ_ARITHMETIC_copy_matrix(float * vin , float * vout){
 
 	int i;

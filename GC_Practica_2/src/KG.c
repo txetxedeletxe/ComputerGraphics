@@ -5,17 +5,17 @@
 #include <math.h>
 #include <stdio.h>
 
-#define KG_WINDOW_WIDTH 640
-#define KG_WINDOW_HEIGHT 480
+#define KG_WINDOW_WIDTH 960
+#define KG_WINDOW_HEIGHT 540
 
 #define KG_WINDOW_TITLE "Practica GPO"
 
-#define KG_COL_BACK_R                       0.60f
-#define KG_COL_BACK_G                       0.30f
-#define KG_COL_BACK_B                       0.60f
+#define KG_COL_BACK_R                       0.1f
+#define KG_COL_BACK_G                       0.1f
+#define KG_COL_BACK_B                       0.1f
 #define KG_COL_BACK_A                       1.00f
 
-#define KG_VIEW_WIDTH 2
+#define KG_VIEW_WIDTH 3
 #define KG_VIEW_HEIGHT 2
 #define KG_VIEW_NEAR 1
 #define KG_VIEW_FAR 1000
@@ -455,7 +455,7 @@ void KG_transform_camera(int axis){
 
 			case KG_TRANSFORM_AXIS_Y:
 				MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
-				MKZ_TRANSFORM_rotateX_local(ca->obj.transform,KG_ROTATE_STEP*sense);
+				MKZ_TRANSFORM_rotateX_local(ca->obj.transform,KG_ROTATE_STEP*-sense);
 				v3->z = dist/MKZ_ARITHMETIC_eulidean_norm(ca->obj.transform+8);
 				MKZ_TRANSFORM_translate_local(ca->obj.transform,v3);
 				break;
@@ -483,7 +483,7 @@ void KG_transform_camera(int axis){
 				break;
 
 			case KG_TRANSFORM_AXIS_Z:
-				v3->z = sense * KG_TRANSLATE_STEP;
+				v3->z = -sense * KG_TRANSLATE_STEP;
 				break;
 
 			}
@@ -615,8 +615,8 @@ int KG_load_object(char * filename){
 
 		MKZ_camera * cam = MKZ_OBJECT_create_camera();
 
-		cam->obj.transform[10] = -1;
-		cam->obj.transform[13] = 1;
+		cam->obj.transform[13] = 2;
+		MKZ_TRANSFORM_rotateY_global(cam->obj.transform,3.14159265359f);
 
 		cam->v_x = KG_VIEW_WIDTH;
 		cam->v_y = KG_VIEW_HEIGHT;
@@ -991,16 +991,17 @@ void KG_uniform_scale(int sense){
 	switch(t_target){
 
 		case KG_TRANSFORM_TARGET_OBJECT:
-			traend = (object*) objList->content;
+			traend = (object*) selectedObject->content;
 			break;
 		case KG_TRANSFORM_TARGET_CAMERA:
-			traend = (object*) cameraList->content;
+			traend = (object*) selectedCamera->content;
 			MKZ_camera * cam = (MKZ_camera *) traend->object;
 
 			cam->v_far *=s_factor;
 			cam->v_x *= s_factor;
 			cam->v_y *= s_factor;
 			return;
+
 		case KG_TRANSFORM_TARGET_LIGHT:
 			traend = lList[selectedLight];
 			break;

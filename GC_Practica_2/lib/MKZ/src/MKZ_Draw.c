@@ -182,14 +182,12 @@ void MKZ_DRAW_clear(){
 
 void MKZ_DRAW_object(MKZ_meshedObject * mo){
 
-	glLoadMatrixf(baseChange_mat);
-	glMultMatrixf(mo->obj.transform);
-
-
+	//glLoadMatrixf(baseChange_mat);
 
 	MKZ_mesh * mesh = mo->mesh;
 	MKZ_material * material = mo->material;
-	//fprintf(stdout,"%d\n",mesh);
+
+
 	if (mesh == 0)
 		return;
 
@@ -199,15 +197,29 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 
 	float face_normals[mesh->num_faces][3];
 	float vertex_normals[mesh->num_vertices][3];
+	float transformed_vertex[mesh->num_vertices][3];
+
+	float temp[4];
+	temp[3] = 1;
 
 	MKZ_vector3 v1;
 	MKZ_vector3 v2;
 	MKZ_vector3 v3;
 
-	MKZ_point3 p1;
-	MKZ_point3 p2;
-	MKZ_point3 p3;
+	/* Transformacion del objeto */
+	for (v = 0 ; v < mesh->num_vertices ; v++){
 
+		temp[0] = mo->mesh->vertex_table[v].coord.x;
+		temp[1] = mo->mesh->vertex_table[v].coord.y;
+		temp[2] = mo->mesh->vertex_table[v].coord.z;
+
+		MKZ_ARITHMETIC_transform(mo->obj.transform,temp);
+
+		transformed_vertex[v][0] = temp[0];
+		transformed_vertex[v][1] = temp[1];
+		transformed_vertex[v][2] = temp[2];
+
+	}
 
 	if (lighting_enabled){
 
@@ -267,37 +279,13 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 
 			MKZ_face face =  mesh->face_table[f];
 
+			v1.x = transformed_vertex[face.vertex_table[1]][0] - transformed_vertex[face.vertex_table[0]][0];
+			v1.y = transformed_vertex[face.vertex_table[1]][1] - transformed_vertex[face.vertex_table[0]][1];
+			v1.z = transformed_vertex[face.vertex_table[1]][2] - transformed_vertex[face.vertex_table[0]][2];
 
-			p1.x = mesh->vertex_table[face.vertex_table[0]].coord.x;
-			p1.y = mesh->vertex_table[face.vertex_table[0]].coord.y;
-			p1.z = mesh->vertex_table[face.vertex_table[0]].coord.z;
-
-			p2.x = mesh->vertex_table[face.vertex_table[1]].coord.x;
-			p2.y = mesh->vertex_table[face.vertex_table[1]].coord.y;
-			p2.z = mesh->vertex_table[face.vertex_table[1]].coord.z;
-
-			p3.x = mesh->vertex_table[face.vertex_table[2]].coord.x;
-			p3.y = mesh->vertex_table[face.vertex_table[2]].coord.y;
-			p3.z = mesh->vertex_table[face.vertex_table[2]].coord.z;
-
-			/*
-			MKZ_ARITHMETIC_transform_vector(baseChange_mat,&p1);
-			MKZ_ARITHMETIC_transform_vector(mo->obj.transform,&p1);
-
-			MKZ_ARITHMETIC_transform_vector(baseChange_mat,&p2);
-			MKZ_ARITHMETIC_transform_vector(mo->obj.transform,&p2);
-
-			MKZ_ARITHMETIC_transform_vector(baseChange_mat,&p3);
-			MKZ_ARITHMETIC_transform_vector(mo->obj.transform,&p3);
-			*/
-
-			v1.x = p2.x - p1.x;
-			v1.y = p2.y - p1.y;
-			v1.z = p2.z - p1.z;
-
-			v2.x = p3.x - p1.x;
-			v2.y = p3.y - p1.y;
-			v2.z = p3.z - p1.z;
+			v2.x = transformed_vertex[face.vertex_table[2]][0] - transformed_vertex[face.vertex_table[0]][0];
+			v2.y = transformed_vertex[face.vertex_table[2]][1] - transformed_vertex[face.vertex_table[0]][1];
+			v2.z = transformed_vertex[face.vertex_table[2]][2] - transformed_vertex[face.vertex_table[0]][2];
 
 			MKZ_ARITHMETIC_corssProduct_vector(&v1,&v2,&v3);
 
@@ -357,9 +345,7 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 			v_index = mesh->face_table[f].vertex_table[v];
 			if (lighting_enabled && lighting_mode == MKZ_LIGHTING_SMOOTH)
 				glNormal3f(vertex_normals[v_index][0], vertex_normals[v_index][1], vertex_normals[v_index][2]);
-			glVertex3d(mesh->vertex_table[v_index].coord.x,
-					mesh->vertex_table[v_index].coord.y,
-					mesh->vertex_table[v_index].coord.z);
+			glVertex3d(transformed_vertex[v_index][0],transformed_vertex[v_index][1],transformed_vertex[v_index][2]);
 		}
 
 		glEnd();
