@@ -182,6 +182,7 @@ void MKZ_DRAW_clear(){
 
 void MKZ_DRAW_object(MKZ_meshedObject * mo){
 
+	glLoadIdentity();
 	//glLoadMatrixf(baseChange_mat);
 
 	MKZ_mesh * mesh = mo->mesh;
@@ -214,6 +215,7 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 		temp[2] = mo->mesh->vertex_table[v].coord.z;
 
 		MKZ_ARITHMETIC_transform(mo->obj.transform,temp);
+		MKZ_ARITHMETIC_transform(baseChange_mat,temp);
 
 		transformed_vertex[v][0] = temp[0];
 		transformed_vertex[v][1] = temp[1];
@@ -373,6 +375,7 @@ void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 	//printf("Light ptr: %d\n",lo);
 	glLoadMatrixf(baseChange_mat);
 
+
 	GLenum light_ind;
 	float f[4];
 	switch(next_light){
@@ -415,6 +418,7 @@ void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 		f[1] = -lo->obj.transform[9];
 		f[2] = -lo->obj.transform[10];
 		f[3] = 0;
+
 
 		glLightfv(light_ind, GL_POSITION, f);
 
