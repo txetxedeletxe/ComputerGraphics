@@ -40,7 +40,7 @@ MKZ_lightObject * MKZ_OBJECT_create_lightObject(){
 	mlo->atenuationLinear = 1;
 	mlo->atenuationQuadratic = 1;
 
-	mlo->spotExponent = 1;
+	mlo->spotExponent = 0;
 
 	mlo->light_type = 0;
 

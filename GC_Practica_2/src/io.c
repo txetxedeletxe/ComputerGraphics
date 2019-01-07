@@ -120,8 +120,14 @@ void event_callback(int event_id , void * event_info){
 		    case 'F':
 
 		    	printf("%s", "Enter archive path: ");
-		    	scanf("%s", fname);
-		    	int error = KG_load_object(fname);
+		    	int error = scanf("%s", fname);
+
+		    	if (error != 1){
+		    		printf("Could not read from stdin.\n");
+		    		break;
+		    	}
+
+		    	error = KG_load_object(fname);
 		    	if (error != 0){
 		    		printf("%s", "Could not read from file\n");
 		    	}

@@ -405,6 +405,10 @@ void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 			light_ind = GL_LIGHT7;
 			break;
 
+		default:
+			printf("MAX LIGHTS exceded");
+			return;
+
 	}
 
 	glEnable(light_ind);
@@ -478,6 +482,17 @@ void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 		glLightf(light_ind, GL_SPOT_CUTOFF, det);
 
 		glLightf(light_ind, GL_SPOT_EXPONENT, lo->spotExponent);
+	}
+	else{
+
+		f[0] = 0;
+		f[1] = 0;
+		f[2] = -1;
+		f[3] = 0;
+
+		glLightfv(light_ind, GL_SPOT_DIRECTION, f);
+		glLightf(light_ind, GL_SPOT_CUTOFF, 180);
+		glLightf(light_ind, GL_SPOT_EXPONENT,0);
 	}
 
 	next_light++;
