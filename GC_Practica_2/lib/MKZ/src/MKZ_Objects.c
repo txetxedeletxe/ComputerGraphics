@@ -53,7 +53,9 @@ MKZ_camera * MKZ_OBJECT_create_camera(){
 	MKZ_OBJECT_init_object(&mc->obj);
 	mc->projection_mode = MKZ_PROJECTIONMODE_PARALLEL;
 	mc->polygon_mode = MKZ_POLYGONMODE_FILLED;
-	MKZ_GEOMETRY_reset_to_black(&mc->skybox);
+	mc->useSkybox = 0;
+	mc->c_skybox = 0;
+	MKZ_LIGHTING_reset_to_black(&mc->background);
 	mc->lighting_enable = 0;
 	mc->lighting_mode = 0;
 	mc->culling_enabled = 1;

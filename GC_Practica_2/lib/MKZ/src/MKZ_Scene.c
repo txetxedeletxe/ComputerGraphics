@@ -39,7 +39,7 @@ void MKZ_SCENE_draw(){
 
 		MKZ_camera * aux_camera = 0;
 		aux_camera = ((global_mask & MKZ_GLOBAL_BG_COLOR) != 0) ? default_camera : camera;
-		MKZ_DRAW_set_background_color(&aux_camera->skybox);
+		MKZ_DRAW_set_background_color(&aux_camera->background);
 
 		aux_camera = ((global_mask & MKZ_GLOBAL_PROJECTION) != 0) ? default_camera : camera;
 		MKZ_DRAW_set_projectionMode(aux_camera->projection_mode);

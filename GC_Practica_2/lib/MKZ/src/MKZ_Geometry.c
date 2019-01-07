@@ -1,4 +1,4 @@
-#include <MKZ_Io.h>
+#include "MKZ_Io.h"
 #include "MKZ_Geometry.h"
 #include <stdlib.h>
 
@@ -9,15 +9,6 @@ void MKZ_GEOMETRY_reset_to_origin(MKZ_point3 * p3){
 	p3->z = 0;
 
 }
-
-void MKZ_GEOMETRY_reset_to_black(MKZ_color3 * c3){
-
-	c3->r = 0;
-	c3->g = 0;
-	c3->b = 0;
-
-}
-
 
 MKZ_point3 * MKZ_GEOMETRY_create_point3(){
 	MKZ_point3 * p3  = (MKZ_point3*) malloc(sizeof(MKZ_point3));
@@ -49,11 +40,6 @@ MKZ_line * MKZ_GEOMETRY_create_line(){
 	MKZ_GEOMETRY_reset_to_origin(&l->p1);
 	return l;
 }
-MKZ_color3 * MKZ_GEOMETRY_create_color3(){
-	MKZ_color3 * c3 = (MKZ_color3*) malloc(sizeof(MKZ_color3));
-	MKZ_GEOMETRY_reset_to_black(c3);
-	return c3;
-}
 
 void MKZ_GEOMETRY_face_add_vertex(MKZ_face * face, int p){
 
@@ -81,10 +67,6 @@ void MKZ_GEOMETRY_free_face(MKZ_face * face){
 void MKZ_GEOMETRY_free_line(MKZ_line * line){
 	free(line);
 }
-void MKZ_GEOMETRY_free_color3(MKZ_color3 * col){
-	free(col);
-}
-
 
 /** MESH **/
 MKZ_mesh * MKZ_GEOMETRY_create_mesh(MKZ_point3 * vertices, MKZ_face * faces , int vertex_count , int face_count){
@@ -220,48 +202,3 @@ void MKZ_GEOMETRY_free_mesh(MKZ_mesh * mesh){
 	free(mesh);
 }
 
-MKZ_material * MKZ_GEOMETRY_create_material(){
-
-	MKZ_material * mat = (MKZ_material *) malloc(sizeof(MKZ_material));
-
-	mat->ambientMapR = 0;
-	mat->ambientMapG = 0;
-	mat->ambientMapB = 0;
-
-	mat->difuseMapR = 0;
-	mat->difuseMapG = 0;
-	mat->difuseMapB = 0;
-
-	mat->specularMapR = 0;
-	mat->specularMapG = 0;
-	mat->specularMapB = 0;
-
-	mat->shininess = 1;
-
-	return mat;
-}
-
-MKZ_map * MKZ_GEOMETRY_create_map(int size){
-
-	MKZ_map * map = (MKZ_map *) malloc(sizeof(MKZ_map));
-	map->n = size;
-	map->floatMap = (float*) malloc(sizeof(float)*size*size);
-
-	int i;
-
-	for (i = 0 ; i < size*size ; i++){
-		map->floatMap[i] = 0;
-	}
-
-	return map;
-}
-
-void MKZ_GEOMETRY_free_material(MKZ_material * mat){
-	free(mat);
-}
-
-void MKZ_GEOMETRY_free_map(MKZ_map * map){
-
-	free(map->floatMap);
-	free(map);
-}

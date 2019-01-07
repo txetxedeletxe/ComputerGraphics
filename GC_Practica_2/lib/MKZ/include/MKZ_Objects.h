@@ -2,7 +2,7 @@
 #define __MKZ_OBJECTS_IMPORTED__
 
 #include "MKZ_Geometry.h"
-
+#include "MKZ_Lighting.h"
 
 
 typedef struct{
@@ -47,7 +47,9 @@ typedef struct{
 
 	MKZ_object obj;
 
-	MKZ_color3 skybox;
+	int useSkybox;
+	MKZ_color3 background;
+	MKZ_cube_map * c_skybox;
 
 	int projection_mode;
 

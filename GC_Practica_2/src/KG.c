@@ -47,8 +47,8 @@ int special_function;
 /** Resources **/
 
 MKZ_mesh * meshList[100];
-MKZ_map * mapList[100];
-
+MKZ_3map * mapList[100];
+MKZ_map * one_map;
 /** Private Functions **/
 void KG_save_object_matrix(object * obj){
 
@@ -111,9 +111,9 @@ void __KG_init(){
 	/** init scene**/
 	MKZ_camera * cam  = MKZ_SCENE_get_default_camera();
 	cam->polygon_mode = MKZ_POLYGONMODE_FILLED;
-	cam->skybox.r = KG_COL_BACK_R;
-	cam->skybox.g = KG_COL_BACK_G;
-	cam->skybox.b = KG_COL_BACK_B;
+	cam->background.r = KG_COL_BACK_R;
+	cam->background.g = KG_COL_BACK_G;
+	cam->background.b = KG_COL_BACK_B;
 	cam->lighting_enable = 1;
 	cam->lighting_mode = MKZ_LIGHTING_FLAT;
 	cam->culling_enabled = 1;
@@ -255,12 +255,20 @@ void __KG_init(){
 	linkedlist_add(&obj->children,mo_object);
 	KG_update_children(obj);
 
+	mapList[0] = MKZ_LIGHTING_create_3map(1);
+	mapList[0]->floatMap1[0] = 1.0;
+	mapList[0]->floatMap2[0] = 1.0;
+	mapList[0]->floatMap3[0] = 1.0;
 
-	for (i = 0 ; i < 100 ; i++){
-		mapList[i] = MKZ_GEOMETRY_create_map(1);
-		mapList[i]->floatMap[0] = ((float)rand())/((float)RAND_MAX);
+	for (i = 1 ; i < 100 ; i++){
+		mapList[i] = MKZ_LIGHTING_create_3map(1);
+		mapList[i]->floatMap1[0] = ((float)rand())/((float)RAND_MAX);
+		mapList[i]->floatMap2[0] = ((float)rand())/((float)RAND_MAX);
+		mapList[i]->floatMap3[0] = ((float)rand())/((float)RAND_MAX);
 	}
 
+	one_map = MKZ_LIGHTING_create_map(1);
+	one_map->floatMap[0] = 1;
 
 }
 
@@ -582,22 +590,25 @@ int KG_load_object(char * filename){
 		mo->mesh = mesh;
 
 
-		MKZ_material * mat = MKZ_GEOMETRY_create_material();
+		MKZ_material * mat = MKZ_LIGHTING_create_material();
+		mat->property_mask = MKZ_MATERIAL_AMBIENT | MKZ_MATERIAL_DIFFUSE | MKZ_MATERIAL_SPECULARITY;
+
+		mat->ambient = MKZ_LIGHTING_create_ambient();
+		mat->diffuse = MKZ_LIGHTING_create_diffuse();
+		mat->specular = MKZ_LIGHTING_create_specular();
 
 		unsigned int r = rand() %100;
-		mat->ambientMapR = mapList[r];
-		mat->difuseMapR = mapList[r];
-		mat->specularMapR = mapList[r];
-		r = rand() % 100;
-		mat->ambientMapG = mapList[r];
-		mat->difuseMapG = mapList[r];
-		mat->specularMapG = mapList[r];
-		r = rand() % 100;
-		mat->ambientMapB = mapList[r];
-		mat->difuseMapB = mapList[r];
-		mat->specularMapB = mapList[r];
+		mat->ambient->map = mapList[r];
+		mat->ambient->intensity_map = one_map;
+		mat->diffuse->map = mapList[r];
+		mat->diffuse->intensity_map = one_map;
+		mat->specular->map = mapList[0];
+		mat->specular->intensity_map = one_map;
 
-		mat->shininess = 127.0*((float)rand())/((float)RAND_MAX);
+		MKZ_map * sh_map = MKZ_LIGHTING_create_map(1);
+
+		sh_map->floatMap[0] = 127.0*((float)rand())/((float)RAND_MAX);
+		mat->specular->shininess_map = sh_map;
 
 		mo->material = mat;
 

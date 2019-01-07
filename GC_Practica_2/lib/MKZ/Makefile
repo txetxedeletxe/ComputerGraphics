@@ -5,8 +5,8 @@ LIB = -lGL -lGLU -lglut -lm
 
 INCLUDEDIR=include
 
-_OBJ=MKZ_Arithmetic.o MKZ_Datastruct.o MKZ_Draw.o MKZ_Geometry.o MKZ.o MKZ_Scene.o  MKZ_Transform.o MKZ_WindowManager.o MKZ_Io.o MKZ_Objects.o
-_OBJ_D=MKZ_Arithmetic_debug.o MKZ_Datastruct_debug.o MKZ_Draw_debug.o MKZ_Geometry_debug.o MKZ_debug.o MKZ_Scene_debug.o  MKZ_Transform_debug.o MKZ_WindowManager_debug.o MKZ_Io_debug.o MKZ_Objects_debug.o
+_OBJ=MKZ_Arithmetic.o MKZ_Datastruct.o MKZ_Draw.o MKZ_Geometry.o MKZ.o MKZ_Scene.o  MKZ_Transform.o MKZ_WindowManager.o MKZ_Io.o MKZ_Objects.o MKZ_Lighting.o
+_OBJ_D=MKZ_Arithmetic_debug.o MKZ_Datastruct_debug.o MKZ_Draw_debug.o MKZ_Geometry_debug.o MKZ_debug.o MKZ_Scene_debug.o  MKZ_Transform_debug.o MKZ_WindowManager_debug.o MKZ_Io_debug.o MKZ_Objects_debug.o MKZ_Lighting_debug.o
 OBJDIR=obj
 
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))

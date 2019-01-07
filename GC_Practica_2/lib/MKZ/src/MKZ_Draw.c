@@ -55,26 +55,50 @@ void MKZ_DRAW_init(){
 	lighting_mode = MKZ_LIGHTING_FLAT;
 
 	/*default material */
-	MKZ_material * mat = MKZ_GEOMETRY_create_material();
-	MKZ_map * map = MKZ_GEOMETRY_create_map(1);
-	map->floatMap[0] = 0.2;
-	mat->ambientMapR = map;
-	mat->ambientMapG = map;
-	mat->ambientMapB = map;
+	MKZ_material * mat = MKZ_LIGHTING_create_material();
+	mat->property_mask = MKZ_MATERIAL_AMBIENT | MKZ_MATERIAL_DIFFUSE | MKZ_MATERIAL_SPECULARITY;
 
-	map = MKZ_GEOMETRY_create_map(1);
-	map->floatMap[0] = 0.8;
-	mat->difuseMapR = map;
-	mat->difuseMapG = map;
-	mat->difuseMapB = map;
+	mat->ambient = MKZ_LIGHTING_create_ambient();
+	mat->diffuse = MKZ_LIGHTING_create_diffuse();
+	mat->specular = MKZ_LIGHTING_create_specular();
 
-	map = MKZ_GEOMETRY_create_map(1);
-	map->floatMap[0] = 0;
-	mat->specularMapR = map;
-	mat->specularMapG = map;
-	mat->specularMapB = map;
+	MKZ_3map * map3 = MKZ_LIGHTING_create_3map(1);
+	MKZ_map * map = MKZ_LIGHTING_create_map(1);
 
-	mat->shininess = 100;
+	map3->floatMap1[0] = 0.2;
+	map3->floatMap2[0] = 0.2;
+	map3->floatMap3[0] = 0.2;
+	map->floatMap[0] = 1;
+
+	mat->ambient->map = map3;
+	mat->ambient->intensity_map = map;
+
+	map3 = MKZ_LIGHTING_create_3map(1);
+	map = MKZ_LIGHTING_create_map(1);
+
+	map3->floatMap1[0] = 0.8;
+	map3->floatMap2[0] = 0.8;
+	map3->floatMap3[0] = 0.8;
+	map->floatMap[0] = 1;
+
+	mat->diffuse->map = map3;
+	mat->diffuse->intensity_map = map;
+
+	map3 = MKZ_LIGHTING_create_3map(1);
+	map = MKZ_LIGHTING_create_map(1);
+
+	map3->floatMap1[0] = 0.0;
+	map3->floatMap2[0] = 0.0;
+	map3->floatMap3[0] = 0.0;
+	map->floatMap[0] = 1;
+
+	mat->specular->map = map3;
+	mat->specular->intensity_map = map;
+
+	map = MKZ_LIGHTING_create_map(1);
+	map->floatMap[0] = 100;
+
+	mat->specular->shininess_map = map;
 
 	defaultMaterial = mat;
 
@@ -169,7 +193,6 @@ void MKZ_DRAW_start(){
 		glFrustum(c_left,c_right,c_bottom,c_top,c_near,c_far);
 	}
 
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -231,34 +254,34 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 		GLfloat mat_shininess[1];
 
 		if (material == 0){
-			mat_ambient[0] = defaultMaterial->ambientMapR->floatMap[0];
-			mat_ambient[1] = defaultMaterial->ambientMapG->floatMap[0];
-			mat_ambient[2] = defaultMaterial->ambientMapB->floatMap[0];
+			mat_ambient[0] = defaultMaterial->ambient->map->floatMap1[0] * defaultMaterial->ambient->intensity_map->floatMap[0];
+			mat_ambient[1] = defaultMaterial->ambient->map->floatMap2[0] * defaultMaterial->ambient->intensity_map->floatMap[0];
+			mat_ambient[2] = defaultMaterial->ambient->map->floatMap3[0] * defaultMaterial->ambient->intensity_map->floatMap[0];
 
-			mat_difuse[0] = defaultMaterial->difuseMapR->floatMap[0];
-			mat_difuse[1] = defaultMaterial->difuseMapG->floatMap[0];
-			mat_difuse[2] = defaultMaterial->difuseMapB->floatMap[0];
+			mat_difuse[0] = defaultMaterial->diffuse->map->floatMap1[0] * defaultMaterial->diffuse->intensity_map->floatMap[0];
+			mat_difuse[1] = defaultMaterial->diffuse->map->floatMap2[0] * defaultMaterial->diffuse->intensity_map->floatMap[0];
+			mat_difuse[2] = defaultMaterial->diffuse->map->floatMap3[0] * defaultMaterial->diffuse->intensity_map->floatMap[0];
 
-			mat_specular[0] = defaultMaterial->specularMapR->floatMap[0];
-			mat_specular[1] = defaultMaterial->specularMapG->floatMap[0];
-			mat_specular[2] = defaultMaterial->specularMapB->floatMap[0];
+			mat_specular[0] = defaultMaterial->specular->map->floatMap1[0] * defaultMaterial->specular->intensity_map->floatMap[0];
+			mat_specular[1] = defaultMaterial->specular->map->floatMap2[0] * defaultMaterial->specular->intensity_map->floatMap[0];
+			mat_specular[2] = defaultMaterial->specular->map->floatMap3[0] * defaultMaterial->specular->intensity_map->floatMap[0];
 
-			mat_shininess[0] = defaultMaterial->shininess;
+			mat_shininess[0] = defaultMaterial->specular->shininess_map->floatMap[0];
 		}
 		else{
-			mat_ambient[0] = material->ambientMapR->floatMap[0];
-			mat_ambient[1] = material->ambientMapG->floatMap[0];
-			mat_ambient[2] = material->ambientMapB->floatMap[0];
+			mat_ambient[0] = material->ambient->map->floatMap1[0] * material->ambient->intensity_map->floatMap[0];
+			mat_ambient[1] = material->ambient->map->floatMap2[0] * material->ambient->intensity_map->floatMap[0];
+			mat_ambient[2] = material->ambient->map->floatMap3[0] * material->ambient->intensity_map->floatMap[0];
 
-			mat_difuse[0] = material->difuseMapR->floatMap[0];
-			mat_difuse[1] = material->difuseMapG->floatMap[0];
-			mat_difuse[2] = material->difuseMapB->floatMap[0];
+			mat_difuse[0] = material->diffuse->map->floatMap1[0] * material->diffuse->intensity_map->floatMap[0];
+			mat_difuse[1] = material->diffuse->map->floatMap2[0] * material->diffuse->intensity_map->floatMap[0];
+			mat_difuse[2] = material->diffuse->map->floatMap3[0] * material->diffuse->intensity_map->floatMap[0];
 
-			mat_specular[0] = material->specularMapR->floatMap[0];
-			mat_specular[1] = material->specularMapG->floatMap[0];
-			mat_specular[2] = material->specularMapB->floatMap[0];
+			mat_specular[0] = material->specular->map->floatMap1[0] * material->specular->intensity_map->floatMap[0];
+			mat_specular[1] = material->specular->map->floatMap2[0] * material->specular->intensity_map->floatMap[0];
+			mat_specular[2] = material->specular->map->floatMap3[0] * material->specular->intensity_map->floatMap[0];
 
-			mat_shininess[0] = material->shininess;
+			mat_shininess[0] = material->specular->shininess_map->floatMap[0];
 		}
 
 
@@ -323,14 +346,14 @@ void MKZ_DRAW_object(MKZ_meshedObject * mo){
 		GLfloat color[4];
 
 		if (material == 0){
-			color[0] = defaultMaterial->ambientMapR->floatMap[0];
-			color[1] = defaultMaterial->ambientMapG->floatMap[0];
-			color[2] = defaultMaterial->ambientMapB->floatMap[0];
+			color[0] = defaultMaterial->ambient->map->floatMap1[0];
+			color[1] = defaultMaterial->ambient->map->floatMap2[0];
+			color[2] = defaultMaterial->ambient->map->floatMap3[0];
 		}
 		else{
-			color[0] = material->ambientMapR->floatMap[0];
-			color[1] = material->ambientMapG->floatMap[0];
-			color[2] = material->ambientMapB->floatMap[0];
+			color[0] = material->ambient->map->floatMap1[0];
+			color[1] = material->ambient->map->floatMap2[0];
+			color[2] = material->ambient->map->floatMap3[0];
 		}
 
 		color[3] = 1;
@@ -406,7 +429,7 @@ void MKZ_DRAW_add_light(MKZ_lightObject * lo){
 			break;
 
 		default:
-			printf("MAX LIGHTS exceded");
+			printf("MAX LIGHTS exceeded");
 			return;
 
 	}
