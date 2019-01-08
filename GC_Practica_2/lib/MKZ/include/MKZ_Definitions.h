@@ -73,4 +73,7 @@ typedef struct {
 #define MKZ_MATERIAL_LIGHTMAPPED 128
 #define MKZ_MATERIAL_RADIOSITYMAPPED 256
 #define MKZ_MATERIAL_REFLECTIONMAPPED 512
+
+char * shader_directory;
+
 #endif

@@ -2,6 +2,7 @@
 #include "MKZ_Transform.h"
 #include "MKZ_Draw.h"
 #include "MKZ_Definitions.h"
+#include "MKZ_Shading.h"
 
 #include <GL/gl.h>
 #include <GL/glut.h>
@@ -27,6 +28,8 @@ int lighting_enabled;
 MKZ_material * defaultMaterial;
 
 void MKZ_DRAW_init(){
+
+
 
 
 	identity_mat = MKZ_ARITHMETIC_create_matrix();

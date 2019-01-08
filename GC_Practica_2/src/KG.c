@@ -557,7 +557,7 @@ void KG_transform_camera(int axis){
 /** Exported part **/
 void KG_init(){
 
-	MKZ_init();
+	MKZ_init("resources");
 	MKZ_WM_set_window_size(KG_WINDOW_WIDTH, KG_WINDOW_HEIGHT);
 	MKZ_WM_set_window_title(KG_WINDOW_TITLE);
 	MKZ_create_window();

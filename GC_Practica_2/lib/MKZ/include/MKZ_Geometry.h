@@ -10,6 +10,7 @@ typedef MKZ_vector3 MKZ_point3;
 typedef struct {
     MKZ_point3 coord;                       /* coordinates,x, y, z */
     int num_faces;                    /* number of faces that share this MKZ_vertex */
+
 } MKZ_vertex;
 
 typedef struct {

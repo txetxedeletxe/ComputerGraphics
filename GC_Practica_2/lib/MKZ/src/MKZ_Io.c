@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define MAXLINE 200
-
+#define FILESIZEBUFFER 100000
 
 
 static int sreadint2(char * lerroa, int * zenbakiak) {
@@ -137,6 +137,26 @@ int MKZ_IO_read_objFile(char * file_name, MKZ_point3 ** vertex_table, MKZ_face *
 		*(face_count) = num_faces;
 
 		return 0;
+}
 
+int MKZ_IO_Readfile(char * filename , char * string){
 
+	FILE * f;
+
+	f = fopen(filename,"r");
+
+	if (f == 0)
+		return 0;
+
+	fseek(f, 0, SEEK_END);
+	long fsize = ftell(f);
+	fseek(f, 0, SEEK_SET);  //same as rewind(f);
+
+	string = malloc(fsize + 1);
+	int st = fread(string, fsize, 1, f);
+	fclose(f);
+
+	string[fsize] = 0;
+
+	return st;
 }

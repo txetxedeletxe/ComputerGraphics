@@ -1,6 +1,6 @@
 CC = gcc
 
-ST_LIB = -lGL -lGLU -lglut -lm
+ST_LIB = -lGL -lGLU -lglut -lm -lGLEW
 LIB = -lMKZ
 LIBD = -lMKZDebug
 
@@ -14,7 +14,7 @@ HEADDIR = include
 
 
 CFLAGS = -I$(HEADDIR) -Llib $(LIB) $(ST_LIB) -O3 
-DFLAGS = -I$(HEADDIR) -Llib $(LIBD) $(ST_LIB) -g
+DFLAGS = -I$(HEADDIR) -Llib $(LIBD) $(ST_LIB) -g 
 
 _OBJ = main.o objects.o io.o KG.o
 _OBJ_D = main_debug.o objects_debug.o io_debug.o KG_debug.o
