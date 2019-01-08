@@ -1,6 +1,5 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include <GL/freeglut.h>
 
 #include <string.h>
 
@@ -21,9 +20,6 @@ GLuint p_default;
 
 void MKZ_SHADING_init(){
 
-	glutInitContextVersion (3, 1);
-	glutInitContextFlags (GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
-
 
 	int error = glewInit();
 
@@ -37,6 +33,7 @@ void MKZ_SHADING_init(){
 	int strLen;
 	char * sourceStr;
 	char bufferStr[200];
+
 	//Create shaders
 
 	vs_default = glCreateShader(GL_VERTEX_SHADER);
@@ -46,7 +43,7 @@ void MKZ_SHADING_init(){
 	strcpy(bufferStr,shader_directory);
 	strcat(bufferStr,"/vs_default.glsl");
 
-	strLen = MKZ_IO_Readfile(bufferStr,sourceStr);
+	strLen = MKZ_IO_Readfile(bufferStr,&sourceStr);
 
 	const char * vs_default_source = sourceStr;
 
@@ -56,7 +53,7 @@ void MKZ_SHADING_init(){
 	strcpy(bufferStr,shader_directory);
 	strcat(bufferStr,"/fs_default.glsl");
 
-	strLen = MKZ_IO_Readfile(bufferStr,sourceStr);
+	strLen = MKZ_IO_Readfile(bufferStr,&sourceStr);
 
 	const char * fs_default_source = sourceStr;
 
@@ -80,7 +77,7 @@ void MKZ_SHADING_init(){
 	//Link programs
 	glLinkProgram(p_default);
 
-	//glUseProgram(p_default);
+	glUseProgram(p_default);
 
 }
 

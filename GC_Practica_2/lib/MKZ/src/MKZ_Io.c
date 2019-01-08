@@ -139,12 +139,11 @@ int MKZ_IO_read_objFile(char * file_name, MKZ_point3 ** vertex_table, MKZ_face *
 		return 0;
 }
 
-int MKZ_IO_Readfile(char * filename , char * string){
+int MKZ_IO_Readfile(char * filename , char ** str){
 
 	FILE * f;
 
 	f = fopen(filename,"r");
-
 	if (f == 0)
 		return 0;
 
@@ -152,11 +151,11 @@ int MKZ_IO_Readfile(char * filename , char * string){
 	long fsize = ftell(f);
 	fseek(f, 0, SEEK_SET);  //same as rewind(f);
 
-	string = malloc(fsize + 1);
-	int st = fread(string, fsize, 1, f);
+	char * string = malloc(sizeof(char)*(fsize + 1));
+	int st = fread(string, fsize,1, f);
 	fclose(f);
 
 	string[fsize] = 0;
-
-	return st;
+	*(str) = string;
+	return fsize;
 }

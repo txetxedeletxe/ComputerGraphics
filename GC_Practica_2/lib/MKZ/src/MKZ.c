@@ -22,6 +22,6 @@ void MKZ_create_window(){
 	MKZ_WM_create_window();
 	MKZ_WM_set_display_function(MKZ_SCENE_draw);
 	MKZ_WM_bind_callback();
-	//MKZ_SHADING_init();
+	MKZ_SHADING_init();
 }
 

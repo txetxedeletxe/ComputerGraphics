@@ -296,7 +296,7 @@ void event_callback(int event_id , void * event_info){
 				KG_lighting_switch();
 				break;
 
-			case MKZ_KEY_F12:
+			case MKZ_KEY_F11:
 				KG_switch_lighting_mode();
 				break;
 
